@@ -131,13 +131,20 @@ const categoryBadgeClass = computed(() => categoryBadgeColors[props.story.catego
 const categoryBgGradient = computed(() => categoryBgGradients[props.story.category] || 'from-amber-100 to-orange-100')
 
 const timeAgo = computed(() => {
+  if (!props.story.publishedAt) return ''
   const date = new Date(props.story.publishedAt)
   const now = new Date()
   const diff = now.getTime() - date.getTime()
-  const hours = Math.floor(diff / (1000 * 60 * 60))
+  
+  // Future date handling
+  if (diff < 0) return 'Just now'
+  
+  const minutes = Math.floor(diff / (1000 * 60))
+  const hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
   
-  if (hours < 1) return 'Just now'
+  if (minutes < 5) return 'Just now'
+  if (minutes < 60) return `${minutes}m ago`
   if (hours < 24) return `${hours}h ago`
   if (days < 7) return `${days}d ago`
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })

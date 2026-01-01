@@ -22,6 +22,8 @@
             <span class="font-bold">{{ streak }}</span>
             <span class="text-xs font-medium opacity-80">day streak</span>
           </button>
+          <WeatherWidget />
+          <span class="w-px h-4 bg-amber-200"></span>
           <span>{{ currentDateTime }}</span>
         </div>
         <div class="flex items-center gap-4">

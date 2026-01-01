@@ -24,7 +24,6 @@
             <ul class="list-disc pl-6 text-amber-800/80 space-y-2">
               <li><strong>Email address</strong> — when you subscribe to our newsletter</li>
               <li><strong>Contact information</strong> — when you submit a story or contact us</li>
-              <li><strong>Account information</strong> — if you create an account (optional)</li>
             </ul>
 
             <h3 class="text-lg font-semibold text-amber-800 mt-4">Information Collected Automatically</h3>
@@ -34,16 +33,32 @@
               <li><strong>IP address</strong> — for analytics and security purposes</li>
               <li><strong>Cookies</strong> — see our Cookie Policy for details</li>
             </ul>
+
+            <h3 class="text-lg font-semibold text-amber-800 mt-4">Publicly Available Information</h3>
+            <p class="text-amber-800/80 mt-2">
+              We aggregate and summarize news stories from publicly available sources (such as reputable news outlets and press releases). We respect copyright and always attribute the original source.
+            </p>
           </section>
 
           <section>
             <h2 class="text-xl font-bold text-amber-900">How We Use Your Information</h2>
             <ul class="list-disc pl-6 text-amber-800/80 space-y-2">
               <li>To send you our newsletter (if subscribed)</li>
-              <li>To respond to your inquiries and story submissions</li>
+              <li>To respond to your inquiries</li>
               <li>To improve our website and content</li>
               <li>To analyze usage patterns and trends</li>
               <li>To protect against fraud and abuse</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 class="text-xl font-bold text-amber-900">AI & Content Generation</h2>
+            <p class="text-amber-800/80 mb-4">
+              We use Artificial Intelligence (AI) technologies to help summary articles and generate video scripts. All AI-generated content is reviewed for accuracy and alignment with our "Good News" mission.
+            </p>
+            <ul class="list-disc pl-6 text-amber-800/80 space-y-2">
+              <li><strong>Anthropic (Claude)</strong> — Used for article summarization and script writing.</li>
+              <li><strong>HeyGen</strong> — Used for generating AI news anchor videos.</li>
             </ul>
           </section>
 
@@ -63,13 +78,12 @@
             <h2 class="text-xl font-bold text-amber-900">Third-Party Services</h2>
             <p class="text-amber-800/80">We use the following third-party services:</p>
             <ul class="list-disc pl-6 text-amber-800/80 space-y-2">
-              <li><strong>Vercel</strong> — website hosting</li>
-              <li><strong>MongoDB Atlas</strong> — data storage</li>
-              <li><strong>Cloudinary</strong> — image hosting and delivery</li>
-              <li><strong>Google Analytics</strong> — website analytics (with your consent)</li>
-              <li><strong>CookieYes</strong> — cookie consent management</li>
-              <li><strong>Beehiiv</strong> — newsletter delivery</li>
-              <li><strong>Formspree</strong> — contact form processing</li>
+              <li><strong>Vercel</strong> — Website hosting</li>
+              <li><strong>MongoDB Atlas</strong> — Database storage</li>
+              <li><strong>Cloudinary</strong> — Image optimization and delivery</li>
+              <li><strong>Anthropic</strong> — AI text processing</li>
+              <li><strong>HeyGen</strong> — AI video generation</li>
+              <li><strong>Google Analytics</strong> — Website traffic analysis</li>
             </ul>
             <p class="text-amber-800/80 mt-2">
               Each service has its own privacy policy governing their use of your data.

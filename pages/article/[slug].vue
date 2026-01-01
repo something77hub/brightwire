@@ -389,7 +389,6 @@
           />
         </div>
         
-        <!-- Load More Related Button -->
         <div v-if="hasMoreRelated" class="mt-10 text-center">
           <button
             @click="loadMoreRelated"
@@ -410,6 +409,9 @@
               </svg>
             </span>
           </button>
+        </div>
+        <div v-else class="mt-10 text-center text-amber-900/40 text-sm font-medium italic">
+          You're all caught up! ✨
         </div>
       </section>
 

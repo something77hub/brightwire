@@ -617,38 +617,50 @@ Respond with JSON array ONLY (no other text):
             }
           }
 
-          const heroBasename = getImageBasename(heroImage || '')
-
-          // Filter out images that are similar to hero (same base name)
-          const uniqueImages = item.images.filter(img => {
-            if (!img || img === heroImage) return false
-            const basename = getImageBasename(img)
-            // Check if basenames are too similar (one contains the other)
-            if (heroBasename && basename) {
-              if (heroBasename.includes(basename) || basename.includes(heroBasename)) return false
-              // Check for same filename with different sizes
-              const heroFile = heroBasename.split('/').pop() || ''
-              const imgFile = basename.split('/').pop() || ''
-              if (heroFile && imgFile && (heroFile.includes(imgFile) || imgFile.includes(heroFile))) return false
+          // DEDUPLICATION: Ensure no repeated images, even with different query params or sizes
+          const getImageBasename = (url: string): string => {
+            try {
+              const pathname = new URL(url).pathname
+              return pathname
+                .replace(/[-_]\d+x\d+/g, '') // Remove size like -800x600
+                .replace(/[-_](small|medium|large|thumb|preview)/gi, '')
+                .replace(/\.[^.]+$/, '') // Remove extension
+                .toLowerCase()
+            } catch {
+              return url.toLowerCase()
             }
-            return true
-          })
+          }
 
-          // Only use inline images if we have truly different images
-          const inlineImages = uniqueImages.slice(0, 3)
+          // Start with hero image, then add others
+          const allImages = heroImage ? [heroImage, ...item.images] : [...item.images]
+
+          // Filter to keep only the first occurrence of each "basename"
+          const seenBasenames = new Set<string>()
+          const uniqueImages: string[] = []
+
+          for (const img of allImages) {
+            if (!img) continue
+            const basename = getImageBasename(img)
+            if (!seenBasenames.has(basename)) {
+              seenBasenames.add(basename)
+              uniqueImages.push(img)
+            }
+          }
+
+          // Limit to 4 images
+          const inlineImages = uniqueImages.slice(0, 4)
           const hasInlineImages = inlineImages.length > 0
 
-          console.log(`[Images] Hero: ${heroImage?.slice(-30)}, Unique for inline: ${inlineImages.length}/${item.images.length - 1}`)
+          console.log(`[Images] Hero: ${heroImage?.slice(-30)}, Available for inline: ${inlineImages.length}`)
 
           const imageInstructions = hasInlineImages
-            ? `\nAVAILABLE IMAGES FOR INLINE PLACEMENT (${inlineImages.length} - hero image is separate):
+            ? `\nAVAILABLE IMAGES FOR INLINE PLACEMENT (${inlineImages.length}):
 ${inlineImages.map((_, i) => `[IMG:${i}] - Image ${i + 1}`).join('\n')}
 
 IMAGE PLACEMENT RULES:
-- Place [IMG:0] after the first 2-3 paragraphs
-- If 2+ images, place [IMG:1] in the middle of the article
-- If 3 images, place [IMG:2] near the end before conclusion
-- Images break up long text at natural story transitions
+- You MUST include at least one image if available
+- Place [IMG:0] (often the main image) early in the article (e.g. after 1st/2nd paragraph)
+- Place other images to break up long text
 - DO NOT place images back-to-back
 - DO NOT put image at the very start or very end`
             : ''

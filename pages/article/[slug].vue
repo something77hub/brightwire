@@ -21,6 +21,7 @@
     </div>
 
     <!-- Article -->
+    <article v-else-if="story" class="pb-16">
       <!-- Hero Image -->
       <div v-if="story.imageUrl" class="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] overflow-hidden">
         <img 

@@ -200,6 +200,7 @@
 
 <script setup lang="ts">
 import { h } from 'vue'
+import { CORE_CATEGORIES, CATEGORY_MAP } from '~/utils/constants'
 
 const route = useRoute()
 const router = useRouter()
@@ -267,7 +268,7 @@ const stats = computed(() => [
   },
   { 
     label: 'Categories', 
-    value: 6, 
+    value: CORE_CATEGORIES.length, 
     icon: DashboardIcon, 
     bgColor: 'bg-purple-100', 
     iconColor: 'text-purple-600' 
@@ -291,27 +292,13 @@ function formatDate(date: string) {
 }
 
 function getCategoryColor(category: string) {
-  const colors: Record<string, string> = {
-    'good-news': 'bg-amber-100 text-amber-700',
-    'heroes': 'bg-rose-100 text-rose-700',
-    'planet': 'bg-green-100 text-green-700',
-    'innovation': 'bg-violet-100 text-violet-700',
-    'solutions': 'bg-blue-100 text-blue-700',
-    'sports': 'bg-orange-100 text-orange-700',
-  }
-  return colors[category] || 'bg-gray-100 text-gray-700'
+  const cat = CATEGORY_MAP[category]
+  if (!cat) return 'bg-gray-100 text-gray-700'
+  return `bg-${cat.twColor}-100 text-${cat.twColor}-700`
 }
 
 function getCategoryEmoji(category: string) {
-  const emojis: Record<string, string> = {
-    'good-news': '☀️',
-    'heroes': '🦸',
-    'planet': '🌍',
-    'innovation': '🚀',
-    'solutions': '💡',
-    'sports': '🏆',
-  }
-  return emojis[category] || '✨'
+  return CATEGORY_MAP[category]?.emoji || '✨'
 }
 
 async function triggerFetch() {

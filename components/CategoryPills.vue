@@ -62,16 +62,19 @@ const route = useRoute()
 // Check if we're on homepage (filtering mode) or other pages (navigation mode)
 const isHomepage = computed(() => route.path === '/')
 
-const categories: CategoryInfo[] = [
+// Import shared categories
+import { CORE_CATEGORIES } from '~/utils/constants'
+
+// Add 'All' option to the beginning
+const categories = computed(() => [
   { id: 'all', label: 'All Stories', emoji: '✨', color: 'amber' },
-  { id: 'good-news', label: "Today's Good News", emoji: '☀️', color: 'amber' },
-  { id: 'heroes', label: 'Community Heroes', emoji: '🦸', color: 'rose' },
-  { id: 'planet', label: 'Planet Wins', emoji: '🌍', color: 'emerald' },
-  { id: 'innovation', label: 'Innovation', emoji: '🚀', color: 'violet' },
-  { id: 'solutions', label: 'Solutions', emoji: '💡', color: 'blue' },
-  { id: 'kindness', label: 'Acts of Kindness', emoji: '💛', color: 'yellow' },
-  { id: 'sports', label: 'Sports', emoji: '🏆', color: 'orange' },
-]
+  ...CORE_CATEGORIES.map(c => ({
+    id: c.id,
+    label: c.label,
+    emoji: c.emoji,
+    color: c.color
+  }))
+])
 
 function getCategoryLink(id: string): string {
   if (id === 'all') return '/'

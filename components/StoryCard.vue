@@ -105,7 +105,8 @@ const categoryEmojis: Record<string, string> = {
   'planet': '🌍',
   'innovation': '🚀',
   'solutions': '💡',
-  'kindness': '💛',
+    'kindness': '💛',
+  'sports': '🏆',
 }
 
 const categoryBadgeColors: Record<string, string> = {
@@ -115,6 +116,7 @@ const categoryBadgeColors: Record<string, string> = {
   'innovation': 'bg-violet-500',
   'solutions': 'bg-blue-500',
   'kindness': 'bg-yellow-500',
+  'sports': 'bg-orange-500',
 }
 
 const categoryBgGradients: Record<string, string> = {
@@ -124,6 +126,7 @@ const categoryBgGradients: Record<string, string> = {
   'innovation': 'from-violet-100 to-purple-100',
   'solutions': 'from-blue-100 to-indigo-100',
   'kindness': 'from-yellow-100 to-amber-100',
+  'sports': 'from-orange-100 to-red-100',
 }
 
 const categoryEmoji = computed(() => categoryEmojis[props.story.category] || '✨')
@@ -167,6 +170,7 @@ function formatCategory(category: string): string {
     'innovation': 'Innovation',
     'solutions': 'Solutions',
     'kindness': 'Kindness',
+    'sports': 'Sports',
   }
   return labels[category] || 'Good News'
 }

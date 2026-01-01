@@ -33,12 +33,54 @@ export default defineCachedEventHandler(async (event) => {
     }
 
     // Get stories - sort by publishedAt (newest first)
-    const results = await stories
-      .find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .toArray()
+    let results: Story[] = []
+
+    if (isHomepage && !featured) {
+      // HOMEPAGE DIVERSITY LOGIC
+      // We want to limit sports to 25% of the feed to prevent overshadowing
+      const sportsLimit = Math.ceil(limit * 0.25)
+      const otherLimit = limit - sportsLimit
+
+      const sportsSkip = (page - 1) * sportsLimit
+      const otherSkip = (page - 1) * otherLimit
+
+      const aggregation = [
+        {
+          $facet: {
+            // Stream 1: Sports (Limited)
+            sports: [
+              { $match: { category: 'sports' } },
+              { $sort: { createdAt: -1 } },
+              { $skip: sportsSkip },
+              { $limit: sportsLimit }
+            ],
+            // Stream 2: Everything else
+            others: [
+              { $match: { category: { $ne: 'sports' } } },
+              { $sort: { createdAt: -1 } },
+              { $skip: otherSkip },
+              { $limit: otherLimit }
+            ]
+          }
+        }
+      ]
+
+      const [faceted] = await stories.aggregate(aggregation).toArray()
+
+      // Merge and sort by date to interleave them naturally
+      results = [...(faceted.sports || []), ...(faceted.others || [])].sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      })
+
+    } else {
+      // STANDARD LOGIC (Category pages or filtered)
+      results = await stories
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .toArray()
+    }
 
     // Get total count for pagination
     const total = await stories.countDocuments(filter)

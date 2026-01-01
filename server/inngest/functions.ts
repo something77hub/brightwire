@@ -900,7 +900,7 @@ FORMATTING:
       // Vercel Pro settings
       const MAX_ARTICLES = 100
       const BATCH_SIZE = 5
-      const BATCH_DELAY = 1000
+      const BATCH_DELAY = 2000 // Increased to 2s to be safe with Claude rate limits
 
       // Articles are already sorted by addedAt (oldest first) from queue
       // No need to re-sort - we want to process oldest first to prevent expiry
@@ -1049,23 +1049,6 @@ FORMATTING:
     // ========================================
     // STEP 8: Check for more work (Looping)
     // ========================================
-    const remainingCount = (cleanup?.remaining as number) || 0
-
-    if (remainingCount > 0) {
-      await step.run('trigger-next-batch', async () => {
-        console.log(`🔄 Triggering next batch immediately (${remainingCount} remaining)...`)
-        await inngest.send({
-          name: 'app/manual.fetch',
-          data: { reason: 'queue-continuation' }
-        })
-      })
-    }
-
-    // ========================================
-    // STEP 8: Check for more work (Looping)
-    // ========================================
-    // If there are still items in the queue, trigger another run immediately
-    // This allows us to churn through 1000s of items in batches of 100 without hitting timeouts
     const remainingCount = (cleanup?.remaining as number) || 0
 
     if (remainingCount > 0) {

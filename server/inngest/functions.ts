@@ -331,7 +331,16 @@ Respond with JSON array ONLY (no other text):
             'kindness': 'kindness',
             'kind': 'kindness',
             'generosity': 'kindness',
+            'generosity': 'kindness',
             'heartwarming': 'kindness',
+            'sports': 'sports',
+            'sport': 'sports',
+            'football': 'sports',
+            'soccer': 'sports',
+            'olympics': 'sports',
+            'championship': 'sports',
+            'nba': 'sports',
+            'nfl': 'sports',
           }
 
           const positive = results

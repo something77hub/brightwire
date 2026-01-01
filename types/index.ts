@@ -27,6 +27,7 @@ export type StoryCategory =
   | 'innovation'     // Innovation - tech, science breakthroughs
   | 'solutions'      // Solutions - systemic fixes, policy wins
   | 'kindness'       // Acts of Kindness - heartwarming human moments
+  | 'sports'         // Sports - wins, records, teamwork
 
 // Advertisement Types
 export type AdType =

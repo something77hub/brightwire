@@ -137,6 +137,17 @@ export const newsSources: NewsSource[] = [
     name: 'Popular Science',
     feed: 'https://www.popsci.com/feed/',
     baseUrl: 'https://popsci.com',
+
+  },
+  {
+    name: 'Space.com',
+    feed: 'https://www.space.com/feeds/all',
+    baseUrl: 'https://space.com',
+  },
+  {
+    name: 'The Verge Science',
+    feed: 'https://www.theverge.com/science/rss/index.xml',
+    baseUrl: 'https://theverge.com',
   },
 
   // ========================================
@@ -231,6 +242,11 @@ export const newsSources: NewsSource[] = [
     feed: 'https://www.simplemost.com/feed/',
     baseUrl: 'https://simplemost.com',
   },
+  {
+    name: 'Global Citizen',
+    feed: 'https://www.globalcitizen.org/en/content/feed/',
+    baseUrl: 'https://globalcitizen.org',
+  },
 
   // ========================================
   // MAINSTREAM NEWS (filtered for positive)
@@ -321,6 +337,21 @@ export const newsSources: NewsSource[] = [
     name: 'Daily Trust',
     feed: 'https://dailytrust.com/feed',
     baseUrl: 'https://dailytrust.com',
+  },
+  },
+
+// ========================================
+// SPORTS & ATHLETICS (New)
+// ========================================
+{
+  name: 'BBC Sport',
+    feed: 'https://feeds.bbci.co.uk/sport/rss.xml',
+      baseUrl: 'https://bbc.com/sport',
+  },
+{
+  name: 'Yahoo Sports',
+    feed: 'https://sports.yahoo.com/rss/',
+      baseUrl: 'https://sports.yahoo.com',
   },
 ]
 

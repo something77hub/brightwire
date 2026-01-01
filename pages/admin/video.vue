@@ -48,22 +48,34 @@
             </div>
             <div class="p-6">
               <!-- Search -->
-              <div class="relative mb-4">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                <input
-                  v-model="searchQuery"
-                  type="text"
-                  placeholder="Search articles..."
-                  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-purple-500 focus:border-purple-500"
-                />
+              <!-- Filters -->
+              <div class="flex gap-2 mb-4">
+                <div class="relative flex-1">
+                  <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                  <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Search articles..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-purple-500 focus:border-purple-500"
+                  />
+                </div>
+                <select 
+                  v-model="selectedCategory"
+                  class="w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-purple-500 focus:border-purple-500"
+                >
+                  <option value="all">All Categories</option>
+                  <option v-for="cat in CORE_CATEGORIES" :key="cat.id" :value="cat.id">
+                    {{ cat.emoji }} {{ cat.label }}
+                  </option>
+                </select>
               </div>
               
               <!-- Article List -->
-              <div class="max-h-64 overflow-y-auto space-y-2">
+              <div class="max-h-96 overflow-y-auto space-y-2">
                 <div v-if="loadingArticles" class="py-8 text-center text-gray-500">
-                  Loading...
+                  Loading articles...
                 </div>
                 <div
                   v-for="article in filteredArticles"
@@ -89,10 +101,19 @@
                     </div>
                   </div>
                 </div>
+                
+                <div v-if="!loadingArticles && filteredArticles.length === 0" class="py-8 text-center text-gray-500 text-sm">
+                  No articles found matching your filters.
+                </div>
+                
+                <div v-if="!loadingArticles && filteredArticles.length > 0" class="pt-2 text-center text-xs text-gray-400">
+                  Showing {{ filteredArticles.length }} articles
+                </div>
               </div>
               
               <!-- Quick actions -->
-              <div v-if="selectedArticles.length > 0" class="mt-4 pt-4 border-t border-gray-100">
+              <div v-if="selectedArticles.length > 0" class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                <span class="text-xs text-purple-700 font-medium">{{ selectedArticles.length }} selected</span>
                 <button
                   @click="selectedArticles = []"
                   class="text-xs text-gray-500 hover:text-gray-700"
@@ -328,8 +349,10 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: false })
+import { CORE_CATEGORIES } from '~/utils/constants'
 
 const searchQuery = ref('')
+const selectedCategory = ref('all')
 const articles = ref<any[]>([])
 const loadingArticles = ref(false)
 const selectedArticles = ref<any[]>([])
@@ -418,7 +441,8 @@ const closings = [
 async function loadArticles() {
   loadingArticles.value = true
   try {
-    const data = await $fetch('/api/stories', { query: { limit: 50 } })
+    // Increased limit to 500 to show "all" recent history as requested
+    const data = await $fetch('/api/stories', { query: { limit: 500 } })
     articles.value = data.stories
   } catch (e) {
     console.error('Failed to load articles:', e)
@@ -427,14 +451,23 @@ async function loadArticles() {
   }
 }
 
-// Filtered articles based on search
+// Filtered articles based on search and category
 const filteredArticles = computed(() => {
-  if (!searchQuery.value) return articles.value
-  const query = searchQuery.value.toLowerCase()
-  return articles.value.filter(a =>
-    a.title.toLowerCase().includes(query) ||
-    a.category?.toLowerCase().includes(query)
-  )
+  let result = articles.value
+  
+  if (selectedCategory.value !== 'all') {
+    result = result.filter(a => a.category === selectedCategory.value)
+  }
+  
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(a =>
+      a.title.toLowerCase().includes(query) ||
+      a.category?.toLowerCase().includes(query)
+    )
+  }
+  
+  return result
 })
 
 // Multi-select helpers

@@ -3,7 +3,7 @@
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event)
-    
+
     // Handle URL decoding safely
     const safeDecodeURI = (str: string | undefined, fallback: string): string => {
       if (!str) return fallback
@@ -13,16 +13,16 @@ export default defineEventHandler(async (event) => {
         return str // Already decoded or invalid
       }
     }
-    
+
     const quote = safeDecodeURI(query.quote as string, 'Good news exists. We find it.')
     const source = safeDecodeURI(query.source as string, 'BrightWire')
     const category = (query.category as string) || 'good-news'
     const backgroundImage = query.bg ? safeDecodeURI(query.bg as string, '') : null
-    
+
     // Canvas dimensions (Instagram/Twitter friendly)
     const width = 1200
     const height = 630
-    
+
     // Category colors
     const categoryColors: Record<string, { bg: string; accent: string; text: string }> = {
       'good-news': { bg: '#FFF7ED', accent: '#F59E0B', text: '#78350F' },
@@ -32,24 +32,24 @@ export default defineEventHandler(async (event) => {
       'solutions': { bg: '#F5F3FF', accent: '#8B5CF6', text: '#4C1D95' },
       'kindness': { bg: '#FDF2F8', accent: '#EC4899', text: '#831843' },
     }
-    
+
     const colors = categoryColors[category] || categoryColors['good-news']
-    
+
     // Escape HTML entities for SVG
-    const escapeHtml = (text: string) => 
+    const escapeHtml = (text: string) =>
       text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;')
-    
+
     // Word wrap for SVG
     const wrapText = (text: string, maxChars: number): string[] => {
       const words = text.split(' ')
       const lines: string[] = []
       let currentLine = ''
-      
+
       for (const word of words) {
         if ((currentLine + ' ' + word).length > maxChars) {
           if (currentLine) lines.push(currentLine)
@@ -61,26 +61,26 @@ export default defineEventHandler(async (event) => {
       if (currentLine) lines.push(currentLine)
       return lines
     }
-    
+
     // Truncate quote if too long
     const maxQuoteLength = 280
-    const displayQuote = quote.length > maxQuoteLength 
-      ? quote.slice(0, maxQuoteLength - 3) + '...' 
+    const displayQuote = quote.length > maxQuoteLength
+      ? quote.slice(0, maxQuoteLength - 3) + '...'
       : quote
-    
-    const lines = wrapText(displayQuote, 45)
+
+    const lines = wrapText(displayQuote, 40)
     const fontSize = displayQuote.length > 200 ? 32 : displayQuote.length > 150 ? 38 : displayQuote.length > 100 ? 44 : 50
     const lineHeight = fontSize * 1.35
     const totalHeight = lines.length * lineHeight
     const startY = (height - totalHeight) / 2 + fontSize
-    
+
     // Build text lines as separate tspan elements
-    const quoteTspans = lines.map((line, i) => 
+    const quoteTspans = lines.map((line, i) =>
       `<tspan x="80" dy="${i === 0 ? 0 : lineHeight}">${escapeHtml(line)}</tspan>`
     ).join('')
-    
+
     let svg: string
-    
+
     if (backgroundImage) {
       // Fetch image and embed as base64
       let imageData = ''
@@ -95,7 +95,7 @@ export default defineEventHandler(async (event) => {
       } catch (e) {
         console.error('Failed to fetch background image:', e)
       }
-      
+
       if (imageData) {
         svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <defs>
@@ -132,10 +132,10 @@ export default defineEventHandler(async (event) => {
     } else {
       svg = generateSolidSvg(width, height, colors, quoteTspans, startY, fontSize, source, escapeHtml)
     }
-    
+
     setResponseHeader(event, 'Content-Type', 'image/svg+xml')
     setResponseHeader(event, 'Cache-Control', 'public, max-age=3600')
-    
+
     return svg
   } catch (error: any) {
     console.error('Quote card generation error:', error)

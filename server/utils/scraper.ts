@@ -326,18 +326,43 @@ async function doScrape(url: string, summaryFallback?: string): Promise<ScrapedA
     // Extract images
     const images: string[] = []
     const imageSelector = selectors?.images || GENERIC_SELECTORS.images
+
+    // Keywords that indicate an irrelevant image (junk/UI)
+    const JUNK_KEYWORDS = [
+      'icon', 'logo', 'avatar', 'author', 'button', 'social',
+      'share', 'newsletter', 'widget', 'shim', 'spacer', 'pixel',
+      'tracker', 'ad-', 'advert', 'promo', 'spinner', 'loader'
+    ]
+
     $(imageSelector).each((_, el) => {
-      const src = $(el).attr('src') || $(el).attr('data-src')
-      if (src && !src.includes('data:') && !src.includes('placeholder')) {
-        try {
-          const absoluteUrl = new URL(src, url).href
-          if (!images.includes(absoluteUrl)) images.push(absoluteUrl)
-        } catch { }
-      }
+      const $el = $(el)
+      const src = $el.attr('src') || $el.attr('data-src')
+
+      if (!src || src.includes('data:') || src.includes('placeholder')) return
+
+      // check for explicit small dimensions in HTML
+      const width = parseInt($el.attr('width') || '0')
+      const height = parseInt($el.attr('height') || '0')
+      if ((width > 0 && width < 150) || (height > 0 && height < 150)) return
+
+      // Check against junk keywords
+      const lowerSrc = src.toLowerCase()
+      if (JUNK_KEYWORDS.some(kw => lowerSrc.includes(kw))) return
+
+      // Filter out 1x1 pixels or common tracking patterns often found in filenames
+      if (lowerSrc.includes('1x1') || lowerSrc.includes('0x0')) return
+
+      try {
+        const absoluteUrl = new URL(src, url).href
+        if (!images.includes(absoluteUrl)) images.push(absoluteUrl)
+      } catch { }
     })
 
     const ogImage = $('meta[property="og:image"]').attr('content')
-    if (ogImage && !images.includes(ogImage)) images.unshift(ogImage)
+    if (ogImage && !images.includes(ogImage)) {
+      // OG Image is usually high quality, put it first
+      images.unshift(ogImage)
+    }
 
     // Metadata
     const title = $('meta[property="og:title"]').attr('content')
@@ -357,7 +382,8 @@ async function doScrape(url: string, summaryFallback?: string): Promise<ScrapedA
     return {
       title: cleanText(title),
       content,
-      images: images.slice(0, 5),
+      // Increased limit to 25 to capture full galleries + smart filtering ensures quality
+      images: images.slice(0, 25),
       author,
       publishedAt,
       videoEmbedUrl,

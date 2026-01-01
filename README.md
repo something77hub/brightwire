@@ -9,7 +9,8 @@ An AI-powered positive news aggregator built with Nuxt 3. Automatically scrapes 
 ## Features
 
 - 🤖 **AI-Powered** — Claude AI classifies headlines (score 45+) and rewrites articles in your voice
-- 📰 **54+ RSS Feeds** — BBC, NPR, Guardian, Good News Network, Science Daily, and more
+- 💰 **Cost Optimized** — Lightweight keyword filter runs BEFORE AI to reject negative news (saves 50%+ on API costs)
+- 📰 **59+ RSS Feeds** — BBC, NPR, Nigerian News (Punch, Vanguard), Science Daily, and more
 - 🖼️ **Image CDN** — Images proxied through Cloudinary
 - 📧 **Newsletter Ready** — Beehiiv integration + RSS feed for daily digests
 - 🔍 **Search** — Full-text search across all articles
@@ -51,9 +52,9 @@ An AI-powered positive news aggregator built with Nuxt 3. Automatically scrapes 
                                      │
                                      ▼
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  54+ RSS    │────▶│   Filter    │────▶│  Claude AI  │────▶│   MongoDB   │
-│   Feeds     │     │  Last 48h   │     │  Score 45+  │     │   Store     │
-│             │     │  New Only   │     │  Rewrite    │     │   Article   │
+│  59+ RSS    │────▶│ Keyword     │────▶│  Claude AI  │────▶│   MongoDB   │
+│   Feeds     │     │ Scorer      │     │  Score 45+  │     │   Store     │
+│             │     │ (Cost Opt)  │     │  Rewrite    │     │   Article   │
 └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
                                                                    │
                          ┌─────────────────────────────────────────┼──────────┐
@@ -77,7 +78,8 @@ An AI-powered positive news aggregator built with Nuxt 3. Automatically scrapes 
 | Stage | What Happens |
 |-------|--------------|
 | **Fetch** | RSS feeds scanned, only articles from last 48 hours accepted |
-| **Filter** | Skip duplicates (by GUID), skip articles with negative keywords |
+| **Pre-Filter** | **[NEW]** Keywords scored locally. Negative news (war, murder) skipped *before* AI costs. |
+| **Filter** | Skip duplicates (by GUID). |
 | **Classify** | Claude AI scores headlines 0-100, only 45+ pass |
 | **Rewrite** | Claude rewrites full article in positive tone |
 | **Store** | Saved to MongoDB with category, tags, images |

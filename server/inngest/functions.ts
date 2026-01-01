@@ -597,7 +597,7 @@ ORIGINAL CONTENT (${originalWordCount} words): ${item.content.slice(0, 6000)}
 ${imageInstructions}
 
 CRITICAL REQUIREMENTS:
-1. Your rewrite MUST be ${Math.max(300, originalWordCount - 50)}-${originalWordCount + 100} words (similar length to original)
+1. Your rewrite MUST be **400-800 words**. If the original is longer, condense it to the most impactful details.
 2. DO NOT summarize - write a COMPLETE article with all details
 3. Include EVERY fact, name, number, date, quote from the original
 4. Write 5-8 full paragraphs minimum
@@ -617,12 +617,20 @@ HEADLINE GUIDELINES (very important for engagement):
 - Good: "Teen's App Reunites 500 Families Separated at Border"
 - Bad: "Inspiring Teen Creates Amazing App to Help Families"
 
+TAGGING GUIDELINES (Critical for Viral Reach):
+- Generate 5-7 HIGH-IMPACT tags
+- Focus on SPECIFIC entities, locations, and viral topics
+- Example: Use ["ElonMusk", "SpaceX", "Mars"] instead of ["Space", "Tech"]
+- Include the specific city/country if relevant
+- Include the main subject's name if relevant
+- Tags should be PascalCase strings
+
 FORMATTING:
 - Return ONLY valid JSON
 - Use [P] between paragraphs (not actual line breaks in the content string)
 - Content should be one continuous string with [P] markers${hasInlineImages ? ' and [IMG:X] markers' : ''}
 
-{"title": "Compelling headline", "content": "First paragraph with hook.[P]Second paragraph with details.${hasInlineImages ? '[IMG:0]' : ''}[P]Third paragraph continues the story.[P]More paragraphs...", "summary": "Engaging 2-sentence preview that hooks readers", "tags": ["tag1", "tag2", "tag3"]}`
+{"title": "Compelling headline", "content": "First paragraph with hook.[P]Second paragraph with details.${hasInlineImages ? '[IMG:0]' : ''}[P]Third paragraph continues the story.[P]More paragraphs...", "summary": "Engaging 2-sentence preview that hooks readers", "tags": ["SpecificEntity", "ViralTopic", "CityName", "SubjectName"]}`
 
           const response = await anthropic.messages.create({
             model: 'claude-3-5-haiku-20241022',

@@ -4,6 +4,8 @@ import { ObjectId } from 'mongodb'
 import JSZip from 'jszip'
 import sharp from 'sharp'
 
+import { generateViralHashtags } from '~/server/utils/social-tags'
+
 // Social media image sizes
 const SOCIAL_SIZES = {
   'twitter_facebook': { width: 1200, height: 630, name: 'twitter_facebook_1200x630' },
@@ -16,56 +18,52 @@ const SOCIAL_SIZES = {
 // Download selected articles as social media package with resized images
 export default defineEventHandler(async (event) => {
   await requireAdminAuth(event)
-  
+
   const body = await readBody(event)
   const { articleIds } = body
-  
+
   if (!articleIds || articleIds.length === 0) {
     throw createError({
       statusCode: 400,
       message: 'No articles selected'
     })
   }
-  
+
   try {
     const stories = await getStoriesCollection()
-    
+
     // Get selected articles
     const objectIds = articleIds.map((id: string) => new ObjectId(id))
     const articles = await stories.find({ _id: { $in: objectIds } }).toArray()
-    
+
     if (articles.length === 0) {
       throw createError({
         statusCode: 404,
         message: 'No articles found'
       })
     }
-    
+
     const siteUrl = 'https://www.brightwire.news'
     const zip = new JSZip()
-    
+
     // Process each article
     for (let i = 0; i < articles.length; i++) {
       const article = articles[i]
       const folderName = `${String(i + 1).padStart(2, '0')}_${article.slug.slice(0, 30)}`
       const folder = zip.folder(folderName)
-      
+
       if (!folder) continue
-      
+
       // Generate caption - Title first
       const title = article.title || ''
       const summary = article.summary || ''
       const truncatedSummary = summary.length > 200 ? summary.slice(0, 200) + '...' : summary
-      
-      // Generate hashtags
-      const tags = article.tags || []
-      const categoryTag = `#${(article.category || 'news').replace(/-/g, '')}`
-      const baseTags = ['#GoodNews', '#PositiveNews', '#BrightWire']
-      const articleTags = tags.slice(0, 3).map((t: string) => `#${t.replace(/\s+/g, '')}`)
-      const hashtags = [...baseTags, categoryTag, ...articleTags].join(' ')
-      
+
+      // Generate viral hashtags using shared logic
+      const hashtags = generateViralHashtags(article)
+
       const articleUrl = `${siteUrl}/article/${article.slug}`
-      
+
       // Create caption file - Title first!
       const caption = `📰 ${title}
 
@@ -76,7 +74,7 @@ ${hashtags}
 🔗 Read more: ${articleUrl}`
 
       folder.file('caption.txt', caption)
-      
+
       // Create full details file
       const details = `TITLE: ${article.title}
 
@@ -99,86 +97,122 @@ IMAGES INCLUDED:
 - linkedin_1200x627.jpg          → LinkedIn posts
 `
       folder.file('details.txt', details)
-      
+
       // Download and process image if exists
+      // Download and process images
+      const imagesToProcess: { url: string; isHero: boolean; index: number }[] = []
+
+      // Add hero image
       if (article.imageUrl) {
-        try {
-          // Try the Cloudinary proxy URL first (it handles CORS/blocking)
-          // Then fall back to original URL if needed
-          const urlsToTry = [article.imageUrl]
-          
-          // Also try original URL if it's a Cloudinary proxy
-          if (article.imageUrl.includes('cloudinary.com') && article.imageUrl.includes('/fetch/')) {
-            const parts = article.imageUrl.split('/fetch/')
-            if (parts[1]) {
-              // Get just the URL part (after any transforms like w_800,q_auto/)
-              const urlPart = parts[1].split('/').pop() || parts[1]
-              const originalUrl = decodeURIComponent(urlPart)
-              if (originalUrl.startsWith('http')) {
-                urlsToTry.push(originalUrl)
-              }
-            }
-          }
-          
-          let imageBuffer: Buffer | null = null
-          
-          for (const imageUrl of urlsToTry) {
+        imagesToProcess.push({ url: article.imageUrl, isHero: true, index: 0 })
+      }
+
+      // Add other images (avoiding duplicates)
+      if (article.images && Array.isArray(article.images)) {
+        for (let j = 0; j < article.images.length; j++) {
+          const imgUrl = article.images[j]
+          // Skip if it's the same as hero image
+          if (article.imageUrl && imgUrl === article.imageUrl) continue
+
+          imagesToProcess.push({ url: imgUrl, isHero: false, index: j + 1 })
+        }
+      }
+
+      const processedImages: string[] = []
+
+      if (imagesToProcess.length > 0) {
+        const imagesFolder = folder.folder('images')
+        if (imagesFolder) {
+          for (const imgTask of imagesToProcess) {
             try {
-              const imageResponse = await fetch(imageUrl, {
-                headers: {
-                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                  'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-                  'Accept-Language': 'en-US,en;q=0.9',
-                  'Referer': 'https://www.google.com/'
+              // Try the Cloudinary proxy URL first (it handles CORS/blocking)
+              // Then fall back to original URL if needed
+              const urlsToTry = [imgTask.url]
+
+              // Also try original URL if it's a Cloudinary proxy
+              if (imgTask.url.indexOf('cloudinary.com') !== -1 && imgTask.url.indexOf('/fetch/') !== -1) {
+                const parts = imgTask.url.split('/fetch/')
+                if (parts[1]) {
+                  // Get just the URL part (after any transforms like w_800,q_auto/)
+                  const urlPart = parts[1].split('/').pop() || parts[1]
+                  const originalUrl = decodeURIComponent(urlPart)
+                  if (originalUrl.startsWith('http')) {
+                    urlsToTry.push(originalUrl)
+                  }
                 }
-              })
-              
-              if (imageResponse.ok) {
-                imageBuffer = Buffer.from(await imageResponse.arrayBuffer())
-                console.log(`[Social] Downloaded image from: ${imageUrl.slice(0, 50)}...`)
-                break
               }
-            } catch (e) {
-              console.log(`[Social] Failed to fetch: ${imageUrl.slice(0, 50)}...`)
-            }
-          }
-          
-          if (imageBuffer && imageBuffer.length > 1000) {
-            // Create images folder
-            const imagesFolder = folder.folder('images')
-            if (!imagesFolder) continue
-            
-            // Save original
-            imagesFolder.file('original.jpg', imageBuffer)
-            
-            // Resize for each social media platform
-            for (const [key, size] of Object.entries(SOCIAL_SIZES)) {
-              try {
-                const resized = await sharp(imageBuffer)
-                  .resize(size.width, size.height, {
-                    fit: 'cover',
-                    position: 'center'
+
+              let imageBuffer: Buffer | null = null
+
+              for (const imageUrl of urlsToTry) {
+                try {
+                  const imageResponse = await fetch(imageUrl, {
+                    headers: {
+                      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                      'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                      'Accept-Language': 'en-US,en;q=0.9',
+                      'Referer': 'https://www.google.com/'
+                    }
                   })
+
+                  if (imageResponse.ok) {
+                    imageBuffer = Buffer.from(await imageResponse.arrayBuffer())
+                    console.log(`[Social] Downloaded image from: ${imageUrl.slice(0, 50)}...`)
+                    break
+                  }
+                } catch (e) {
+                  console.log(`[Social] Failed to fetch: ${imageUrl.slice(0, 50)}...`)
+                }
+              }
+
+              if (imageBuffer && imageBuffer.length > 1000) {
+                // Convert to JPEG for consistency
+                const jpegBuffer = await sharp(imageBuffer)
                   .jpeg({ quality: 90 })
                   .toBuffer()
-                
-                imagesFolder.file(`${size.name}.jpg`, resized)
-              } catch (resizeErr) {
-                console.error(`Failed to resize for ${key}:`, resizeErr)
+
+                if (imgTask.isHero) {
+                  // Save original hero
+                  imagesFolder.file('original.jpg', jpegBuffer)
+                  processedImages.push('original.jpg')
+
+                  // Resize for each social media platform (Hero only)
+                  for (const [key, size] of Object.entries(SOCIAL_SIZES)) {
+                    try {
+                      const resized = await sharp(jpegBuffer)
+                        .resize(size.width, size.height, {
+                          fit: 'cover',
+                          position: 'center'
+                        })
+                        .jpeg({ quality: 90 })
+                        .toBuffer()
+
+                      imagesFolder.file(`${size.name}.jpg`, resized)
+                    } catch (resizeErr) {
+                      console.error(`Failed to resize for ${key}:`, resizeErr)
+                    }
+                  }
+                } else {
+                  // Save extra images
+                  const filename = `extra_${imgTask.index}.jpg`
+                  imagesFolder.file(filename, jpegBuffer)
+                  processedImages.push(filename)
+                }
               }
+            } catch (imgError) {
+              console.error(`Failed to process image ${imgTask.url}:`, imgError)
             }
-          } else {
-            folder.file('image_error.txt', `Failed to download image.\nURL: ${article.imageUrl}\n\nYou can manually download from the URL above.`)
           }
-        } catch (imgError) {
-          console.error(`Failed to process image for ${article.slug}:`, imgError)
-          folder.file('image_error.txt', `Error processing image.\nURL: ${article.imageUrl}`)
+        }
+
+        if (processedImages.length === 0) {
+          folder.file('image_error.txt', `Failed to download any images.\nHero URL: ${article.imageUrl}`)
         }
       } else {
-        folder.file('no_image.txt', 'This article has no image.')
+        folder.file('no_image.txt', 'This article has no images.')
       }
     }
-    
+
     // Add README
     zip.file('README.txt', `BRIGHTWIRE SOCIAL MEDIA PACKAGE
 ================================
@@ -217,22 +251,22 @@ HOW TO POST:
 
 No resizing needed - all images are ready to use! 🎉
 `)
-    
+
     // Generate zip
-    const zipBuffer = await zip.generateAsync({ 
+    const zipBuffer = await zip.generateAsync({
       type: 'nodebuffer',
       compression: 'DEFLATE',
       compressionOptions: { level: 6 }
     })
-    
+
     // Return as downloadable zip
     setHeader(event, 'Content-Type', 'application/zip')
     setHeader(event, 'Content-Disposition', `attachment; filename="brightwire-social-${Date.now()}.zip"`)
-    
+
     return zipBuffer
   } catch (error: any) {
     if (error.statusCode) throw error
-    
+
     console.error('Social download error:', error)
     throw createError({
       statusCode: 500,

@@ -366,7 +366,19 @@
 
           <!-- Hashtags -->
           <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Hashtags</label>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-sm font-medium text-gray-700">Hashtags</label>
+              <button 
+                @click="regenerateHashtags"
+                class="text-xs text-amber-600 hover:text-amber-700 flex items-center gap-1"
+                title="Regenerate optimized hashtags"
+              >
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Regenerate
+              </button>
+            </div>
             <input
               v-model="postHashtags"
               type="text"
@@ -453,8 +465,9 @@
     </div>
     
     <!-- Quote Card Modal -->
-    <div v-if="showQuoteCardModal" class="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 pt-12 overflow-y-auto" @click.self="showQuoteCardModal = false">
-      <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mb-8">
+    <div v-if="showQuoteCardModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/50" @click.self="showQuoteCardModal = false">
+      <div class="flex min-h-full items-center justify-center p-4">
+        <div class="w-full max-w-3xl transform rounded-2xl bg-white shadow-2xl transition-all mb-8">
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10 rounded-t-2xl">
           <h3 class="text-lg font-semibold text-gray-900">Create Quote Card</h3>
           <button @click="showQuoteCardModal = false" class="text-gray-400 hover:text-gray-600">
@@ -592,6 +605,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+
 definePageMeta({ layout: false })
 
 const articles = ref<any[]>([])
@@ -1049,13 +1064,50 @@ async function connectAyrshare() {
 }
 
 // Open post modal and reset fields
-function openPostModal() {
-  // Clear any previous caption/hashtags so auto-generation is used
+async function openPostModal() {
+  // Clear any previous caption/hashtags
   postCaption.value = ''
   postHashtags.value = ''
   schedulePost.value = false
   scheduleTime.value = ''
   showPostModal.value = true
+  
+  // Auto-generate tags from API if we have articles
+  if (selectedArticles.value.length > 0) {
+    const firstArticle = articles.value.find(a => a._id === selectedArticles.value[0])
+    if (firstArticle) {
+      // Use article tags first if available
+      postHashtags.value = 'Generating best tags...'
+      try {
+        const tags = await $fetch('/api/admin/social/tags', {
+          method: 'POST',
+          body: { article: firstArticle }
+        })
+        postHashtags.value = tags.instagram // Default to Instagram/Viral set
+      } catch (e) {
+        console.error('Failed to generate tags:', e)
+        postHashtags.value = '#GoodNews #BrightWire' // Fallback
+      }
+    }
+  }
+}
+
+async function regenerateHashtags() {
+  if (selectedArticles.value.length === 0) return
+  
+  const firstArticle = articles.value.find(a => a._id === selectedArticles.value[0])
+  if (!firstArticle) return
+    
+  postHashtags.value = 'Generating...'
+  try {
+    const tags = await $fetch('/api/admin/social/tags', {
+      method: 'POST',
+      body: { article: firstArticle }
+    })
+    postHashtags.value = tags.instagram
+  } catch (e) {
+    postHashtags.value = '#GoodNews #BrightWire'
+  }
 }
 
 // Post to social media

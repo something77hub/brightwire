@@ -660,7 +660,7 @@ const articleUrl = computed(() => `${siteUrl.value}/article/${slug.value}`)
 const jsonLd = computed(() => {
   if (!story.value) return null
   
-  const data: any = {
+  const data: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     'headline': story.value.title.substring(0, 110), // Google recommends < 110 chars
@@ -689,6 +689,10 @@ const jsonLd = computed(() => {
     },
     'articleSection': formatCategory(story.value.category),
     'inLanguage': 'en-US',
+    'speakable': {
+      '@type': 'SpeakableSpecification',
+      'cssSelector': ['h1', 'p.text-xl'] // Target title and summary
+    },
   }
   
   // Add image if available (required for rich results)
@@ -753,12 +757,13 @@ useHead({
     { property: 'og:title', content: computed(() => story.value?.title || 'BrightWire') },
     { property: 'og:description', content: computed(() => story.value?.summary || '') },
     { property: 'og:image', content: computed(() => {
-      if (!story.value) return `${siteUrl.value}/api/og.png`
-      // Generate dynamic OG image with headline burned in
+      if (story.value?.imageUrl) return story.value.imageUrl
+      
+      // Fallback: Generate dynamic OG image
       const params = new URLSearchParams({
         type: 'article',
-        title: story.value.title || '',
-        category: story.value.category || 'good-news',
+        title: story.value?.title || '',
+        category: story.value?.category || 'good-news',
       })
       return `${siteUrl.value}/api/og.png?${params.toString()}`
     }) },
@@ -774,11 +779,12 @@ useHead({
     { name: 'twitter:title', content: computed(() => story.value?.title || 'BrightWire') },
     { name: 'twitter:description', content: computed(() => story.value?.summary || '') },
     { name: 'twitter:image', content: computed(() => {
-      if (!story.value) return `${siteUrl.value}/api/og.png`
+      if (story.value?.imageUrl) return story.value.imageUrl
+
       const params = new URLSearchParams({
         type: 'article',
-        title: story.value.title || '',
-        category: story.value.category || 'good-news',
+        title: story.value?.title || '',
+        category: story.value?.category || 'good-news',
       })
       return `${siteUrl.value}/api/og.png?${params.toString()}`
     }) },

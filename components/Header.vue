@@ -11,6 +11,17 @@
             </span>
             <span class="font-medium">Live Updates</span>
           </span>
+          <!-- Streak Badge -->
+          <button 
+            v-if="streak > 0"
+            @click="showStreakModal = true"
+            class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-orange-100 hover:bg-orange-200 transition-colors text-orange-700 cursor-pointer"
+            title="Your Good Vibes Streak"
+          >
+            <span class="animate-pulse">🔥</span>
+            <span class="font-bold">{{ streak }}</span>
+            <span class="text-xs font-medium opacity-80">day streak</span>
+          </button>
           <span>{{ currentDateTime }}</span>
         </div>
         <div class="flex items-center gap-4">
@@ -206,6 +217,50 @@
           </div>
         </div>
       </Transition>
+      <!-- Streak Modal -->
+      <Teleport to="body">
+        <div v-if="showStreakModal" class="fixed inset-0 bg-black/50 overflow-y-auto h-full w-full z-[100] flex items-center justify-center p-4" @click.self="showStreakModal = false">
+          <div class="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center transform transition-all scale-100">
+            <!-- Confetti/Decor -->
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 text-6xl animate-bounce">
+              🔥
+            </div>
+            
+            <h3 class="text-2xl font-bold text-amber-950 mt-4 mb-2 font-display">
+              {{ streak }} Day Streak!
+            </h3>
+            
+            <p class="text-amber-800/70 mb-6">
+              You've visited BrightWire for {{ streak }} consecutive days. Keep the good vibes going!
+            </p>
+            
+            <div class="bg-amber-50 rounded-xl p-4 mb-6 border border-amber-100">
+              <p class="text-sm font-medium text-amber-900 mb-1">Current Status</p>
+              <div class="flex justify-center gap-1 mb-2">
+                <span v-for="i in Math.min(streak, 5)" :key="i" class="text-xl">🔥</span>
+                <span v-if="streak > 5" class="text-sm self-center text-amber-500 font-bold ml-1">+{{ streak - 5 }}</span>
+              </div>
+              <p class="text-xs text-amber-600/60"> Come back tomorrow to keep it up!</p>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+              <button 
+                @click="shareStreak"
+                class="w-full bg-black text-white font-medium py-3 px-4 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                Share Streak
+              </button>
+              <button 
+                @click="showStreakModal = false"
+                class="w-full text-amber-700 font-medium py-2 hover:bg-amber-50 rounded-xl transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </Teleport>
     </div>
   </header>
 </template>
@@ -294,6 +349,8 @@ function scrollToNewsletter() {
   }
 }
 
+const { streak, showStreakModal } = useStreak()
+
 // Live clock
 const currentDateTime = ref('')
 
@@ -308,6 +365,16 @@ function updateTime() {
     minute: '2-digit',
     hour12: true,
   })
+}
+
+function shareStreak() {
+  const text = `🔥 I'm on a ${streak.value}-day Good Vibes Streak on BrightWire! The world isn't all bad. ☀️`
+  const url = window.location.origin
+  window.open(
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+    '_blank'
+  )
+  showStreakModal.value = false
 }
 
 onMounted(() => {

@@ -318,42 +318,73 @@ async function triggerFetch() {
 const reclassifying = ref(false)
 const reclassifyMessage = ref('')
 const reclassifyError = ref(false)
+const reclassifyStats = ref({ processed: 0, total: 0 })
 
 async function reclassifyArticles() {
   reclassifying.value = true
-  reclassifyMessage.value = ''
+  reclassifyMessage.value = 'Analyzing articles...'
   reclassifyError.value = false
+  reclassifyStats.value = { processed: 0, total: 0 }
   
   try {
-    // First do a dry run
+    // 1. First dry run to get total count
     const dryRun = await $fetch('/api/admin/reclassify', { 
       method: 'POST',
-      body: { batchSize: 20, dryRun: true }
+      body: { batchSize: 50, dryRun: true }
     })
     
-    if (dryRun.changed === 0) {
-      reclassifyMessage.value = 'All articles are already properly categorized!'
+    if (dryRun.total === 0) {
+      reclassifyMessage.value = 'All articles are already properly categorized! 🎉'
       await refreshCategoryStats()
+      reclassifying.value = false
       return
     }
-    
-    // Ask for confirmation
-    if (!confirm(`This will reclassify ${dryRun.changed} articles. Continue?`)) {
-      reclassifyMessage.value = 'Reclassification cancelled.'
+
+    // 2. Ask for confirmation
+    const confirmMsg = `Found ${dryRun.total} articles to check.\n(Approximately ${dryRun.changed} need changes)`
+    if (!confirm(`${confirmMsg}\n\nStart AUTO-FIX process? This will run in batches.`)) {
+      reclassifyMessage.value = 'Cancelled.'
+      reclassifying.value = false
       return
     }
+
+    reclassifyMessage.value = `Starting... Found ${dryRun.total} to process`
     
-    // Actually reclassify
-    const result = await $fetch('/api/admin/reclassify', { 
-      method: 'POST',
-      body: { batchSize: 20, dryRun: false }
-    })
+    // 3. Loop until done (Process All)
+    let processedCount = 0
+    let changedCount = 0
+    let batchNum = 1
     
-    reclassifyMessage.value = `Reclassified ${result.changed} articles! Run again to process more.`
+    while (true) {
+      reclassifyMessage.value = `Batch ${batchNum}: Processing next 50 articles... (${processedCount} done so far)`
+      
+      const result = await $fetch('/api/admin/reclassify', { 
+        method: 'POST',
+        body: { batchSize: 50, dryRun: false }
+      })
+      
+      processedCount += result.total
+      changedCount += result.changed
+      batchNum++
+      
+      // Update UI stats
+      reclassifyStats.value = { processed: processedCount, total: dryRun.total } // Estimate
+      
+      // If we processed fewer than requested, or found 0 candidates, we are done
+      if (result.total === 0 || result.changed === 0) {
+        break
+      }
+      
+      // Small delay to be nice to API
+      await new Promise(r => setTimeout(r, 1000))
+    }
+    
+    reclassifyMessage.value = `✅ Setup Complete! Processed ${processedCount} articles. Fixed ${changedCount} categories.`
     await refreshCategoryStats()
+
   } catch (e) {
     reclassifyError.value = true
-    reclassifyMessage.value = 'Failed to reclassify. Check console for errors.'
+    reclassifyMessage.value = 'Stopped: ' + (e.message || 'Unknown error')
     console.error(e)
   } finally {
     reclassifying.value = false

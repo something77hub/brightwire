@@ -97,7 +97,13 @@ export const fetchNews = inngest.createFunction(
           let added = 0
 
           for (const item of feed.items.slice(0, 20)) {
-            const guid = item.guid || item.link || item.title
+            let guid = item.guid || item.link || item.title
+            if (typeof guid === 'object' && guid !== null) {
+              // Handle rss-parser object format (e.g. { _: 'value', $: { ... } })
+              guid = (guid as any)._ || JSON.stringify(guid)
+            }
+            guid = String(guid)
+
             if (!guid || !item.title) continue
 
             totalItems++
@@ -176,7 +182,7 @@ export const fetchNews = inngest.createFunction(
         // Index might already exist
       }
 
-      const guids = candidates.map(c => c.guid)
+      const guids = candidates.map(c => String(c.guid))
 
       // Check both stories (already published) and queue (pending) by GUID
       const existingStories = await stories.find({ guid: { $in: guids } }).toArray()

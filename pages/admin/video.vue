@@ -441,8 +441,9 @@ const closings = [
 async function loadArticles() {
   loadingArticles.value = true
   try {
-    // Increased limit to 500 to show "all" recent history as requested
-    const data = await $fetch('/api/stories', { query: { limit: 500 } })
+    // Use admin endpoint to bypass public feed limits
+    // Fetch up to 1000 recent stories for video generation
+    const data = await $fetch('/api/admin/stories', { query: { limit: 1000 } })
     articles.value = data.stories
   } catch (e) {
     console.error('Failed to load articles:', e)

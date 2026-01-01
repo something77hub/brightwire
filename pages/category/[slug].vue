@@ -124,7 +124,7 @@ const page = ref(1)
 const loadingMore = ref(false)
 const allStories = ref<any[]>([])
 
-const allStories = ref<any[]>([])
+
 
 const categoryData: Record<string, { title: string; emoji: string; description: string }> = {
   'good-news': {

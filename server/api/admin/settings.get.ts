@@ -13,12 +13,29 @@ export default defineEventHandler(async (event) => {
     const db = client.db('brightwire')
     const settings = db.collection('settings')
 
-    // Get fetch interval, default to 60 minutes
-    const intervalDoc = await settings.findOne({ key: 'fetch_interval_minutes' })
-    const fetchInterval = intervalDoc?.value || 60
+    // Get all settings
+    const allSettings = await settings.find({}).toArray()
+
+    // Convert array of key/value pairs to object
+    // { key: 'siteName', value: '...' } -> { siteName: '...' }
+    const settingsMap = allSettings.reduce((acc, item) => {
+      acc[item.key] = item.value
+      return acc
+    }, {} as Record<string, any>)
 
     return {
-      fetchInterval
+      fetchInterval: settingsMap.fetch_interval_minutes || 60,
+      siteName: settingsMap.siteName || 'BrightWire',
+      siteDescription: settingsMap.siteDescription || 'Good news daily - positive journalism that inspires.',
+      siteUrl: settingsMap.siteUrl || '',
+      newsletterSuccessMessage: settingsMap.newsletterSuccessMessage || "You're in! 🎉",
+      social: settingsMap.social || {
+        twitter: '',
+        facebook: '',
+        instagram: '',
+        linkedin: ''
+      },
+      contactEmail: settingsMap.contactEmail || ''
     }
   } catch (e: any) {
     throw createError({ statusCode: 500, message: e.message })

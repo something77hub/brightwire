@@ -16,12 +16,25 @@ export default defineEventHandler(async (event) => {
     const db = client.db('brightwire')
     const settings = db.collection('settings')
 
-    if (fetchInterval) {
-      await settings.updateOne(
-        { key: 'fetch_interval_minutes' },
-        { $set: { value: Number(fetchInterval), updatedAt: new Date() } },
-        { upsert: true }
-      )
+    // List of keys to save and their types
+    const keys = [
+      { key: 'fetch_interval_minutes', val: Number(body.fetchInterval) },
+      { key: 'siteName', val: body.siteName },
+      { key: 'siteDescription', val: body.siteDescription },
+      { key: 'siteUrl', val: body.siteUrl },
+      { key: 'newsletterSuccessMessage', val: body.newsletterSuccessMessage },
+      { key: 'social', val: body.social },
+      { key: 'contactEmail', val: body.contactEmail }
+    ]
+
+    for (const item of keys) {
+      if (item.val !== undefined) {
+        await settings.updateOne(
+          { key: item.key },
+          { $set: { value: item.val, updatedAt: new Date() } },
+          { upsert: true }
+        )
+      }
     }
 
     return { success: true, message: 'Settings saved' }

@@ -70,6 +70,7 @@ const categories: CategoryInfo[] = [
   { id: 'innovation', label: 'Innovation', emoji: '🚀', color: 'violet' },
   { id: 'solutions', label: 'Solutions', emoji: '💡', color: 'blue' },
   { id: 'kindness', label: 'Acts of Kindness', emoji: '💛', color: 'yellow' },
+  { id: 'sports', label: 'Sports', emoji: '🏆', color: 'orange' },
 ]
 
 function getCategoryLink(id: string): string {

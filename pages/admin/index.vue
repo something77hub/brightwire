@@ -297,6 +297,7 @@ function getCategoryColor(category: string) {
     'planet': 'bg-green-100 text-green-700',
     'innovation': 'bg-violet-100 text-violet-700',
     'solutions': 'bg-blue-100 text-blue-700',
+    'sports': 'bg-orange-100 text-orange-700',
   }
   return colors[category] || 'bg-gray-100 text-gray-700'
 }
@@ -308,6 +309,7 @@ function getCategoryEmoji(category: string) {
     'planet': '🌍',
     'innovation': '🚀',
     'solutions': '💡',
+    'sports': '🏆',
   }
   return emojis[category] || '✨'
 }

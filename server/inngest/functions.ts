@@ -52,7 +52,7 @@ export const fetchNews = inngest.createFunction(
     // ========================================
     // STEP 0: Check Config & Interval
     // ========================================
-    const shouldRun = await step.run('check-config', async () => {
+    const runConfig = await step.run('check-config', async () => {
       // Check if this is a manual run or queue continuation
       const isManual = event.name === 'app/manual.fetch'
       const isQueueContinuation = event.data && (event.data as any).reason === 'queue-continuation'
@@ -60,7 +60,7 @@ export const fetchNews = inngest.createFunction(
       console.log(`[Fetch] Triggered by ${event.name}. Manual? ${isManual}. Continuation? ${isQueueContinuation}`)
 
       if (isManual || isQueueContinuation) {
-        return { run: true, message: 'Manual run or queue continuation - bypassing time check' }
+        return { fetchRss: true, reason: 'manual-or-continuation' }
       }
 
       const client = new MongoClient(config.MONGODB_URI!)
@@ -81,25 +81,22 @@ export const fetchNews = inngest.createFunction(
         const minsSinceLast = (now.getTime() - lastRun.getTime()) / (1000 * 60)
 
         if (minsSinceLast < intervalMins) {
-          return { run: false, message: `Skipping: Only ${Math.floor(minsSinceLast)}m since last run (Interval: ${intervalMins}m)` }
+          console.log(`[Config] Skipping RSS Fetch: Only ${Math.floor(minsSinceLast)}m since last run (Interval: ${intervalMins}m)`)
+          return { fetchRss: false, reason: 'interval-not-met' }
         }
 
-        // Update last run time ONLY for scheduled runs (prevent frequent updates during loops)
+        // Update last run time ONLY if we are legitimately fetching RSS
         await settings.updateOne(
           { key: 'last_fetch_run' },
           { $set: { value: now } },
           { upsert: true }
         )
 
-        return { run: true }
+        return { fetchRss: true, reason: 'interval-met' }
       } finally {
         await client.close()
       }
     })
-
-    if (!shouldRun.run) {
-      return { skipped: true, message: shouldRun.message }
-    }
 
     // ========================================
     // STEP 0.5: Check queue for pending articles
@@ -132,9 +129,14 @@ export const fetchNews = inngest.createFunction(
     // STEP 1: Fetch all RSS feeds
     // ========================================
     const candidates = await step.run('fetch-rss-feeds', async () => {
-      // Check if we should skip RSS fetching (if this is just a queue drain run)
-      if (config.SKIP_RSS_ON_DRAIN === 'true' || (event.data && (event.data as any).reason === 'queue-continuation')) {
-        console.log('Skipping RSS fetch (Queue Continuation Mode)')
+      // Check if we should skip RSS fetching (based on config or queue continuation)
+      // We skip if the interval hasn't met OR if we are just draining the queue
+      const skipRss = !runConfig.fetchRss ||
+        config.SKIP_RSS_ON_DRAIN === 'true' ||
+        (event.data && (event.data as any).reason === 'queue-continuation')
+
+      if (skipRss) {
+        console.log('Skipping RSS fetch (Mode: Queue Processing Only)')
         return []
       }
 

@@ -3,11 +3,11 @@ import { getStoriesCollection } from '~/server/utils/db'
 export default defineEventHandler(async (event) => {
   try {
     const stories = await getStoriesCollection()
-    
+
     // Get articles from the last 30 days
     const monthAgo = new Date()
     monthAgo.setDate(monthAgo.getDate() - 30)
-    
+
     // Aggregate tags from recent articles
     const result = await stories.aggregate([
       {
@@ -36,10 +36,10 @@ export default defineEventHandler(async (event) => {
         $limit: 5
       }
     ]).toArray()
-    
+
     // Return tag names
     let trendingTags = result.map(r => r._id)
-    
+
     // If no tags, get top categories by article count
     if (trendingTags.length === 0) {
       const categoryResult = await stories.aggregate([
@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
           $limit: 5
         }
       ]).toArray()
-      
+
       // Map category slugs to display names
       const categoryLabels: Record<string, string> = {
         'good-news': 'Good News',
@@ -69,11 +69,13 @@ export default defineEventHandler(async (event) => {
         'planet': 'Planet Wins',
         'innovation': 'Innovation',
         'solutions': 'Solutions',
+        'sports': 'Sports',
+        'kindness': 'Acts of Kindness'
       }
-      
+
       trendingTags = categoryResult.map(r => categoryLabels[r._id] || r._id)
     }
-    
+
     return { tags: trendingTags }
   } catch (error) {
     console.error('Trending tags error:', error)

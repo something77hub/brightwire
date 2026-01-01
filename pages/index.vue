@@ -367,7 +367,7 @@ const { data: trendingData } = await useFetch('/api/trending', {
 const trendingTopics = computed(() => trendingData.value?.tags || [])
 
 // Fallback topics if no trending tags
-const fallbackTopics = ['Good News', 'Community Heroes', 'Planet Wins', 'Innovation', 'Solutions']
+const fallbackTopics = ['Good News', 'Community Heroes', 'Planet Wins', 'Innovation', 'Solutions', 'Sports']
 const displayTrendingTopics = computed(() => {
   return trendingTopics.value.length > 0 ? trendingTopics.value : fallbackTopics
 })
@@ -457,23 +457,23 @@ const showEmptyState = computed(() => {
   return !pending.value && storyList.length === 0
 })
 
+// Import shared categories
+import { CORE_CATEGORIES } from '~/utils/constants'
+
 const categories = [
   { id: 'all', label: 'All Stories', emoji: '✨' },
-  { id: 'good-news', label: 'Good News', emoji: '☀️' },
-  { id: 'heroes', label: 'Community Heroes', emoji: '🦸' },
-  { id: 'planet', label: 'Planet Wins', emoji: '🌍' },
-  { id: 'innovation', label: 'Innovation', emoji: '🚀' },
-  { id: 'solutions', label: 'Solutions', emoji: '💡' },
+  ...CORE_CATEGORIES.map(c => ({
+    id: c.id,
+    label: c.label,
+    emoji: c.emoji
+  }))
 ]
 
 // Map display names to category slugs
-const categoryMap: Record<string, string> = {
-  'good news': 'good-news',
-  'community heroes': 'heroes',
-  'planet wins': 'planet',
-  'innovation': 'innovation',
-  'solutions': 'solutions',
-}
+const categoryMap = CORE_CATEGORIES.reduce((acc, cat) => {
+  acc[cat.label.toLowerCase()] = cat.id
+  return acc
+}, { 'all stories': 'all' } as Record<string, string>)
 
 function openSearchWithQuery(query: string) {
   // Check if this is a category label - navigate to category page instead
@@ -564,6 +564,7 @@ function formatCategoryTitle(category: string): string {
     innovation: 'Innovation & Discovery',
     'good-news': "Today's Good News",
     kindness: 'Acts of Kindness',
+    sports: 'Sports & Athletics',
   }
   return titles[category] || 'Good News'
 }

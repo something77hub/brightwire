@@ -47,15 +47,63 @@ export const fetchNews = inngest.createFunction(
   ],
 
   async ({ step }) => {
+    const config = process.env
+
     // ========================================
-    // STEP 0: Check queue for pending articles
+    // STEP 0: Check Config & Interval
+    // ========================================
+    const shouldRun = await step.run('check-config', async () => {
+      // Manual triggers always run
+      // Note: Inngest doesn't easily expose the trigger type here without more context, 
+      // but we can assume scheduled runs need checking.
+
+      const client = new MongoClient(config.MONGODB_URI!)
+      try {
+        await client.connect()
+        const db = client.db('brightwire')
+        const settings = db.collection('settings')
+
+        // Check interval
+        const intervalDoc = await settings.findOne({ key: 'fetch_interval_minutes' })
+        const intervalMins = intervalDoc?.value || 60 // Default 1 hour
+
+        // Check last run
+        const lastRunDoc = await settings.findOne({ key: 'last_fetch_run' })
+        const lastRun = lastRunDoc?.value ? new Date(lastRunDoc.value) : new Date(0)
+        const now = new Date()
+
+        const minsSinceLast = (now.getTime() - lastRun.getTime()) / (1000 * 60)
+
+        if (minsSinceLast < intervalMins) {
+          return { run: false, message: `Skipping: Only ${Math.floor(minsSinceLast)}m since last run (Interval: ${intervalMins}m)` }
+        }
+
+        // Update last run time NOW to prevent race conditions or double runs
+        await settings.updateOne(
+          { key: 'last_fetch_run' },
+          { $set: { value: now } },
+          { upsert: true }
+        )
+
+        return { run: true }
+      } finally {
+        await client.close()
+      }
+    })
+
+    if (!shouldRun.run) {
+      return { skipped: true, message: shouldRun.message }
+    }
+
+    // ========================================
+    // STEP 0.5: Check queue for pending articles
     // ========================================
     const queuedArticles = await step.run('check-queue', async () => {
-      const client = new MongoClient(process.env.MONGODB_URI!)
+      const client = new MongoClient(config.MONGODB_URI!)
       await client.connect()
       const db = client.db('brightwire')
       const queue = db.collection('article_queue')
-
+      // ... same queue logic ...
       // Create index if not exists
       await queue.createIndex({ guid: 1 }, { unique: true })
       await queue.createIndex({ addedAt: 1 })
@@ -78,6 +126,19 @@ export const fetchNews = inngest.createFunction(
     // STEP 1: Fetch all RSS feeds
     // ========================================
     const candidates = await step.run('fetch-rss-feeds', async () => {
+      const client = new MongoClient(config.MONGODB_URI!)
+      await client.connect()
+      const db = client.db('brightwire')
+      const feedsCol = db.collection('feeds')
+
+      // Load enabled feeds from DB
+      const dbFeeds = await feedsCol.find({ enabled: { $ne: false } }).toArray()
+      await client.close()
+
+      // Fallback if DB empty (initial run) - though we have seeds now
+      const sourcesToUse = dbFeeds.length > 0 ? dbFeeds : newsSources
+      console.log(`Fetching from ${sourcesToUse.length} feeds...`)
+
       const parser = new Parser({
         customFields: {
           item: [
@@ -92,7 +153,7 @@ export const fetchNews = inngest.createFunction(
       const sourceResults: string[] = []
       let totalItems = 0
 
-      for (const source of newsSources) {
+      for (const source of sourcesToUse) {
         try {
           const feed = await parser.parseURL(source.feed)
           let added = 0

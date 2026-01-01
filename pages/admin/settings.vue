@@ -1,293 +1,184 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Admin Header -->
-    <header class="bg-white border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-xl font-bold text-gray-900">BrightWire Admin</h1>
-              <p class="text-sm text-gray-500">Settings</p>
-            </div>
-          </div>
-          <NuxtLink to="/" class="text-amber-600 hover:text-amber-700 font-medium">View Site →</NuxtLink>
-          <button @click="logout" class="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 ml-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+  <div class="min-h-screen bg-gray-50 pb-12">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <NuxtLink to="/admin" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
-          </button>
+          </NuxtLink>
+          <div class="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">Settings & Feeds</h1>
+            <p class="text-xs text-gray-500">Configure system behavior and news sources</p>
+          </div>
         </div>
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <!-- Navigation Tabs -->
-      <nav class="flex gap-1 mb-8 bg-white rounded-xl p-1 shadow-sm">
-        <NuxtLink 
-          to="/admin" 
-          class="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-gray-600 hover:bg-gray-100"
-        >
-          Dashboard
-        </NuxtLink>
-        <NuxtLink 
-          to="/admin/articles" 
-          class="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-gray-600 hover:bg-gray-100"
-        >
-          Articles
-        </NuxtLink>
-        <NuxtLink 
-          to="/admin/settings" 
-          class="flex items-center gap-2 px-4 py-2 rounded-lg font-medium bg-amber-500 text-white"
-        >
-          Settings
-        </NuxtLink>
-      </nav>
-
-      <!-- Settings Form -->
-      <div class="space-y-6">
-        <!-- Site Settings -->
-        <div class="bg-white rounded-xl p-6 shadow-sm">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Site Settings</h2>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
-              <input 
-                v-model="settings.siteName" 
-                type="text" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="BrightWire"
-              />
-            </div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <!-- 1. General Settings -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="font-semibold text-gray-900">General Configuration</h2>
+        </div>
+        <div class="p-6">
+          <div class="max-w-md">
+            <label class="block text-sm font-medium text-gray-700 mb-2">News Fetch Frequency</label>
+            <select
+              v-model="fetchInterval"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-amber-500 focus:border-amber-500"
+            >
+              <option :value="15">Every 15 minutes (High Traffic)</option>
+              <option :value="30">Every 30 minutes</option>
+              <option :value="60">Every hour (Recommended)</option>
+              <option :value="120">Every 2 hours</option>
+              <option :value="360">Every 6 hours</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-2">
+              Note: The fetcher runs on a fixed schedule. This setting controls whether it skips a run.
+            </p>
             
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Site URL (Domain)</label>
-              <input 
-                v-model="settings.siteUrl" 
-                type="url" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="https://brightwire.news"
-              />
-              <p class="text-sm text-gray-500 mt-1">Used for share links and SEO. Include https://</p>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Site Description</label>
-              <textarea 
-                v-model="settings.siteDescription" 
-                rows="2"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="Your daily dose of positive news"
-              ></textarea>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
-              <input 
-                v-model="settings.contactEmail" 
-                type="email" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="contact@brightwire.news"
-              />
-              <p class="text-sm text-gray-500 mt-1">Shown on the contact page</p>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Default Author Name</label>
-              <input 
-                v-model="settings.defaultAuthor" 
-                type="text" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="Felix Utomi"
-              />
-              <p class="text-sm text-gray-500 mt-1">Author name shown on new articles</p>
+            <div class="mt-4">
               <button
-                @click="updateAllAuthors"
-                :disabled="updatingAuthors"
-                class="mt-2 text-sm text-amber-600 hover:text-amber-700 font-medium disabled:opacity-50"
+                @click="saveSettings"
+                :disabled="savingSettings"
+                class="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
               >
-                {{ updatingAuthors ? 'Updating...' : '→ Apply to all existing articles' }}
+                {{ savingSettings ? 'Saving...' : 'Save Configuration' }}
               </button>
-              <p v-if="authorUpdateResult" class="text-sm text-green-600 mt-1">{{ authorUpdateResult }}</p>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Social Media -->
-        <div class="bg-white rounded-xl p-6 shadow-sm">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Social Media Links</h2>
-          
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Twitter/X</label>
-              <input 
-                v-model="settings.socialTwitter" 
-                type="url" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="https://twitter.com/brightwire"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
-              <input 
-                v-model="settings.socialInstagram" 
-                type="url" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="https://instagram.com/brightwire"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Facebook</label>
-              <input 
-                v-model="settings.socialFacebook" 
-                type="url" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="https://facebook.com/brightwire"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-              <input 
-                v-model="settings.socialLinkedin" 
-                type="url" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="https://linkedin.com/company/brightwire"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">YouTube</label>
-              <input 
-                v-model="settings.socialYoutube" 
-                type="url" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="https://youtube.com/@brightwire"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">TikTok</label>
-              <input 
-                v-model="settings.socialTiktok" 
-                type="url" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="https://tiktok.com/@brightwire"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- Newsletter Settings -->
-        <div class="bg-white rounded-xl p-6 shadow-sm">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Newsletter</h2>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Title/Heading</label>
-              <input 
-                v-model="settings.newsletterTitle" 
-                type="text" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="Start Your Day With Good News"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Subtitle/Description</label>
-              <textarea 
-                v-model="settings.newsletterSubtitle" 
-                rows="2"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="Join 50,000+ readers who wake up to stories that inspire."
-              ></textarea>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
-              <input 
-                v-model="settings.newsletterButtonText" 
-                type="text" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="Subscribe Free"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Success Message</label>
-              <input 
-                v-model="settings.newsletterSuccessMessage" 
-                type="text" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="You're in! Check your inbox."
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- SEO Settings -->
-        <div class="bg-white rounded-xl p-6 shadow-sm">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">SEO & Meta</h2>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Default Meta Title</label>
-              <input 
-                v-model="settings.metaTitle" 
-                type="text" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="BrightWire - Good News Daily"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Default Meta Description</label>
-              <textarea 
-                v-model="settings.metaDescription" 
-                rows="2"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="Your daily source for positive, uplifting news stories from around the world."
-              ></textarea>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Default OG Image URL</label>
-              <input 
-                v-model="settings.ogImage" 
-                type="url" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="https://brightwire.news/og-image.jpg"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- Save Button -->
-        <div class="flex justify-end gap-4">
-          <button 
-            @click="resetSettings"
-            class="px-6 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
+      <!-- 2. Feed Manager -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <h2 class="font-semibold text-gray-900">News Feeds ({{ feeds.length }})</h2>
+          <button
+            @click="openFeedModal()"
+            class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
           >
-            Reset to Defaults
+            + Add Feed
           </button>
-          <button 
-            @click="saveSettings"
-            :disabled="saving"
-            class="px-6 py-2 bg-amber-500 text-white rounded-lg font-medium hover:bg-amber-600 disabled:opacity-50 flex items-center gap-2"
-          >
-            <svg v-if="saving" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            {{ saving ? 'Saving...' : 'Save Settings' }}
-          </button>
+        </div>
+        
+        <!-- Feed List -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source Name</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Feed URL</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-if="loadingFeeds">
+                <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">Loading feeds...</td>
+              </tr>
+              <tr v-else-if="feeds.length === 0">
+                <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No feeds found.</td>
+              </tr>
+              <tr v-for="feed in feeds" :key="feed._id">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ feed.name }}</div>
+                  <div class="text-xs text-gray-500">{{ feed.category || 'General' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500 max-w-xs truncate" :title="feed.feed">{{ feed.feed }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    :class="feed.enabled !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                  >
+                    {{ feed.enabled !== false ? 'Active' : 'Disabled' }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <button @click="openFeedModal(feed)" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
+                  <button @click="deleteFeed(feed)" class="text-red-600 hover:text-red-900">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal -->
+    <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" @click="showModal = false">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+              {{ editingFeed ? 'Edit Feed' : 'Add New Feed' }}
+            </h3>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Source Name</label>
+                <input v-model="form.name" type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Feed URL (RSS/Atom)</label>
+                <input v-model="form.feed" type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Website URL</label>
+                <input v-model="form.baseUrl" type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Default Category (Optional)</label>
+                <select v-model="form.category" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">Auto-Detect</option>
+                    <option value="good-news">Good News</option>
+                    <option value="sports">Sports</option>
+                    <option value="heroes">Heroes</option>
+                    <option value="innovation">Innovation</option>
+                    <option value="planet">Planet</option>
+                </select>
+              </div>
+              
+              <div class="flex items-center">
+                <input v-model="form.enabled" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                <label class="ml-2 block text-sm text-gray-900">Enable this feed</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button 
+              @click="saveFeed" 
+              type="button" 
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+              :disabled="savingFeed"
+            >
+              {{ savingFeed ? 'Saving...' : 'Save' }}
+            </button>
+            <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -295,103 +186,120 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
-const saving = ref(false)
-const updatingAuthors = ref(false)
-const authorUpdateResult = ref('')
+definePageMeta({ layout: false })
 
-// Check auth on page load
-const { data: authCheck } = await useFetch('/api/admin/check')
-if (!authCheck.value?.authenticated) {
-  await navigateTo('/admin/login')
-}
+const fetchInterval = ref(60)
+const savingSettings = ref(false)
+const loadingFeeds = ref(false)
+const feeds = ref<any[]>([])
+const showModal = ref(false)
+const editingFeed = ref<any>(null)
+const savingFeed = ref(false)
 
-// Logout function
-async function logout() {
-  await $fetch('/api/admin/logout', { method: 'POST' })
-  router.push('/admin/login')
-}
+const form = ref({
+  name: '',
+  feed: '',
+  baseUrl: '',
+  category: '',
+  enabled: true
+})
 
-// Update all existing articles with current author name
-async function updateAllAuthors() {
-  if (!confirm('This will update ALL existing articles to use the current author name. Continue?')) {
-    return
-  }
-  
-  updatingAuthors.value = true
-  authorUpdateResult.value = ''
-  
+// Load data
+async function loadData() {
+  loadingFeeds.value = true
   try {
-    // Save settings first to ensure the author name is saved
-    await $fetch('/api/admin/settings', {
-      method: 'POST',
-      body: settings.value,
-    })
+    const [settingsData, feedsData] = await Promise.all([
+      $fetch('/api/admin/settings'),
+      $fetch('/api/admin/feeds')
+    ])
     
-    // Then update all articles
-    const result = await $fetch('/api/admin/update-authors', { method: 'POST' })
-    authorUpdateResult.value = result.message
+    fetchInterval.value = settingsData.fetchInterval || 60
+    feeds.value = feedsData.feeds || []
   } catch (e) {
-    console.error('Failed to update authors:', e)
-    authorUpdateResult.value = 'Failed to update authors'
+    alert('Failed to load data')
+    console.error(e)
   } finally {
-    updatingAuthors.value = false
+    loadingFeeds.value = false
   }
-}
-
-const defaultSettings = {
-  siteName: 'BrightWire',
-  siteUrl: 'https://brightwire.news',
-  siteDescription: 'Your daily dose of positive news',
-  contactEmail: 'contact@brightwire.news',
-  defaultAuthor: 'Felix Utomi',
-  socialTwitter: '',
-  socialInstagram: '',
-  socialFacebook: '',
-  socialLinkedin: '',
-  socialYoutube: '',
-  socialTiktok: '',
-  metaTitle: 'BrightWire - Good News Daily',
-  metaDescription: 'Your daily source for positive, uplifting news stories from around the world.',
-  ogImage: '',
-  // Newsletter settings
-  newsletterTitle: 'Start Your Day With Good News',
-  newsletterSubtitle: 'Join 50,000+ readers who wake up to stories that inspire. Delivered fresh every morning.',
-  newsletterButtonText: 'Subscribe Free',
-  newsletterSuccessMessage: "You're in! Check your inbox.",
-}
-
-const settings = ref({ ...defaultSettings })
-
-// Load settings from API
-const { data: savedSettings } = await useFetch('/api/admin/settings')
-if (savedSettings.value) {
-  settings.value = { ...defaultSettings, ...savedSettings.value }
 }
 
 async function saveSettings() {
-  saving.value = true
+  savingSettings.value = true
   try {
     await $fetch('/api/admin/settings', {
       method: 'POST',
-      body: settings.value,
+      body: { fetchInterval: fetchInterval.value }
     })
-    alert('Settings saved successfully!')
+    alert('Settings saved!')
   } catch (e) {
     alert('Failed to save settings')
-    console.error(e)
   } finally {
-    saving.value = false
+    savingSettings.value = false
   }
 }
 
-function resetSettings() {
-  if (confirm('Reset all settings to defaults?')) {
-    settings.value = { ...defaultSettings }
+function openFeedModal(feed?: any) {
+  editingFeed.value = feed || null
+  if (feed) {
+    form.value = {
+      name: feed.name,
+      feed: feed.feed,
+      baseUrl: feed.baseUrl,
+      category: feed.category || '',
+      enabled: feed.enabled !== false
+    }
+  } else {
+    form.value = {
+      name: '',
+      feed: '',
+      baseUrl: '',
+      category: '',
+      enabled: true
+    }
+  }
+  showModal.value = true
+}
+
+async function saveFeed() {
+  if (!form.value.name || !form.value.feed) {
+    alert('Name and Feed URL are required')
+    return
+  }
+  
+  savingFeed.value = true
+  try {
+    await $fetch('/api/admin/feeds', {
+      method: 'POST',
+      body: {
+        _id: editingFeed.value?._id,
+        ...form.value
+      }
+    })
+    
+    await loadData()
+    showModal.value = false
+  } catch (e: any) {
+    alert('Failed to save feed: ' + e.message)
+  } finally {
+    savingFeed.value = false
   }
 }
 
-useHead({
-  title: 'Settings - BrightWire Admin',
+async function deleteFeed(feed: any) {
+  if (!confirm(`Are you sure you want to delete ${feed.name}?`)) return
+  
+  try {
+    await $fetch(`/api/admin/feeds`, {
+      method: 'DELETE',
+      params: { id: feed._id }
+    })
+    await loadData()
+  } catch (e) {
+    alert('Failed to delete feed')
+  }
+}
+
+onMounted(() => {
+  loadData()
 })
 </script>

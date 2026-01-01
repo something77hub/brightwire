@@ -112,7 +112,7 @@ export const fetchNews = inngest.createFunction(
             // Get pubDate for storage
             const pubDate = item.pubDate || item.isoDate || ''
 
-            // Filter: only accept articles from last 48 hours
+            // Filter: only accept articles from last 72 hours
             if (pubDate) {
               const articleDate = new Date(pubDate)
               if (isNaN(articleDate.getTime())) {
@@ -121,16 +121,17 @@ export const fetchNews = inngest.createFunction(
               const now = new Date()
               const ageHours = (now.getTime() - articleDate.getTime()) / (1000 * 60 * 60)
 
-              if (ageHours > 48) continue // Too old
-              if (ageHours < -1) continue // Future date
+              if (ageHours > 72) continue // Too old
+              if (ageHours < -24) continue // Future date (allow some timezone drift)
             } else {
-              continue // no date
+              // STRICT MODE: If no date is found, reject it.
+              // This prevents old "related" articles from being scraped as new.
+              continue
             }
 
             // Pre-filter using keyword scoring
             const filterAction = preFilterStory(item.title, item.contentSnippet || '')
             if (filterAction === 'skip') {
-              // console.log(`[Pre-filter Skip] ${item.title}`)
               continue
             }
 
@@ -179,6 +180,7 @@ export const fetchNews = inngest.createFunction(
       // Create text index for title similarity search if not exists
       try {
         await stories.createIndex({ title: 'text' })
+        await stories.createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 30 }) // 30 day TTL
       } catch (e) {
         // Index might already exist
       }
@@ -272,33 +274,40 @@ export const fetchNews = inngest.createFunction(
 
       const prompt = `You are classifying news headlines for a POSITIVE NEWS website called BrightWire.
 
-Score each headline 0-100 on how positive/uplifting it is:
-- 70-100: Clearly positive (breakthroughs, victories, kindness, progress, solutions)
-- 50-69: Mildly positive or neutral-positive (interesting discoveries, hopeful developments)  
-- 30-49: Neutral or mixed
-- 0-29: Negative news (disasters, conflicts, problems without solutions)
+Score each headline 0-100.
+STRICT FILTER: We ONLY want uplifting, solution-oriented, or generally positive news.
 
-BE GENEROUS with scoring - we want to find the good news! If a headline could be positive, score it 50+.
+CRITICAL - AUTOMATIC 0 SCORE FOR:
+- Fires, Explosions, Accidents
+- Death, Murder, Crime, Violence
+- Political attacks or scandals
+- Natural disasters (unless sticking to rescue/recovery)
+- "Church Erupts in Inferno" -> SCORE 0 (Destruction)
+
+SCORING GUIDE:
+- 80-100: Clearly positive (breakthroughs, victories, acts of kindness, progress)
+- 60-79: Neutral-positive (interesting discoveries, hopeful developments, sports wins)
+- 0-40: Negative, Tragical, or too controversial to be "Good News"
 
 Headlines to classify:
 ${newCandidates.map((c, i) => `${i + 1}. ${c.title}`).join('\n')}
 
-CATEGORIES - Pick the MOST SPECIFIC one:
-1. "heroes" - PEOPLE making a difference: volunteers, activists, rescuers, donors, community leaders
-2. "planet" - ENVIRONMENT: wildlife, conservation, climate wins, nature, animals, sustainability
-3. "innovation" - TECH/SCIENCE: inventions, discoveries, medical advances, research, space, AI
-4. "solutions" - SYSTEMIC: laws passed, programs launched, policy wins, social initiatives
-5. "kindness" - HEARTWARMING: acts of kindness, generosity, reunions, feel-good moments
-6. "sports" - ATHLETES: matches, championships (super bowl/world cup), records broken, sportsmanship
-7. "good-news" - General positive stories that don't fit above
+CATEGORIES - Pick the MOST SPECIFIC one, or use 'good-news' as fallback.
+1. "heroes"
+2. "planet"
+3. "innovation"
+4. "solutions"
+5. "kindness"
+6. "sports"
+7. "good-news"
 
 Respond with JSON array ONLY (no other text):
-[{"idx": 1, "score": 75, "category": "innovation"}, ...]`
+[{"idx": 1, "score": 85, "category": "innovation"}, ...]`
 
       try {
         const response = await anthropic.messages.create({
           model: 'claude-3-5-haiku-20241022',
-          max_tokens: 8000,  // Increased for large headline lists
+          max_tokens: 8000,
           messages: [{ role: 'user', content: prompt }],
         })
 

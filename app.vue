@@ -19,7 +19,7 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="showNewArticlesBanner" class="fixed bottom-4 right-4 z-50 max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5">
+      <div v-if="showBanner" class="fixed bottom-4 right-4 z-50 max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5">
         <div class="flex-1 w-0 p-4">
           <div class="flex items-start">
             <div class="flex-shrink-0 pt-0.5">
@@ -58,10 +58,23 @@
 <script setup lang="ts">
 // Global app setup
 const { showNewArticlesBanner, newArticlesCount, dismissBanner, subscribe } = usePusherUpdates()
+const route = useRoute()
+
+// Check if we are on an admin page
+const isAdminRoute = computed(() => {
+  return route.path.startsWith('/admin')
+})
+
+const showBanner = computed(() => {
+  return showNewArticlesBanner.value && !isAdminRoute.value
+})
 
 // Subscribe globally
+const { $pusher } = useNuxtApp()
 onMounted(() => {
-  subscribe()
+  if (!isAdminRoute.value) {
+    subscribe()
+  }
 })
 
 const router = useRouter()

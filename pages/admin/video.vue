@@ -571,6 +571,7 @@ async function checkStatus(videoId: string) {
         status: result.status,
         videoUrl: result.videoUrl,
         thumbnailUrl: result.thumbnailUrl,
+        errorMessage: result.error,
       }
     }
     

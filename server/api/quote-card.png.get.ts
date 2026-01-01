@@ -63,16 +63,24 @@ export default defineEventHandler(async (event) => {
     }
 
     // Truncate quote if too long
-    const maxQuoteLength = 280
+    const maxQuoteLength = 400
     const displayQuote = quote.length > maxQuoteLength
       ? quote.slice(0, maxQuoteLength - 3) + '...'
       : quote
 
-    const lines = wrapText(displayQuote, 40)
-    const fontSize = displayQuote.length > 200 ? 32 : displayQuote.length > 150 ? 38 : displayQuote.length > 100 ? 44 : 50
+    // Improved dynamic font sizing
+    let fontSize = 50
+    if (displayQuote.length > 300) fontSize = 32
+    else if (displayQuote.length > 200) fontSize = 38
+    else if (displayQuote.length > 100) fontSize = 44
+
+    // Adjust line wrapping based on font size
+    const charsPerLine = Math.floor(45 * (50 / fontSize))
+    const lines = wrapText(displayQuote, charsPerLine)
+
     const lineHeight = fontSize * 1.35
     const totalHeight = lines.length * lineHeight
-    const startY = (height - totalHeight) / 2 + fontSize
+    const startY = (height - totalHeight) / 2 + fontSize * 0.5 // Better vertical centering
 
     // Build text lines as separate tspan elements
     const quoteTspans = lines.map((line, i) =>
@@ -85,12 +93,19 @@ export default defineEventHandler(async (event) => {
       // Fetch image and embed as base64
       let imageData = ''
       try {
-        const response = await fetch(backgroundImage)
+        // Handle relative URLs
+        const imageUrl = backgroundImage.startsWith('http')
+          ? backgroundImage
+          : `${process.env.SITE_URL || 'http://localhost:3000'}${backgroundImage}`
+
+        const response = await fetch(imageUrl)
         if (response.ok) {
           const buffer = await response.arrayBuffer()
           const base64 = Buffer.from(buffer).toString('base64')
           const contentType = response.headers.get('content-type') || 'image/jpeg'
           imageData = `data:${contentType};base64,${base64}`
+        } else {
+          console.error('Failed to fetch background image, status:', response.status)
         }
       } catch (e) {
         console.error('Failed to fetch background image:', e)

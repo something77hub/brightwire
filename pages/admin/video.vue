@@ -16,8 +16,8 @@
               </svg>
             </div>
             <div>
-              <h1 class="text-xl font-bold text-gray-900">Video Generator</h1>
-              <p class="text-xs text-gray-500">Create AI videos with HeyGen</p>
+              <h1 class="text-xl font-bold text-gray-900">Video 2.0 Generator</h1>
+              <p class="text-xs text-gray-500">AI-Powered News Production</p>
             </div>
           </div>
           
@@ -48,7 +48,6 @@
             </div>
             <div class="p-6">
               <!-- Search -->
-              <!-- Filters -->
               <div class="flex gap-2 mb-4">
                 <div class="relative flex-1">
                   <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,86 +104,49 @@
                 <div v-if="!loadingArticles && filteredArticles.length === 0" class="py-8 text-center text-gray-500 text-sm">
                   No articles found matching your filters.
                 </div>
-                
-                <div v-if="!loadingArticles && filteredArticles.length > 0" class="pt-2 text-center text-xs text-gray-400">
-                  Showing {{ filteredArticles.length }} articles
-                </div>
-              </div>
-              
-              <!-- Quick actions -->
-              <div v-if="selectedArticles.length > 0" class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-                <span class="text-xs text-purple-700 font-medium">{{ selectedArticles.length }} selected</span>
-                <button
-                  @click="selectedArticles = []"
-                  class="text-xs text-gray-500 hover:text-gray-700"
-                >
-                  Clear selection
-                </button>
               </div>
             </div>
           </div>
 
-          <!-- Script Editor -->
+          <!-- Script Style Selection (No Editor) -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h2 class="font-semibold text-gray-900">2. Generate Script</h2>
-              <span class="text-xs text-gray-500">{{ script.length }}/2500 chars</span>
+              <h2 class="font-semibold text-gray-900">2. Video Style</h2>
             </div>
             <div class="p-6">
-              <!-- Script Style Selection -->
-              <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Script Style</label>
-                <div class="grid grid-cols-2 gap-2">
-                  <button
-                    v-for="style in scriptStyles"
-                    :key="style.id"
-                    @click="selectedStyle = style.id"
-                    class="p-3 text-left rounded-lg border transition-colors"
-                    :class="selectedStyle === style.id ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'"
-                  >
-                    <div class="text-lg mb-1">{{ style.emoji }}</div>
-                    <div class="text-xs font-medium text-gray-900">{{ style.name }}</div>
-                    <div class="text-xs text-gray-500">{{ style.duration }}</div>
-                  </button>
-                </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  v-for="style in scriptStyles"
+                  :key="style.id"
+                  @click="selectedStyle = style.id"
+                  class="p-3 text-left rounded-lg border transition-colors"
+                  :class="selectedStyle === style.id ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'"
+                >
+                  <div class="text-lg mb-1">{{ style.emoji }}</div>
+                  <div class="text-xs font-medium text-gray-900">{{ style.name }}</div>
+                  <div class="text-xs text-gray-500">{{ style.duration }}</div>
+                </button>
               </div>
               
-              <!-- Generate Button -->
-              <button
-                @click="generateScript"
-                :disabled="selectedArticles.length === 0"
-                class="w-full mb-4 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                ✨ Generate {{ selectedStyle }} Script
-              </button>
-              
-              <textarea
-                v-model="script"
-                rows="10"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-purple-500 focus:border-purple-500"
-                placeholder="Select articles and generate a script, or write your own..."
-              ></textarea>
-              
-              <p class="text-xs text-gray-500 mt-3">
-                💡 Tip: Select multiple articles for a news roundup video!
-              </p>
+              <div class="mt-4 bg-purple-50 border border-purple-100 rounded-lg p-3 text-xs text-purple-700">
+                <span class="font-semibold">🤖 AI Magic:</span> The script will be automatically written by our best AI news anchor agent, perfectly timed to your selected articles.
+              </div>
             </div>
           </div>
 
           <!-- Avatar & Voice Selection -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200">
-              <h2 class="font-semibold text-gray-900">3. Choose Avatar & Voice</h2>
+              <h2 class="font-semibold text-gray-900">3. Anchor</h2>
             </div>
             <div class="p-6 space-y-4">
               <!-- Avatar Selection -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Avatar</label>
                 <div v-if="loadingAvatars" class="text-sm text-gray-500">Loading avatars...</div>
                 <div v-else-if="avatars.length === 0" class="text-sm text-red-500">
-                  No avatars found. Check your HeyGen API key.
+                  No avatars found. Check API key.
                 </div>
-                <div v-else class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                <div v-else class="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto">
                   <button
                     v-for="avatar in avatars"
                     :key="avatar.avatar_id"
@@ -197,32 +159,22 @@
                     <img
                       v-if="avatar.preview_image_url"
                       :src="avatar.preview_image_url"
-                      class="w-12 h-12 rounded-full mx-auto object-cover"
+                      class="w-10 h-10 rounded-full mx-auto object-cover"
                     />
-                    <div v-else class="w-12 h-12 rounded-full mx-auto bg-gray-200 flex items-center justify-center">
-                      <span class="text-lg">🎭</span>
-                    </div>
-                    <p class="text-xs text-gray-700 mt-1 truncate">{{ avatar.avatar_name }}</p>
                   </button>
                 </div>
-                <p v-if="selectedAvatar" class="text-xs text-green-600 mt-2">
-                  ✓ Selected: {{ selectedAvatar.avatar_name }}
+                <p v-if="selectedAvatar" class="text-xs text-green-600 mt-2 font-medium">
+                  {{ selectedAvatar.avatar_name }} selected
                 </p>
               </div>
               
               <!-- Voice Selection -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Voice</label>
-                <div v-if="loadingVoices" class="text-sm text-gray-500">Loading voices...</div>
-                <div v-else-if="voices.length === 0" class="text-sm text-gray-500">
-                  Using default voice
-                </div>
                 <select
-                  v-else
                   v-model="selectedVoiceId"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-purple-500 focus:border-purple-500"
                 >
-                  <option value="">Default Voice</option>
+                  <option value="">Default Voice (Recommended)</option>
                   <option v-for="voice in voices" :key="voice.voice_id" :value="voice.voice_id">
                     {{ voice.name }} ({{ voice.language }}, {{ voice.gender }})
                   </option>
@@ -234,22 +186,23 @@
           <!-- Generate Button -->
           <button
             @click="generateVideo"
-            :disabled="!script || generating || !selectedAvatar"
-            class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            :disabled="selectedArticles.length === 0 || generating || !selectedAvatar"
+            class="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold text-lg hover:shadow-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <svg v-if="generating" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-            </svg>
-            {{ generating ? 'Generating...' : (selectedAvatar ? 'Generate Video' : 'Select an Avatar') }}
+            <span v-else>🚀 Generate Video 2.0</span>
           </button>
+          
+          <div v-if="generating" class="text-center text-sm text-purple-600 animate-pulse">
+            Writing script and rendering scenes... This may take 30s.
+          </div>
         </div>
 
         <!-- Right: Generated Videos -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden h-fit">
           <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <h2 class="font-semibold text-gray-900">Generated Videos</h2>
             <button @click="loadVideos" class="text-purple-600 hover:text-purple-700 text-sm">
@@ -257,86 +210,71 @@
             </button>
           </div>
           
-          <div class="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
-            <div v-if="loadingVideos" class="p-8 text-center">
-              <svg class="w-8 h-8 text-purple-500 mx-auto mb-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <p class="text-gray-500">Loading videos...</p>
-            </div>
-            
-            <div v-else-if="videos.length === 0" class="p-8 text-center">
-              <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-              </svg>
-              <p class="text-gray-500">No videos generated yet</p>
+          <div class="max-h-[80vh] overflow-y-auto p-4 space-y-4">
+            <div v-if="videos.length === 0" class="text-center text-gray-500 py-10">
+              No videos yet. Create one!
             </div>
             
             <div
               v-for="video in videos"
               :key="video.videoId"
-              class="p-4"
+              class="bg-gray-50 rounded-xl p-4 border border-gray-100"
             >
               <div class="flex items-start gap-4">
                 <!-- Thumbnail -->
-                <div class="w-24 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                <div class="w-20 h-32 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0 relative group">
                   <img
                     v-if="video.thumbnailUrl"
                     :src="video.thumbnailUrl"
                     class="w-full h-full object-cover"
                   />
                   <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                    </svg>
+                    🎬
                   </div>
+                  <a 
+                    v-if="video.videoUrl"
+                    :href="video.videoUrl" 
+                    target="_blank"
+                    class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </a>
                 </div>
                 
                 <!-- Info -->
                 <div class="flex-1 min-w-0">
-                  <h3 class="text-sm font-medium text-gray-900 line-clamp-1">{{ video.title || 'Untitled' }}</h3>
-                  <p class="text-xs text-gray-500 mt-1">{{ formatDate(video.createdAt) }}</p>
-                  
-                  <!-- Status Badge -->
-                  <div class="mt-2">
-                    <span
-                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                  <h3 class="font-medium text-gray-900 line-clamp-2 leading-tight">{{ video.title || 'Untitled Video' }}</h3>
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    <span 
+                      class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
                       :class="{
                         'bg-yellow-100 text-yellow-700': video.status === 'processing',
                         'bg-green-100 text-green-700': video.status === 'completed',
                         'bg-red-100 text-red-700': video.status === 'failed',
-                        'bg-gray-100 text-gray-700': !['processing', 'completed', 'failed'].includes(video.status),
                       }"
                     >
-                      <span v-if="video.status === 'processing'" class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></span>
                       {{ video.status }}
                     </span>
-                    
-                    <!-- Error message -->
-                    <p v-if="video.status === 'failed' && video.errorMessage" class="text-xs text-red-600 mt-1">
-                      {{ video.errorMessage }}
-                    </p>
+                    <span class="text-xs text-gray-500">{{ formatDate(video.createdAt) }}</span>
                   </div>
-                </div>
-                
-                <!-- Actions -->
-                <div class="flex flex-col gap-2">
-                  <button
-                    v-if="video.status === 'processing'"
-                    @click="checkStatus(video.videoId)"
-                    class="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
-                  >
-                    Check Status
-                  </button>
-                  <a
-                    v-if="video.videoUrl"
-                    :href="video.videoUrl"
-                    target="_blank"
-                    class="px-3 py-1 text-xs bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors text-center"
-                  >
-                    Download
-                  </a>
+                  
+                   <div class="mt-3 flex gap-2">
+                    <button
+                      v-if="video.status === 'processing'"
+                      @click="checkStatus(video.videoId)"
+                      class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50"
+                    >
+                      Check Status
+                    </button>
+                    <a
+                      v-if="video.videoUrl"
+                      :href="video.videoUrl"
+                      target="_blank"
+                      class="text-xs bg-purple-600 text-white px-3 py-1.5 rounded-lg hover:bg-purple-700"
+                    >
+                      Download
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -357,8 +295,6 @@ const articles = ref<any[]>([])
 const loadingArticles = ref(false)
 const selectedArticles = ref<any[]>([])
 const selectedStyle = ref('engaging')
-const script = ref('')
-const scriptSegments = ref<{text: string, articleId?: string}[]>([])
 const generating = ref(false)
 const videos = ref<any[]>([])
 const loadingVideos = ref(false)
@@ -409,41 +345,10 @@ const scriptStyles = [
   { id: 'roundup', name: 'News Roundup', duration: '~2 min', emoji: '📰' },
 ]
 
-// Hook templates for variety
-const hooks = [
-  "You're not gonna believe this!",
-  "Okay, this just made my day.",
-  "Stop scrolling, you need to hear this.",
-  "Finally some good news!",
-  "This is the kind of story we need right now.",
-  "Wait till you hear what just happened.",
-  "I've got something amazing to share.",
-  "This story literally gave me chills.",
-]
-
-const transitions = [
-  "And here's the best part:",
-  "But wait, it gets better:",
-  "Now get this:",
-  "What's really incredible is:",
-  "The amazing thing is:",
-]
-
-const closings = [
-  "Follow BrightWire for more stories like this!",
-  "This is why I love sharing good news. See you tomorrow!",
-  "Drop a comment if this made you smile!",
-  "Share this with someone who needs to hear it!",
-  "Follow for your daily dose of positivity!",
-  "Hit follow so you don't miss tomorrow's good news!",
-]
-
 // Load articles
 async function loadArticles() {
   loadingArticles.value = true
   try {
-    // Use admin endpoint to bypass public feed limits
-    // Fetch up to 1000 recent stories for video generation
     const data = await $fetch('/api/admin/stories', { query: { limit: 1000 } })
     articles.value = data.stories
   } catch (e) {
@@ -485,69 +390,9 @@ function toggleArticle(article: any) {
   }
 }
 
-// Random picker helper
-function pick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
-
-// Generate script based on selected articles and style
-function generateScript() {
-  if (selectedArticles.value.length === 0) return
-  
-  const hook = pick(hooks)
-  const transition = pick(transitions)
-  const closing = pick(closings)
-  
-  scriptSegments.value = [] // Reset segments
-
-  if (selectedArticles.value.length === 1) {
-    // Single article script
-    const article = selectedArticles.value[0]
-    
-    // Add hook
-    scriptSegments.value.push({ text: hook })
-    
-    let mainBody = ''
-    switch (selectedStyle.value) {
-      case 'quick':
-        mainBody = `${article.title}.\n\n${article.summary?.slice(0, 150) || ''}`
-        break
-      case 'engaging':
-        mainBody = `${article.title}.\n\n${article.summary || ''}\n\n${transition} This is exactly the kind of story that reminds us there's so much good happening in the world.`
-        break
-      case 'storyteller':
-        mainBody = `Let me tell you about something incredible that just happened.\n\n${article.title}.\n\n${article.summary || ''}\n\n${transition} Stories like this remind me why I started sharing good news in the first place.`
-        break
-      case 'roundup':
-        mainBody = `${article.title}.\n\n${article.summary || ''}\n\nThat's your good news update for today.`
-        break
-    }
-    
-    // Add main body linked to article
-    scriptSegments.value.push({ text: mainBody, articleId: article._id })
-    // Add closing
-    scriptSegments.value.push({ text: closing })
-    
-  } else {
-    // Multiple articles - news roundup
-    scriptSegments.value.push({ text: `${hook} Welcome to your BrightWire news roundup! I've got ${selectedArticles.value.length} amazing stories for you.` })
-    
-    selectedArticles.value.forEach((article, i) => {
-      const num = i === 0 ? 'First up' : i === selectedArticles.value.length - 1 ? 'And finally' : 'Next'
-      const text = `${num}: ${article.title}. ${article.summary?.slice(0, 150) || ''}`
-      scriptSegments.value.push({ text, articleId: article._id })
-    })
-    
-    scriptSegments.value.push({ text: `And that's your roundup! ${closing}` })
-  }
-  
-  // Update the view-only text area for manual edits (Note: Manual edits won't update segments strictly, this is a trade-off)
-  script.value = scriptSegments.value.map(s => s.text).join('\n\n')
-}
-
 // Generate video
 async function generateVideo() {
-  if (!script.value || generating.value || !selectedAvatar.value) return
+  if (generating.value || !selectedAvatar.value) return
   
   generating.value = true
   try {
@@ -558,16 +403,15 @@ async function generateVideo() {
     const result = await $fetch('/api/admin/video/generate', {
       method: 'POST',
       body: {
-        script: script.value,
-        segments: scriptSegments.value.length > 0 ? scriptSegments.value : undefined, // Send structured segments if available
         title,
         articleIds: selectedArticles.value.map(a => a._id),
         avatarId: selectedAvatar.value.avatar_id,
         voiceId: selectedVoiceId.value || undefined,
+        style: selectedStyle.value
       }
     })
     
-    alert(`✅ Video generation started! ID: ${result.videoId}\n\nCheck back in a few minutes for the result.`)
+    alert(`✅ Video 2.0 generation started!\n\n${result.message}\nCheck the sidebar for status.`)
     loadVideos()
   } catch (e: any) {
     alert('❌ Failed to generate video: ' + (e.data?.message || e.message))
@@ -588,9 +432,6 @@ async function loadVideos() {
     videos.value = result.videos
   } catch (e: any) {
     console.error('Failed to load videos:', e)
-    if (e.data?.message?.includes('not configured')) {
-      heygenConfigured.value = false
-    }
   } finally {
     loadingVideos.value = false
   }

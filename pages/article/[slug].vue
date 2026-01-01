@@ -378,15 +378,38 @@
       </div>
 
       <!-- Related Stories -->
-      <section v-if="related?.length" class="max-w-7xl mx-auto px-4 sm:px-6 mt-16 pt-12 border-t border-amber-200/30">
+      <section v-if="relatedStories.length" class="max-w-7xl mx-auto px-4 sm:px-6 mt-16 pt-12 border-t border-amber-200/30">
         <h2 class="text-2xl font-bold text-amber-950 mb-8 font-display">More Good News</h2>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <StoryCard 
-            v-for="(item, index) in related" 
+            v-for="(item, index) in relatedStories" 
             :key="item.slug"
             :story="item"
             :index="index"
           />
+        </div>
+        
+        <!-- Load More Related Button -->
+        <div v-if="hasMoreRelated" class="mt-10 text-center">
+          <button
+            @click="loadMoreRelated"
+            :disabled="loadingRelated"
+            class="group inline-flex items-center gap-2 px-8 py-3 bg-white border border-amber-200 hover:border-amber-300 text-amber-800 font-semibold rounded-full shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <span v-if="loadingRelated" class="flex items-center gap-2">
+              <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Loading...
+            </span>
+            <span v-else class="flex items-center gap-2">
+              Load More Stories
+              <svg class="w-4 h-4 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </span>
+          </button>
         </div>
       </section>
 
@@ -416,7 +439,58 @@ const copied = ref(false)
 const { data, pending, error } = await useFetch(`/api/stories/${slug.value}`)
 
 const story = computed(() => data.value?.story as Story | undefined)
-const related = computed(() => data.value?.related as Story[] | undefined)
+
+// Related stories state
+const relatedStories = ref<Story[]>([])
+const loadingRelated = ref(false)
+const relatedPage = ref(1)
+const hasMoreRelated = ref(true)
+
+// Initialize related stories from server response
+watch(() => data.value?.related, (newRelated) => {
+  if (newRelated && relatedStories.value.length === 0) {
+    relatedStories.value = newRelated as Story[]
+  }
+}, { immediate: true })
+
+async function loadMoreRelated() {
+  if (loadingRelated.value || !story.value) return
+  
+  loadingRelated.value = true
+  try {
+    const response = await $fetch(`/api/category/${story.value.category}`, {
+      query: { 
+        page: relatedPage.value,
+        limit: 6 
+      }
+    }) as any
+    
+    if (response?.stories) {
+      const currentIds = new Set(relatedStories.value.map(s => s._id || s.guid))
+      // Add current main story to filtered IDs to avoid showing it in related
+      if (story.value._id) currentIds.add(story.value._id)
+      
+      const newStories = response.stories.filter((s: any) => !currentIds.has(s._id || s.guid))
+      
+      if (newStories.length > 0) {
+        relatedStories.value.push(...newStories)
+        relatedPage.value++
+      } else {
+         // If we fetched stories but they were all duplicates, try next page
+         if (response.pagination?.hasMore) {
+            relatedPage.value++
+            // Optimization: could recursively call loadMoreRelated(), but let's let user click again or just stop
+         }
+      }
+      
+      hasMoreRelated.value = response.pagination?.hasMore || false
+    }
+  } catch (e) {
+    console.error('Failed to load more related:', e)
+  } finally {
+    loadingRelated.value = false
+  }
+}
 
 // Category styling
 const categoryEmojis: Record<string, string> = {

@@ -131,8 +131,10 @@ const categoryBadgeClass = computed(() => categoryBadgeColors[props.story.catego
 const categoryBgGradient = computed(() => categoryBgGradients[props.story.category] || 'from-amber-100 to-orange-100')
 
 const timeAgo = computed(() => {
-  if (!props.story.publishedAt) return ''
-  const date = new Date(props.story.publishedAt)
+  // Use createdAt (when we added it) for the display time, fallback to publishedAt
+  const dateStr = props.story.createdAt || props.story.publishedAt
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
   const now = new Date()
   const diff = now.getTime() - date.getTime()
   

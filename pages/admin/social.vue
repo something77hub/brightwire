@@ -186,6 +186,7 @@
               <option value="innovation">Innovation</option>
               <option value="solutions">Solutions</option>
               <option value="kindness">Kindness</option>
+              <option value="sports">Sports</option>
             </select>
             
             <!-- Clear Filters -->

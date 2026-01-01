@@ -426,6 +426,7 @@ const categoryEmojis: Record<string, string> = {
   'innovation': '🚀',
   'solutions': '💡',
   'kindness': '💛',
+  'sports': '🏆',
 }
 
 const categoryBadgeColors: Record<string, string> = {
@@ -435,6 +436,7 @@ const categoryBadgeColors: Record<string, string> = {
   'innovation': 'bg-violet-500 text-white',
   'solutions': 'bg-blue-500 text-white',
   'kindness': 'bg-yellow-500 text-white',
+  'sports': 'bg-orange-600 text-white',
 }
 
 const categoryEmoji = computed(() => 
@@ -501,6 +503,7 @@ function formatCategory(category: string): string {
     'planet': 'Planet Wins',
     'innovation': 'Innovation',
     'solutions': 'Solutions',
+    'sports': 'Sports & Athletics',
   }
   return labels[category] || 'Good News'
 }

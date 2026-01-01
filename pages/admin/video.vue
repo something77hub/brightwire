@@ -358,6 +358,7 @@ const loadingArticles = ref(false)
 const selectedArticles = ref<any[]>([])
 const selectedStyle = ref('engaging')
 const script = ref('')
+const scriptSegments = ref<{text: string, articleId?: string}[]>([])
 const generating = ref(false)
 const videos = ref<any[]>([])
 const loadingVideos = ref(false)
@@ -497,49 +498,51 @@ function generateScript() {
   const transition = pick(transitions)
   const closing = pick(closings)
   
+  scriptSegments.value = [] // Reset segments
+
   if (selectedArticles.value.length === 1) {
     // Single article script
     const article = selectedArticles.value[0]
     
+    // Add hook
+    scriptSegments.value.push({ text: hook })
+    
+    let mainBody = ''
     switch (selectedStyle.value) {
       case 'quick':
-        script.value = `${hook}\n\n${article.title}.\n\n${article.summary?.slice(0, 150) || ''}\n\n${closing}`
+        mainBody = `${article.title}.\n\n${article.summary?.slice(0, 150) || ''}`
         break
-        
       case 'engaging':
-        script.value = `${hook}\n\n${article.title}.\n\n${article.summary || ''}\n\n${transition} This is exactly the kind of story that reminds us there's so much good happening in the world.\n\n${closing}`
+        mainBody = `${article.title}.\n\n${article.summary || ''}\n\n${transition} This is exactly the kind of story that reminds us there's so much good happening in the world.`
         break
-        
       case 'storyteller':
-        script.value = `${hook}\n\nLet me tell you about something incredible that just happened.\n\n${article.title}.\n\n${article.summary || ''}\n\n${transition} Stories like this remind me why I started sharing good news in the first place. In a world full of negativity, it's moments like these that give us hope.\n\n${closing}`
+        mainBody = `Let me tell you about something incredible that just happened.\n\n${article.title}.\n\n${article.summary || ''}\n\n${transition} Stories like this remind me why I started sharing good news in the first place.`
         break
-        
       case 'roundup':
-        script.value = `${hook}\n\n${article.title}.\n\n${article.summary || ''}\n\nThat's your good news update for today. Make sure you're following BrightWire so you never miss a story that'll brighten your day.\n\n${closing}`
+        mainBody = `${article.title}.\n\n${article.summary || ''}\n\nThat's your good news update for today.`
         break
     }
+    
+    // Add main body linked to article
+    scriptSegments.value.push({ text: mainBody, articleId: article._id })
+    // Add closing
+    scriptSegments.value.push({ text: closing })
+    
   } else {
     // Multiple articles - news roundup
-    const articleScripts = selectedArticles.value.map((article, i) => {
-      const num = i === 0 ? 'First up' : i === selectedArticles.value.length - 1 ? 'And finally' : 'Next'
-      return `${num}: ${article.title}. ${article.summary?.slice(0, 100) || ''}`
-    }).join('\n\n')
+    scriptSegments.value.push({ text: `${hook} Welcome to your BrightWire news roundup! I've got ${selectedArticles.value.length} amazing stories for you.` })
     
-    switch (selectedStyle.value) {
-      case 'quick':
-        script.value = `${hook} Here's your quick good news roundup.\n\n${articleScripts}\n\n${closing}`
-        break
-        
-      case 'engaging':
-      case 'storyteller':
-        script.value = `${hook}\n\nI've got ${selectedArticles.value.length} amazing stories to share with you today. Let's dive in!\n\n${articleScripts}\n\n${transition} These stories prove that there's so much good happening in the world, we just have to look for it.\n\n${closing}`
-        break
-        
-      case 'roundup':
-        script.value = `Welcome to your BrightWire news roundup! ${hook}\n\nToday I've got ${selectedArticles.value.length} stories that are going to make your day.\n\n${articleScripts}\n\nAnd that's your roundup! Remember, good news is happening all around us. Stay tuned for tomorrow's update.\n\n${closing}`
-        break
-    }
+    selectedArticles.value.forEach((article, i) => {
+      const num = i === 0 ? 'First up' : i === selectedArticles.value.length - 1 ? 'And finally' : 'Next'
+      const text = `${num}: ${article.title}. ${article.summary?.slice(0, 150) || ''}`
+      scriptSegments.value.push({ text, articleId: article._id })
+    })
+    
+    scriptSegments.value.push({ text: `And that's your roundup! ${closing}` })
   }
+  
+  // Update the view-only text area for manual edits (Note: Manual edits won't update segments strictly, this is a trade-off)
+  script.value = scriptSegments.value.map(s => s.text).join('\n\n')
 }
 
 // Generate video
@@ -556,6 +559,7 @@ async function generateVideo() {
       method: 'POST',
       body: {
         script: script.value,
+        segments: scriptSegments.value.length > 0 ? scriptSegments.value : undefined, // Send structured segments if available
         title,
         articleIds: selectedArticles.value.map(a => a._id),
         avatarId: selectedAvatar.value.avatar_id,

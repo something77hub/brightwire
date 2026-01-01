@@ -503,8 +503,16 @@ async function loadMore() {
     
     if (response?.stories && response.stories.length > 0) {
       // Deduplicate - only add stories not already in the list
+      // Deduplicate - only add stories not already in the list
       const existingIds = new Set(allStories.value.map(s => s._id || s.guid))
-      const newStories = response.stories.filter(s => !existingIds.has(s._id) && !existingIds.has(s.guid))
+      const existingTitles = new Set(allStories.value.map(s => s.title?.toLowerCase().trim()))
+      
+      const newStories = response.stories.filter(s => {
+        const titleValues = s.title?.toLowerCase().trim()
+        if (existingIds.has(s._id) || existingIds.has(s.guid)) return false
+        if (titleValues && existingTitles.has(titleValues)) return false
+        return true
+      })
       
       if (newStories.length > 0) {
         allStories.value = [...allStories.value, ...newStories]

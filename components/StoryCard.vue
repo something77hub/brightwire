@@ -136,14 +136,21 @@ const timeAgo = computed(() => {
   const now = new Date()
   const diff = now.getTime() - date.getTime()
   
-  // Future date handling
-  if (diff < 0) return 'Just now'
+  // Future date handling (prevent 'Just now' for significant timezone skew)
+  if (diff < 0) {
+    // If it's more than 1 hour in the future, just show the date
+    if (diff < -1000 * 60 * 60) {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    }
+    // Otherwise it's likely just minor clock skew, assume fresh
+    return 'Just now'
+  }
   
   const minutes = Math.floor(diff / (1000 * 60))
   const hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
   
-  if (minutes < 5) return 'Just now'
+  if (minutes < 1) return 'Just now'
   if (minutes < 60) return `${minutes}m ago`
   if (hours < 24) return `${hours}h ago`
   if (days < 7) return `${days}d ago`

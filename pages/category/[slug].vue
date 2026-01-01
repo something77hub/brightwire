@@ -3,8 +3,6 @@
     <Header />
     <CategoryPills v-model="category" @select="navigateToCategory" />
     
-    <CategoryPills v-model="category" @select="navigateToCategory" />
-    
     <!-- Category Sponsor -->
     <CategorySponsor :category="category" />
 

@@ -311,38 +311,14 @@ Respond with JSON array ONLY (no other text):
           const results = JSON.parse(jsonMatch[0])
           console.log(`Parsed ${results.length} classification results`)
           const categoryMap: Record<string, string> = {
+            // Canonical categories (AI is instructed to return these exactly)
             'good-news': 'good-news',
-            'goodnews': 'good-news',
-            'news': 'good-news',
-            'general': 'good-news',
             'heroes': 'heroes',
-            'hero': 'heroes',
-            'community': 'heroes',
             'planet': 'planet',
-            'environment': 'planet',
-            'climate': 'planet',
-            'nature': 'planet',
-            'earth': 'planet',
             'innovation': 'innovation',
-            'tech': 'innovation',
-            'technology': 'innovation',
-            'science': 'innovation',
             'solutions': 'solutions',
-            'solution': 'solutions',
-            'policy': 'solutions',
             'kindness': 'kindness',
-            'kind': 'kindness',
-            'generosity': 'kindness',
-
-            'heartwarming': 'kindness',
             'sports': 'sports',
-            'sport': 'sports',
-            'football': 'sports',
-            'soccer': 'sports',
-            'olympics': 'sports',
-            'championship': 'sports',
-            'nba': 'sports',
-            'nfl': 'sports',
           }
 
           const positive = results

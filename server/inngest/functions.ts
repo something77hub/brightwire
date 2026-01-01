@@ -331,7 +331,7 @@ Respond with JSON array ONLY (no other text):
             'kindness': 'kindness',
             'kind': 'kindness',
             'generosity': 'kindness',
-            'generosity': 'kindness',
+
             'heartwarming': 'kindness',
             'sports': 'sports',
             'sport': 'sports',

@@ -338,20 +338,19 @@ export const newsSources: NewsSource[] = [
     feed: 'https://dailytrust.com/feed',
     baseUrl: 'https://dailytrust.com',
   },
-  },
 
-// ========================================
-// SPORTS & ATHLETICS (New)
-// ========================================
-{
-  name: 'BBC Sport',
+  // ========================================
+  // SPORTS & ATHLETICS (New)
+  // ========================================
+  {
+    name: 'BBC Sport',
     feed: 'https://feeds.bbci.co.uk/sport/rss.xml',
-      baseUrl: 'https://bbc.com/sport',
+    baseUrl: 'https://bbc.com/sport',
   },
-{
-  name: 'Yahoo Sports',
+  {
+    name: 'Yahoo Sports',
     feed: 'https://sports.yahoo.com/rss/',
-      baseUrl: 'https://sports.yahoo.com',
+    baseUrl: 'https://sports.yahoo.com',
   },
 ]
 

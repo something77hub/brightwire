@@ -495,7 +495,7 @@ Respond with JSON array ONLY (no other text):
       const pending = await queue
         .find({ status: 'pending' })
         .sort({ score: -1, retryCount: 1, addedAt: 1 })
-        .limit(45)
+        .limit(100) // Vercel Pro limit
         .toArray()
 
       // Mark as processing to prevent double-processing
@@ -617,19 +617,7 @@ Respond with JSON array ONLY (no other text):
             }
           }
 
-          // DEDUPLICATION: Ensure no repeated images, even with different query params or sizes
-          const getImageBasename = (url: string): string => {
-            try {
-              const pathname = new URL(url).pathname
-              return pathname
-                .replace(/[-_]\d+x\d+/g, '') // Remove size like -800x600
-                .replace(/[-_](small|medium|large|thumb|preview)/gi, '')
-                .replace(/\.[^.]+$/, '') // Remove extension
-                .toLowerCase()
-            } catch {
-              return url.toLowerCase()
-            }
-          }
+
 
           // Start with hero image, then add others
           const allImages = heroImage ? [heroImage, ...item.images] : [...item.images]
@@ -909,9 +897,10 @@ FORMATTING:
       // Process articles in batches to avoid rate limits
       // Vercel Pro: 300 second timeout, ~8s per article = ~35-40 articles max
       // With queue system, unprocessed articles will be picked up in next run
-      const MAX_ARTICLES = 40
-      const BATCH_SIZE = 4
-      const BATCH_DELAY = 1200 // 1.2 seconds between batches
+      // Vercel Pro settings
+      const MAX_ARTICLES = 100
+      const BATCH_SIZE = 5
+      const BATCH_DELAY = 1000
 
       // Articles are already sorted by addedAt (oldest first) from queue
       // No need to re-sort - we want to process oldest first to prevent expiry
@@ -1000,7 +989,7 @@ FORMATTING:
     // ========================================
     // STEP 6.5: Clean up queue
     // ========================================
-    await step.run('cleanup-queue', async () => {
+    const cleanup = await step.run('cleanup-queue', async () => {
       const client = new MongoClient(process.env.MONGODB_URI!)
       await client.connect()
       const db = client.db('brightwire')
@@ -1040,10 +1029,12 @@ FORMATTING:
       console.log(`[Queue] ${remaining} articles remaining in queue`)
 
       await client.close()
+
+      return { remaining }
     })
 
     // ========================================
-    // STEP 7: Notify clients via Pusher (real-time)
+    // STEP 7: Notify clients via Pusher
     // ========================================
     if (saved > 0) {
       await step.run('notify-clients', async () => {
@@ -1052,6 +1043,38 @@ FORMATTING:
           category: s.category,
         }))
         await notifyNewArticles(saved, articlePreviews)
+      })
+    }
+
+    // ========================================
+    // STEP 8: Check for more work (Looping)
+    // ========================================
+    const remainingCount = (cleanup?.remaining as number) || 0
+
+    if (remainingCount > 0) {
+      await step.run('trigger-next-batch', async () => {
+        console.log(`🔄 Triggering next batch immediately (${remainingCount} remaining)...`)
+        await inngest.send({
+          name: 'app/manual.fetch',
+          data: { reason: 'queue-continuation' }
+        })
+      })
+    }
+
+    // ========================================
+    // STEP 8: Check for more work (Looping)
+    // ========================================
+    // If there are still items in the queue, trigger another run immediately
+    // This allows us to churn through 1000s of items in batches of 100 without hitting timeouts
+    const remainingCount = (cleanup?.remaining as number) || 0
+
+    if (remainingCount > 0) {
+      await step.run('trigger-next-batch', async () => {
+        console.log(`🔄 Triggering next batch immediately (${remainingCount} remaining)...`)
+        await inngest.send({
+          name: 'app/manual.fetch',
+          data: { reason: 'queue-continuation' }
+        })
       })
     }
 

@@ -224,8 +224,11 @@
         <div v-if="showStreakModal" class="fixed inset-0 bg-black/50 overflow-y-auto h-full w-full z-[100] flex items-center justify-center p-4" @click.self="showStreakModal = false">
           <div class="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center transform transition-all scale-100">
             <!-- Confetti/Decor -->
-            <div class="absolute -top-12 left-1/2 -translate-x-1/2 text-6xl animate-bounce">
-              🔥
+            <!-- Confetti/Decor -->
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2">
+              <div class="text-6xl animate-bounce">
+                🔥
+              </div>
             </div>
             
             <h3 class="text-2xl font-bold text-amber-950 mt-4 mb-2 font-display">

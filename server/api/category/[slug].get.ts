@@ -3,10 +3,10 @@ import { getStoriesCollection } from '~/server/utils/db'
 export default defineEventHandler(async (event) => {
   // Prevent caching to ensure fresh data
   setHeader(event, 'Cache-Control', 'no-cache, no-store, must-revalidate')
-  
+
   const slug = getRouterParam(event, 'slug')
   const query = getQuery(event)
-  
+
   const limit = Math.min(Number(query.limit) || 12, 50)
   const page = Math.max(Number(query.page) || 1, 1)
   const skip = (page - 1) * limit
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const stories = await getStoriesCollection()
-    
+
     const filter: Record<string, any> = {}
     if (slug && slug !== 'all') {
       filter.category = slug
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
     const results = await stories
       .find(filter)
-      .sort({ publishedAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .toArray()

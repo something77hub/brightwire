@@ -35,7 +35,7 @@ export default defineCachedEventHandler(async (event) => {
     // Get stories - sort by publishedAt (newest first)
     const results = await stories
       .find(filter)
-      .sort({ publishedAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .toArray()

@@ -7,7 +7,7 @@
         <h1 class="text-3xl sm:text-4xl font-bold text-amber-950 font-display mb-2">
           Terms of Service
         </h1>
-        <p class="text-amber-600 mb-8">Last updated: December 2025</p>
+        <p class="text-amber-600 mb-8">Last updated: January 2026</p>
 
         <div class="prose prose-amber max-w-none space-y-8">
           <section>
@@ -18,48 +18,54 @@
           </section>
 
           <section>
+            <h2 class="text-xl font-bold text-amber-900">Nature of Service & AI Content</h2>
+            <p class="text-amber-800/80">BrightWire is a positive news aggregator that uses Artificial Intelligence (AI) to curate, summarize, and rewrite news stories from various third-party sources. You understand that:</p>
+            <ul class="list-disc pl-6 text-amber-800/80 space-y-2">
+              <li>Our content is generated partially or wholly by AI technology based on public reporting</li>
+              <li>We utilize state-of-the-art AI technology to curate and summarize the world's most positive news with speed and precision</li>
+              <li>We transparently attribute original sources, ensuring you can always trace stories back to their origin</li>
+            </ul>
+          </section>
+
+          <section>
             <h2 class="text-xl font-bold text-amber-900">Use of Our Service</h2>
-            <p class="text-amber-800/80">BrightWire provides a positive news aggregation service. You may use our service for personal, non-commercial purposes. You agree not to:</p>
+            <p class="text-amber-800/80">You may use our service for personal, non-commercial purposes. You agree not to:</p>
             <ul class="list-disc pl-6 text-amber-800/80 space-y-2">
               <li>Reproduce, distribute, or republish our content without permission</li>
               <li>Use automated systems to scrape or download content</li>
               <li>Attempt to interfere with or disrupt our services</li>
               <li>Use our service for any illegal purpose</li>
-              <li>Impersonate others or provide false information</li>
             </ul>
           </section>
 
           <section>
-            <h2 class="text-xl font-bold text-amber-900">Content and Copyright</h2>
+            <h2 class="text-xl font-bold text-amber-900">Intellectual Property</h2>
             <p class="text-amber-800/80">
-              All content on BrightWire, including articles, images, graphics, and design, is protected by copyright and other intellectual property laws. Our articles are original editorial content created by our team.
+              The summaries, original commentary, design, and AI-generated narratives on BrightWire are protected by copyright. We respect the intellectual property of original news publishers and utilize their content under principles of fair use (commentary, transformative work, and summary).
             </p>
             <p class="text-amber-800/80 mt-2">
-              We attribute original reporting to the source publication. If you believe any content infringes your copyright, please contact us at <a href="mailto:legal@brightwire.news" class="text-amber-600 hover:underline">legal@brightwire.news</a>.
+              If you believe any content infringes your copyright or exceeds fair use, please contact us consistently at <a href="mailto:legal@brightwire.news" class="text-amber-600 hover:underline">legal@brightwire.news</a> and we will address it immediately.
             </p>
           </section>
 
           <section>
             <h2 class="text-xl font-bold text-amber-900">User Submissions</h2>
             <p class="text-amber-800/80">
-              When you submit a story, comment, or other content to BrightWire, you grant us a non-exclusive, royalty-free license to use, modify, and publish that content. You represent that you have the right to submit such content and that it does not violate any laws or third-party rights.
+              When you submit a story, comment, or other content to BrightWire, you grant us a license to use, modify, and publish that content. You represent that you have the right to submit such content.
             </p>
           </section>
 
           <section>
             <h2 class="text-xl font-bold text-amber-900">Newsletter</h2>
             <p class="text-amber-800/80">
-              By subscribing to our newsletter, you agree to receive periodic emails from us. You can unsubscribe at any time by clicking the unsubscribe link in any email or by contacting us.
+              By subscribing to our newsletter, you agree to receive periodic emails. You can unsubscribe at any time.
             </p>
           </section>
 
           <section>
-            <h2 class="text-xl font-bold text-amber-900">Disclaimer</h2>
+            <h2 class="text-xl font-bold text-amber-900">Disclaimer of Warranties</h2>
             <p class="text-amber-800/80">
-              BrightWire is provided "as is" without warranties of any kind. We do not guarantee the accuracy, completeness, or timeliness of any content. We are not responsible for decisions made based on our content.
-            </p>
-            <p class="text-amber-800/80 mt-2">
-              While we strive to feature positive and accurate news, we cannot verify every claim in every story. We encourage readers to consult multiple sources for important decisions.
+              BrightWire is provided "as is". We do not guarantee the accuracy, completeness, or timeliness of any content, particularly given the AI-driven nature of our processing. We are not responsible for decisions made based on our content.
             </p>
           </section>
 

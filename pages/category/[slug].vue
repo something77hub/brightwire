@@ -155,6 +155,11 @@ const categoryData: Record<string, { title: string; emoji: string; description: 
     emoji: '💛',
     description: 'Heartwarming human moments, random acts of kindness, generosity, and compassion in action.',
   },
+  sports: {
+    title: 'Sports & Athletics',
+    emoji: '🏆',
+    description: 'Yes, it is sports, and of course it is good news! Celebrating wins, records, and teamwork.',
+  },
 }
 
 const categoryInfo = computed(() => categoryData[category.value] || {

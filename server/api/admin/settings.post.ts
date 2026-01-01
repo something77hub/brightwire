@@ -16,26 +16,41 @@ export default defineEventHandler(async (event) => {
     const db = client.db('brightwire')
     const settings = db.collection('settings')
 
-    // List of keys to save and their types
-    const keys = [
-      { key: 'fetch_interval_minutes', val: Number(body.fetchInterval) },
-      { key: 'siteName', val: body.siteName },
-      { key: 'siteDescription', val: body.siteDescription },
-      { key: 'siteUrl', val: body.siteUrl },
-      { key: 'newsletterSuccessMessage', val: body.newsletterSuccessMessage },
-      { key: 'social', val: body.social },
-      { key: 'contactEmail', val: body.contactEmail }
-    ]
-
-    for (const item of keys) {
-      if (item.val !== undefined) {
-        await settings.updateOne(
-          { key: item.key },
-          { $set: { value: item.val, updatedAt: new Date() } },
-          { upsert: true }
-        )
-      }
+    // 1. Save Fetch Interval (Keep separate as it's a system config)
+    if (body.fetchInterval) {
+      await settings.updateOne(
+        { key: 'fetch_interval_minutes' },
+        { $set: { value: Number(body.fetchInterval), updatedAt: new Date() } },
+        { upsert: true }
+      )
     }
+
+    // 2. Save Site Settings (Single Doc)
+    // We construct the update object dynamically to allow partial updates if needed,
+    // but the UI sends everything.
+    const updateData = {
+      siteName: body.siteName,
+      siteDescription: body.siteDescription,
+      siteUrl: body.siteUrl,
+      contactEmail: body.contactEmail,
+      newsletterSuccessMessage: body.newsletterSuccessMessage,
+
+      // Social
+      socialTwitter: body.socialTwitter,
+      socialFacebook: body.socialFacebook,
+      socialInstagram: body.socialInstagram,
+      socialLinkedin: body.socialLinkedin,
+      socialYoutube: body.socialYoutube,
+      socialTiktok: body.socialTiktok,
+
+      updatedAt: new Date()
+    }
+
+    await settings.updateOne(
+      { _id: 'site-settings' as any },
+      { $set: updateData },
+      { upsert: true }
+    )
 
     return { success: true, message: 'Settings saved' }
   } catch (e: any) {

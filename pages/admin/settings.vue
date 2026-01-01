@@ -65,27 +65,34 @@
           <h2 class="font-semibold text-gray-900">Social Media & Contact</h2>
         </div>
         <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div>
+          <div class="sm:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
             <input v-model="form.contactEmail" type="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
           </div>
-          <div><!-- Spacer --></div>
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Twitter URL</label>
-            <input v-model="form.social.twitter" type="url" placeholder="https://twitter.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
+            <input v-model="form.socialTwitter" type="url" placeholder="https://twitter.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Facebook URL</label>
-            <input v-model="form.social.facebook" type="url" placeholder="https://facebook.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
+            <input v-model="form.socialFacebook" type="url" placeholder="https://facebook.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
-            <input v-model="form.social.instagram" type="url" placeholder="https://instagram.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
+            <input v-model="form.socialInstagram" type="url" placeholder="https://instagram.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
-            <input v-model="form.social.linkedin" type="url" placeholder="https://linkedin.com/in/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
+            <input v-model="form.socialLinkedin" type="url" placeholder="https://linkedin.com/in/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">YouTube URL</label>
+            <input v-model="form.socialYoutube" type="url" placeholder="https://youtube.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">TikTok URL</label>
+            <input v-model="form.socialTiktok" type="url" placeholder="https://tiktok.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
           </div>
         </div>
       </section>
@@ -162,12 +169,13 @@ const form = ref({
   siteUrl: '',
   contactEmail: '',
   newsletterSuccessMessage: '',
-  social: {
-    twitter: '',
-    facebook: '',
-    instagram: '',
-    linkedin: ''
-  }
+  // Flat structure to match DB
+  socialTwitter: '',
+  socialFacebook: '',
+  socialInstagram: '',
+  socialLinkedin: '',
+  socialYoutube: '',
+  socialTiktok: ''
 })
 
 // Load data
@@ -181,12 +189,13 @@ async function loadData() {
       siteUrl: data.siteUrl || '',
       contactEmail: data.contactEmail || '',
       newsletterSuccessMessage: data.newsletterSuccessMessage || '',
-      social: {
-        twitter: data.social?.twitter || '',
-        facebook: data.social?.facebook || '',
-        instagram: data.social?.instagram || '',
-        linkedin: data.social?.linkedin || '',
-      }
+      
+      socialTwitter: data.socialTwitter || '',
+      socialFacebook: data.socialFacebook || '',
+      socialInstagram: data.socialInstagram || '',
+      socialLinkedin: data.socialLinkedin || '',
+      socialYoutube: data.socialYoutube || '',
+      socialTiktok: data.socialTiktok || ''
     }
   } catch (e) {
     console.error(e)

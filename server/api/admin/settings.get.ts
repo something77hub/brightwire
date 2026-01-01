@@ -12,30 +12,30 @@ export default defineEventHandler(async (event) => {
     await client.connect()
     const db = client.db('brightwire')
     const settings = db.collection('settings')
+    // Get main settings doc
+    const doc = await settings.findOne({ _id: 'site-settings' as any }) || {}
 
-    // Get all settings
-    const allSettings = await settings.find({}).toArray()
-
-    // Convert array of key/value pairs to object
-    // { key: 'siteName', value: '...' } -> { siteName: '...' }
-    const settingsMap = allSettings.reduce((acc, item) => {
-      acc[item.key] = item.value
-      return acc
-    }, {} as Record<string, any>)
+    // Get independent fetch interval setting (or could merge into doc later)
+    const intervalDoc = await settings.findOne({ key: 'fetch_interval_minutes' })
 
     return {
-      fetchInterval: settingsMap.fetch_interval_minutes || 60,
-      siteName: settingsMap.siteName || 'BrightWire',
-      siteDescription: settingsMap.siteDescription || 'Good news daily - positive journalism that inspires.',
-      siteUrl: settingsMap.siteUrl || '',
-      newsletterSuccessMessage: settingsMap.newsletterSuccessMessage || "You're in! 🎉",
-      social: settingsMap.social || {
-        twitter: '',
-        facebook: '',
-        instagram: '',
-        linkedin: ''
-      },
-      contactEmail: settingsMap.contactEmail || ''
+      // Config
+      fetchInterval: intervalDoc?.value || 60,
+
+      // General
+      siteName: doc.siteName || 'BrightWire',
+      siteDescription: doc.siteDescription || 'Good news daily - positive journalism that inspires.',
+      siteUrl: doc.siteUrl || '',
+      contactEmail: doc.contactEmail || '',
+      newsletterSuccessMessage: doc.newsletterSuccessMessage || "You're in! 🎉",
+
+      // Social (Flat structure to match site-settings.get.ts)
+      socialTwitter: doc.socialTwitter || '',
+      socialFacebook: doc.socialFacebook || '',
+      socialInstagram: doc.socialInstagram || '',
+      socialLinkedin: doc.socialLinkedin || '',
+      socialYoutube: doc.socialYoutube || '',
+      socialTiktok: doc.socialTiktok || ''
     }
   } catch (e: any) {
     throw createError({ statusCode: 500, message: e.message })

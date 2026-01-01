@@ -21,7 +21,6 @@
     </div>
 
     <!-- Article -->
-    <article v-else-if="story" class="pb-16">
       <!-- Hero Image -->
       <div v-if="story.imageUrl" class="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] overflow-hidden">
         <img 
@@ -103,17 +102,7 @@
           </p>
         </div>
 
-        <!-- Inline Hero Image -->
-        <figure v-if="story.imageUrl" class="my-8">
-          <img 
-            :src="story.imageUrl" 
-            :alt="story.title"
-            class="w-full rounded-xl shadow-lg"
-          />
-          <figcaption v-if="story.imageCaption" class="text-center text-sm text-amber-600/70 mt-3">
-            {{ story.imageCaption }}
-          </figcaption>
-        </figure>
+
 
         <!-- Main Content -->
         <div 

@@ -312,32 +312,11 @@ watch(data, (newData) => {
   }
 }, { immediate: true })
 
-// Pusher channel reference
-let pusherChannel: any = null
-
 onMounted(() => {
   // Initialize allStories if data is already available (SSR case)
   if (data.value?.stories?.length && allStories.value.length === 0) {
     allStories.value = data.value.stories
     latestStoryId.value = data.value.stories[0]?._id || null
-  }
-  
-  // Subscribe to Pusher for real-time updates
-  if ($pusher) {
-    pusherChannel = $pusher.subscribe('brightwire')
-    pusherChannel.bind('new-articles', (data: { count: number; articles: Array<{ title: string; category: string }> }) => {
-      console.log('[Pusher] New articles:', data)
-      // Only show notification if on "all" category
-      if (activeCategory.value === 'all') {
-        newStoriesCount.value = data.count
-      }
-    })
-    console.log('[Pusher] Subscribed to brightwire channel')
-  } else {
-    console.log('[Pusher] Not configured, using polling fallback')
-    // Fallback to polling if Pusher not configured
-    const pollInterval = setInterval(checkForNewStories, 2 * 60 * 1000)
-    onUnmounted(() => clearInterval(pollInterval))
   }
   
   // Handle scroll to newsletter from URL hash

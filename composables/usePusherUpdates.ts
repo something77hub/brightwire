@@ -8,9 +8,12 @@ interface NewArticlesData {
 
 export function usePusherUpdates(onNewArticles?: (data: NewArticlesData) => void) {
   const { $pusher } = useNuxtApp()
-  const newArticlesCount = ref(0)
-  const showNewArticlesBanner = ref(false)
-  
+
+  // Use global state so it's shared across all components/pages
+  const newArticlesCount = useState<number>('pusher-new-articles-count', () => 0)
+  const showNewArticlesBanner = useState<boolean>('pusher-show-banner', () => false)
+  const isSubscribed = useState<boolean>('pusher-is-subscribed', () => false)
+
   let channel: any = null
 
   const subscribe = () => {
@@ -19,42 +22,48 @@ export function usePusherUpdates(onNewArticles?: (data: NewArticlesData) => void
       return false
     }
 
+    // specific callback for this instance
+    if (onNewArticles && channel) {
+      channel.bind('new-articles', onNewArticles)
+    }
+
+    // Only subscribe once globally
+    if (isSubscribed.value) return true
+
     channel = $pusher.subscribe('brightwire')
     channel.bind('new-articles', (data: NewArticlesData) => {
       console.log('[Pusher] New articles:', data)
       newArticlesCount.value = data.count
       showNewArticlesBanner.value = true
-      
+
+      // If a callback was passed (legacy support), call it
       if (onNewArticles) {
         onNewArticles(data)
       }
     })
-    
+
     console.log('[Pusher] Subscribed to brightwire channel')
+    isSubscribed.value = true
     return true
   }
 
   const unsubscribe = () => {
+    // We don't want to unsubscribe globally usually, 
+    // but if we did:
+    /*
     if (channel) {
       channel.unbind_all()
       channel.unsubscribe()
       channel = null
+      isSubscribed.value = false
     }
+    */
   }
 
   const dismissBanner = () => {
     showNewArticlesBanner.value = false
     newArticlesCount.value = 0
   }
-
-  // Auto-subscribe on mount, unsubscribe on unmount
-  onMounted(() => {
-    subscribe()
-  })
-
-  onUnmounted(() => {
-    unsubscribe()
-  })
 
   return {
     newArticlesCount,

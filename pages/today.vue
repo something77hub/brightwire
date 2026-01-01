@@ -211,26 +211,7 @@ async function loadMore() {
 }
 
 onMounted(() => {
-  // Subscribe to Pusher for real-time updates
-  if ($pusher) {
-    pusherChannel = $pusher.subscribe('brightwire')
-    pusherChannel.bind('new-articles', (data: { count: number }) => {
-      console.log('[Pusher] New articles:', data)
-      newStoriesCount.value = data.count
-    })
-    console.log('[Pusher] Subscribed to brightwire channel')
-  } else {
-    // Fallback to polling if Pusher not configured
-    const pollInterval = setInterval(checkForNewStories, 2 * 60 * 1000)
-    onUnmounted(() => clearInterval(pollInterval))
-  }
-})
-
-onUnmounted(() => {
-  if (pusherChannel) {
-    pusherChannel.unbind_all()
-    pusherChannel.unsubscribe()
-  }
+  // Real-time updates handled globally in app.vue
 })
 
 useHead({

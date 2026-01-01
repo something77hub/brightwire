@@ -3,12 +3,7 @@
     <Header />
     <CategoryPills v-model="category" @select="navigateToCategory" />
     
-    <!-- New Articles Banner -->
-    <NewArticlesBanner 
-      :show="showNewArticlesBanner" 
-      :count="newArticlesCount"
-      @click="loadNewArticles"
-    />
+    <CategoryPills v-model="category" @select="navigateToCategory" />
     
     <!-- Category Sponsor -->
     <CategorySponsor :category="category" />
@@ -129,15 +124,7 @@ const page = ref(1)
 const loadingMore = ref(false)
 const allStories = ref<any[]>([])
 
-// Pusher real-time updates
-const { newArticlesCount, showNewArticlesBanner, dismissBanner } = usePusherUpdates()
-
-async function loadNewArticles() {
-  dismissBanner()
-  allStories.value = []
-  page.value = 1
-  await refresh()
-}
+const allStories = ref<any[]>([])
 
 const categoryData: Record<string, { title: string; emoji: string; description: string }> = {
   'good-news': {

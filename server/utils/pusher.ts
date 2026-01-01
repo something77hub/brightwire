@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import Pusher from 'pusher'
 
 let pusherInstance: Pusher | null = null

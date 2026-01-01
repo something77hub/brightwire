@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { inngest } from './client'
 import Parser from 'rss-parser'
 import Anthropic from '@anthropic-ai/sdk'
@@ -288,7 +289,8 @@ CATEGORIES - Pick the MOST SPECIFIC one:
 3. "innovation" - TECH/SCIENCE: inventions, discoveries, medical advances, research, space, AI
 4. "solutions" - SYSTEMIC: laws passed, programs launched, policy wins, social initiatives
 5. "kindness" - HEARTWARMING: acts of kindness, generosity, reunions, feel-good moments
-6. "good-news" - General positive stories that don't fit above
+6. "sports" - ATHLETES: matches, championships (super bowl/world cup), records broken, sportsmanship
+7. "good-news" - General positive stories that don't fit above
 
 Respond with JSON array ONLY (no other text):
 [{"idx": 1, "score": 75, "category": "innovation"}, ...]`

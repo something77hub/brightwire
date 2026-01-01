@@ -46,16 +46,22 @@ export const fetchNews = inngest.createFunction(
     { event: 'app/manual.fetch' }, // Manual trigger
   ],
 
-  async ({ step }) => {
+  async ({ event, step }) => {
     const config = process.env
 
     // ========================================
     // STEP 0: Check Config & Interval
     // ========================================
     const shouldRun = await step.run('check-config', async () => {
-      // Manual triggers always run
-      // Note: Inngest doesn't easily expose the trigger type here without more context, 
-      // but we can assume scheduled runs need checking.
+      // Check if this is a manual run or queue continuation
+      const isManual = event.name === 'app/manual.fetch'
+      const isQueueContinuation = event.data && (event.data as any).reason === 'queue-continuation'
+
+      console.log(`[Fetch] Triggered by ${event.name}. Manual? ${isManual}. Continuation? ${isQueueContinuation}`)
+
+      if (isManual || isQueueContinuation) {
+        return { run: true, message: 'Manual run or queue continuation - bypassing time check' }
+      }
 
       const client = new MongoClient(config.MONGODB_URI!)
       try {
@@ -78,7 +84,7 @@ export const fetchNews = inngest.createFunction(
           return { run: false, message: `Skipping: Only ${Math.floor(minsSinceLast)}m since last run (Interval: ${intervalMins}m)` }
         }
 
-        // Update last run time NOW to prevent race conditions or double runs
+        // Update last run time ONLY for scheduled runs (prevent frequent updates during loops)
         await settings.updateOne(
           { key: 'last_fetch_run' },
           { $set: { value: now } },
@@ -126,6 +132,12 @@ export const fetchNews = inngest.createFunction(
     // STEP 1: Fetch all RSS feeds
     // ========================================
     const candidates = await step.run('fetch-rss-feeds', async () => {
+      // Check if we should skip RSS fetching (if this is just a queue drain run)
+      if (config.SKIP_RSS_ON_DRAIN === 'true' || (event.data && (event.data as any).reason === 'queue-continuation')) {
+        console.log('Skipping RSS fetch (Queue Continuation Mode)')
+        return []
+      }
+
       const client = new MongoClient(config.MONGODB_URI!)
       await client.connect()
       const db = client.db('brightwire')

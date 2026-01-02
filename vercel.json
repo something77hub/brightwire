@@ -1,3 +1,9 @@
 {
-  "framework": "nuxtjs"
+  "framework": "nuxtjs",
+  "crons": [
+    {
+      "path": "/api/inngest",
+      "schedule": "*/15 * * * *"
+    }
+  ]
 }

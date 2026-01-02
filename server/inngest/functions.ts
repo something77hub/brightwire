@@ -583,6 +583,12 @@ Respond with JSON array ONLY (no other text):
               return
             }
 
+            // STRICT VIDEO VALIDATION: Skip video articles without embed URL
+            if (scrapedData.isVideo && !scrapedData.videoEmbedUrl) {
+              console.log(`SKIP video article missing embed: ${candidate.source} - ${candidate.title.slice(0, 50)}...`)
+              return
+            }
+
             // Additional check for content length (scraper handles this but good to be sure)
             if (scrapedData.content.length < 100 && !scrapedData.isVideo) {
               console.log(`SKIP too short (${scrapedData.content.length} chars): ${candidate.source} - ${candidate.title.slice(0, 30)}...`)
@@ -590,7 +596,7 @@ Respond with JSON array ONLY (no other text):
             }
 
             if (scrapedData.isVideo) {
-              console.log(`VIDEO found: ${candidate.source} ${scrapedData.videoEmbedUrl ? '(with embed)' : '(no embed)'}`)
+              console.log(`✅ VIDEO validated: ${candidate.source} (embed: ${scrapedData.videoEmbedUrl?.slice(0, 50)}...)`)
             }
 
             results.push({
@@ -642,36 +648,38 @@ Respond with JSON array ONLY (no other text):
           // Hero image is always the first one (used at top of article)
           const heroImage = item.candidate.image || item.images[0]
 
-          // Deduplicate images - extract base filename to compare
-          const getImageBasename = (url: string): string => {
+          // Deduplicate images using FULL URL normalization (not just basename)
+          const normalizeImageUrl = (url: string): string => {
+            if (!url) return ''
             try {
-              const pathname = new URL(url).pathname
-              // Remove size indicators, query params, and get base name
-              return pathname
-                .replace(/[-_]\d+x\d+/g, '') // Remove size like -800x600
-                .replace(/[-_](small|medium|large|thumb|preview)/gi, '')
-                .replace(/\.[^.]+$/, '') // Remove extension
+              // Remove Cloudinary transformations, query params, size indicators
+              return url
+                .replace(/\/w_\d+,.*?\//g, '/') // Cloudinary transformations
+                .replace(/[-_]\d+x\d+/g, '') // Size indicators like -800x600
+                .replace(/\?.*$/, '') // Query parameters
+                .replace(/#.*$/, '') // Anchors
                 .toLowerCase()
+                .trim()
             } catch {
-              return url.toLowerCase()
+              return url.toLowerCase().trim()
             }
           }
-
-
 
           // Start with hero image, then add others
           const allImages = heroImage ? [heroImage, ...item.images] : [...item.images]
 
-          // Filter to keep only the first occurrence of each "basename"
-          const seenBasenames = new Set<string>()
+          // Filter to keep only the first occurrence of each normalized URL
+          const seenUrls = new Set<string>()
           const uniqueImages: string[] = []
 
           for (const img of allImages) {
             if (!img) continue
-            const basename = getImageBasename(img)
-            if (!seenBasenames.has(basename)) {
-              seenBasenames.add(basename)
-              uniqueImages.push(img)
+            const normalized = normalizeImageUrl(img)
+            if (!normalized) continue
+
+            if (!seenUrls.has(normalized)) {
+              seenUrls.add(normalized)
+              uniqueImages.push(img) // Keep original URL with Cloudinary params
             }
           }
 
@@ -1055,13 +1063,13 @@ FORMATTING:
         console.log(`[Queue] Removed ${failedResult.deletedCount} articles after 2 failed attempts`)
       }
 
-      // Remove articles that are too old (>7 days)
-      const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 7 days
+      // Remove articles that are too old (>48 hours)
+      const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000) // 48 hours
       const staleResult = await queue.deleteMany({
         addedAt: { $lt: cutoff }
       })
       if (staleResult.deletedCount > 0) {
-        console.log(`[Queue] Removed ${staleResult.deletedCount} stale articles (>7 days)`)
+        console.log(`[Queue] Removed ${staleResult.deletedCount} stale articles (>48 hours)`)
       }
 
       // Log queue status

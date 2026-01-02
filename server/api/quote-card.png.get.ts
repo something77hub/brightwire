@@ -137,7 +137,7 @@ export default defineEventHandler(async (event) => {
   <text x="80" y="${height - 75}" font-family="Arial, 'Inter', sans-serif" font-size="22" fill="white" fill-opacity="0.85">— ${escapeHtml(source)}</text>
   
   <!-- Branding -->
-  <text x="${width - 60}" y="${height - 55}" font-family="Arial, 'Inter', sans-serif" font-size="28" font-weight="700" fill="white" text-anchor="end">https://brightwire.news</text>
+  <text x="${width - 60}" y="${height - 55}" font-family="Arial, 'Inter', sans-serif" font-size="32" font-weight="700" fill="white" text-anchor="end">https://brightwire.news</text>
   <text x="${width - 60}" y="${height - 20}" font-family="Arial, 'Inter', sans-serif" font-size="32" font-weight="700" fill="#F59E0B" text-anchor="end">☀️ BrightWire</text>
 </svg>`
       } else {
@@ -203,7 +203,7 @@ function generateSolidSvg(
   <text x="80" y="${height - 75}" font-family="Arial, 'Inter', sans-serif" font-size="22" fill="#6B7280">— ${escapeHtml(source)}</text>
   
   <!-- Branding -->
-  <text x="${width - 60}" y="${height - 55}" font-family="Arial, 'Inter', sans-serif" font-size="28" font-weight="700" fill="${colors.text}" text-anchor="end">https://brightwire.news</text>
+  <text x="${width - 60}" y="${height - 55}" font-family="Arial, 'Inter', sans-serif" font-size="32" font-weight="700" fill="${colors.text}" text-anchor="end">https://brightwire.news</text>
   <text x="${width - 60}" y="${height - 20}" font-family="Arial, 'Inter', sans-serif" font-size="32" font-weight="700" fill="${colors.accent}" text-anchor="end">☀️ BrightWire</text>
 </svg>`
 }

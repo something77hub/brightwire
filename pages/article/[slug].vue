@@ -831,6 +831,12 @@ useHead({
   meta: [
     { name: 'description', content: computed(() => story.value?.summary || '') },
     { name: 'author', content: computed(() => story.value?.author || 'BrightWire') },
+    { name: 'keywords', content: computed(() => {
+      if (!story.value) return 'positive news, good news, uplifting news'
+      const tags = story.value.tags || []
+      const category = formatCategory(story.value.category)
+      return [...tags, category, 'positive news', 'good news', 'uplifting news'].join(', ')
+    }) },
     // Open Graph - Dynamic headline image for better CTR!
     { property: 'og:type', content: 'article' },
     { property: 'og:title', content: computed(() => story.value?.title || 'BrightWire') },

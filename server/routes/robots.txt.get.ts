@@ -10,6 +10,7 @@ Allow: /
 
 # Sitemaps
 Sitemap: ${siteUrl}/sitemap.xml
+Sitemap: ${siteUrl}/news-sitemap.xml
 
 # Disallow admin pages
 Disallow: /admin
@@ -23,6 +24,6 @@ Allow: /feed.xml
 
   setHeader(event, 'Content-Type', 'text/plain; charset=utf-8')
   setHeader(event, 'Cache-Control', 'public, max-age=86400') // Cache for 24 hours
-  
+
   return robotsTxt
 })

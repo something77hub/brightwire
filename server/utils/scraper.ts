@@ -121,6 +121,11 @@ const GENERIC_SELECTORS = {
     '.newsletter', '.subscribe',
     '.sidebar', '.widget',
     'form',
+    // Remove promotional images (Google News, App Store badges, etc.)
+    'img[src*="google-news"]', 'img[src*="googleplay"]', 'img[src*="play.google"]',
+    'img[src*="appstore"]', 'img[src*="apps.apple"]',
+    'img[src*="badge"]', 'img[src*="download"]',
+    'img[alt*="Google News"]', 'img[alt*="App Store"]', 'img[alt*="Play Store"]',
   ],
   images: 'article img[src], main img[src], .content img[src]',
 }
@@ -338,7 +343,10 @@ async function doScrape(url: string, summaryFallback?: string): Promise<ScrapedA
       'tracker', 'ad-', 'advert', 'promo', 'spinner', 'loader',
       'banner', 'footer', 'header', 'nav', 'menu', 'related',
       'sponsored', 'partner', 'brand', 'default', 'placeholder',
-      'background', 'bg-', 'overlay', 'chart', 'graph'
+      'background', 'bg-', 'overlay', 'chart', 'graph',
+      // Store Badges & News Aggregators
+      'google-news', 'google_news', 'googleplay', 'appstore', 'play.google',
+      'badge', 'download', 'subscribe', 'follow', 'rss'
     ]
 
     $(imageSelector).each((_, el) => {

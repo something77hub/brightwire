@@ -38,18 +38,28 @@ export default defineEventHandler(async (event) => {
     // Use Claude to reclassify
     const anthropic = new Anthropic({ apiKey: config.anthropicApiKey })
 
-    const prompt = `Reclassify these news headlines into the MOST SPECIFIC category.
-    
-${candidates.map((c, i) => `${i + 1}. Title: ${c.title}\nSummary: ${c.summary}`).join('\n\n')}
+    const prompt = `You are a senior editor for BrightWire. Your job is to fix the categorization of these articles.
 
-CATEGORIES - be specific:
-- "heroes": People making a difference, volunteers, activists, community leaders, rescuers
-- "planet": Environment, wildlife, conservation, climate, sustainability, nature
-- "innovation": Technology, science, medicine, research, inventions, discoveries, space, AI
-- "solutions": Policy wins, social programs, systemic fixes, poverty reduction
-- "kindness": Acts of kindness, generosity, reunions, feel-good moments
-- "sports": Athletes, matches, championships, records broken, sportsmanship
-- "good-news": ONLY for general positive stories that don't fit above
+CRITICAL: We now have a "world" category for international news.
+- If the article is about a specific country (not US/UK) or international relations, use "world".
+- If it's about sports, use "sports".
+
+CATEGORIES - Pick the MOST SPECIFIC one:
+1. "heroes" (Volunteers, rescuers, community leaders)
+2. "planet" (Environment, wildlife, climate, nature)
+3. "innovation" (Tech, science, AI, space, medical breakthroughs)
+4. "solutions" (Policy wins, social programs, systemic fixes)
+5. "kindness" (Heartwarming moments, reunions, generosity)
+6. "sports" (Athletes, matches, records, teams)
+7. "world" (International news, specific countries, diplomacy)
+8. "good-news" (General positive stories that don't fit above)
+
+IMPORTANT INSTRUCTIONS:
+- Sports takes priority over Heroes (e.g. Messi saving a game is Sports)
+- World takes priority if the location is the main context (e.g. "Nigeria launches new health program" -> World, not Solutions)
+
+Headlines to reclassify:
+${candidates.map((c, i) => `${i + 1}. ${c.title}\n   Summary: ${c.summary}`).join('\n')}
 
 Respond with JSON array ONLY:
 [{"idx": 1, "category": "heroes"}, ...]`
@@ -77,6 +87,7 @@ Respond with JSON array ONLY:
       'solutions': 'solutions',
       'kindness': 'kindness',
       'sports': 'sports',
+      'world': 'world',
     }
 
     const updates: { id: string; oldCategory: string; newCategory: string; title: string }[] = []

@@ -374,17 +374,8 @@ export const fetchNews = inngest.createFunction(
 
       console.log(`Classifying ${newCandidates.length} headlines.`)
 
-      // Split into forced and unclassified
-      const forcedCandidates = newCandidates.filter(c => c.forcedCategory)
-      const toClassify = newCandidates.filter(c => !c.forcedCategory)
-
-      // 1. Process Forced Categories
-      const forcedResults = forcedCandidates.map(c => ({
-        ...c,
-        score: c.forcedCategory === 'sports' ? 85 : 80, // Default high score for explicitly subscribed content
-        category: c.forcedCategory!,
-      }))
-      console.log(`Bypassing AI for ${forcedResults.length} articles with forced categories`)
+      // ALL candidates are now classified by AI (User Request: "use ai to categorise all rrewrite news no exception")
+      const toClassify = newCandidates
 
       // 2. Process Unclassified with AI
       let aiResults: any[] = []
@@ -422,7 +413,8 @@ CATEGORIES - Pick the MOST SPECIFIC one, or use 'good-news' as fallback.
 4. "solutions"
 5. "kindness"
 6. "sports"
-7. "good-news"
+7. "world"
+8. "good-news"
 
 IMPORTANT INSTRUCTION:
 - If the article is about football, basketball, olympics, or any athletic competition, YOU MUST USE THE CATEGORY 'sports'.
@@ -453,6 +445,7 @@ Respond with JSON array ONLY (no other text):
               'solutions': 'solutions',
               'kindness': 'kindness',
               'sports': 'sports',
+              'world': 'world',
             }
 
             aiResults = results
@@ -468,10 +461,10 @@ Respond with JSON array ONLY (no other text):
         }
       }
 
-      // Merge results
-      const combined = [...forcedResults, ...aiResults]
+      // Merge results (now just aiResults since we have no forcedResults)
+      const combined = aiResults
 
-      console.log(`Total positive articles: ${combined.length} (${forcedResults.length} forced, ${aiResults.length} AI)`)
+      console.log(`Total positive articles: ${combined.length} (All AI classified)`)
       return combined
     })
 

@@ -3,10 +3,10 @@ import { getStoriesCollection } from '~/server/utils/db'
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const siteUrl = config.public.siteUrl || 'https://brightwire.news'
-  
+
   try {
     const stories = await getStoriesCollection()
-    
+
     // Get all articles
     const articles = await stories
       .find({})
@@ -27,6 +27,8 @@ export default defineEventHandler(async (event) => {
       { url: '/category/innovation', changefreq: 'hourly', priority: '0.8' },
       { url: '/category/solutions', changefreq: 'hourly', priority: '0.8' },
       { url: '/category/kindness', changefreq: 'hourly', priority: '0.8' },
+      { url: '/category/sports', changefreq: 'hourly', priority: '0.8' },
+      { url: '/category/world', changefreq: 'hourly', priority: '0.8' },
       { url: '/about', changefreq: 'monthly', priority: '0.5' },
       { url: '/contact', changefreq: 'monthly', priority: '0.5' },
       { url: '/submit', changefreq: 'monthly', priority: '0.5' },
@@ -62,7 +64,7 @@ ${articlesXml}
 
     setHeader(event, 'Content-Type', 'application/xml; charset=utf-8')
     setHeader(event, 'Cache-Control', 'public, max-age=3600') // Cache for 1 hour
-    
+
     return sitemap
   } catch (error) {
     console.error('Sitemap error:', error)

@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   googleFonts: {
     families: {
       'Playfair Display': [400, 500, 600, 700],
-      'Plus Jakarta Sans': [300, 400, 500, 600, 700],
+      'Inter': [300, 400, 500, 600, 700],
     },
     display: 'swap',
   },
@@ -99,7 +99,7 @@ export default defineNuxtConfig({
     ayrshareApiKey: process.env.AYRSHARE_API_KEY,
     heygenApiKey: process.env.HEYGEN_API_KEY,
     heygenAvatarId: process.env.HEYGEN_AVATAR_ID,
-    
+
     // Public keys (available on client)
     public: {
       siteUrl: process.env.SITE_URL || 'https://brightwire.news',

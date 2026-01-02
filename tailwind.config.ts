@@ -11,7 +11,7 @@ export default <Config>{
     extend: {
       fontFamily: {
         'display': ['"Playfair Display"', 'Georgia', 'serif'],
-        'sans': ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        'sans': ['"Inter"', 'system-ui', 'sans-serif'],
       },
       colors: {
         brand: {

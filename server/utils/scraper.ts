@@ -335,7 +335,10 @@ async function doScrape(url: string, summaryFallback?: string): Promise<ScrapedA
     const JUNK_KEYWORDS = [
       'icon', 'logo', 'avatar', 'author', 'button', 'social',
       'share', 'newsletter', 'widget', 'shim', 'spacer', 'pixel',
-      'tracker', 'ad-', 'advert', 'promo', 'spinner', 'loader'
+      'tracker', 'ad-', 'advert', 'promo', 'spinner', 'loader',
+      'banner', 'footer', 'header', 'nav', 'menu', 'related',
+      'sponsored', 'partner', 'brand', 'default', 'placeholder',
+      'background', 'bg-', 'overlay', 'chart', 'graph'
     ]
 
     $(imageSelector).each((_, el) => {

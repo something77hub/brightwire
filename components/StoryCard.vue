@@ -6,20 +6,17 @@
   >
     <div class="h-full bg-white rounded-2xl overflow-hidden shadow-lg shadow-amber-900/5 hover:shadow-xl hover:shadow-amber-900/10 transition-all duration-300 hover:-translate-y-1 flex flex-col">
       <!-- Image -->
-      <div class="relative h-48 overflow-hidden flex-shrink-0">
+      <div v-if="hasValidImage" class="relative h-48 overflow-hidden flex-shrink-0">
         <img 
-          v-if="story.imageUrl"
           :src="story.imageUrl"
           :alt="story.title"
           class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
+          @error="imageError = true"
         />
-        <div v-else class="w-full h-full bg-gradient-to-br flex items-center justify-center" :class="categoryBgGradient">
-          <span class="text-5xl">{{ categoryEmoji }}</span>
-        </div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
         
-        <!-- Category badge -->
+        <!-- Category badge (Image Overlay) -->
         <span 
           class="absolute bottom-3 left-3 text-xs font-bold px-3 py-1.5 rounded-full text-white shadow-lg flex items-center gap-1.5"
           :class="categoryBadgeClass"
@@ -52,6 +49,21 @@
 
       <!-- Content -->
       <div class="p-5 flex flex-col flex-grow">
+        <!-- Text-only Category Badge -->
+        <div v-if="!hasValidImage" class="mb-3 flex items-center gap-2">
+           <span 
+            class="text-xs font-bold px-2.5 py-1 rounded-full text-white flex items-center gap-1.5 w-fit"
+            :class="categoryBadgeClass"
+          >
+            <span>{{ categoryEmoji }}</span>
+            {{ formatCategory(story.category) }}
+          </span>
+          <!-- Video indicator (Text mode) -->
+          <span v-if="story.videoEmbedUrl" class="text-xs font-bold px-2 py-1 rounded-md bg-red-100 text-red-600 flex items-center gap-1">
+             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Video
+          </span>
+        </div>
+
         <!-- Title -->
         <h3 class="font-bold text-amber-950 mb-3 leading-snug group-hover:text-amber-700 transition-colors line-clamp-2 font-display text-lg flex-grow">
           {{ story.title }}
@@ -98,6 +110,9 @@ const props = withDefaults(defineProps<{
   index: 0,
   showSummary: false,
 })
+
+const imageError = ref(false)
+const hasValidImage = computed(() => props.story.imageUrl && !imageError.value)
 
 const categoryEmojis: Record<string, string> = {
   'good-news': '✨',

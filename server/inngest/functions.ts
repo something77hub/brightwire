@@ -271,55 +271,82 @@ export const fetchNews = inngest.createFunction(
         ...existingQueue.map(e => e.guid)
       ])
 
-      // Also get all existing titles for similarity check
-      const allStories = await stories.find({}, { projection: { title: 1 } }).toArray()
-      const allQueueItems = await queue.find({}, { projection: { title: 1 } }).toArray()
-      const existingTitles = [
-        ...allStories.map(s => s.title?.toLowerCase()),
-        ...allQueueItems.map(q => q.title?.toLowerCase())
-      ].filter(Boolean)
+      // Also get all existing titles for similarity check - NOW WITH VIDEO STATUS
+      const allStories = await stories.find({}, { projection: { title: 1, isVideo: 1 } }).toArray()
+      const allQueueItems = await queue.find({}, { projection: { title: 1, isVideo: 1 } }).toArray()
+
+      const existingItems = [
+        ...allStories.map(s => ({ title: s.title?.toLowerCase(), isVideo: !!s.isVideo })),
+        ...allQueueItems.map(q => ({ title: q.title?.toLowerCase(), isVideo: !!q.isVideo }))
+      ].filter(item => item.title)
 
       await client.close()
 
+      // Helper: detect if a new candidate is likely a video
+      const isLikelyVideo = (c: Candidate): boolean => {
+        const text = (c.title + c.link).toLowerCase()
+        if (c.source === 'YouTube' || c.link.includes('youtube.com') || c.link.includes('youtu.be')) return true
+        if (text.includes('video:') || text.includes('watch:') || text.includes('trailer')) return true
+        return false
+      }
+
       // Helper: check if title is too similar to existing
-      const isTitleDuplicate = (title: string): boolean => {
+      // Returns TRUE if we should SKIP (duplicate), FALSE if we should KEEP (unique or upgrade)
+      const shouldSkipDuplicate = (candidate: Candidate): boolean => {
+        const title = candidate.title
+        const newIsVideo = isLikelyVideo(candidate)
+
         const normalized = title.toLowerCase().trim()
-        // Remove common prefixes/suffixes and punctuation for comparison
         const cleanTitle = normalized
           .replace(/^(breaking|update|watch|video|exclusive|report):\s*/i, '')
           .replace(/[^\w\s]/g, '')
           .trim()
 
-        for (const existing of existingTitles) {
-          const cleanExisting = existing
+        for (const existing of existingItems) {
+          if (!existing.title) continue
+
+          const cleanExisting = existing.title
             .replace(/^(breaking|update|watch|video|exclusive|report):\s*/i, '')
             .replace(/[^\w\s]/g, '')
             .trim()
 
-          // Check for exact match or very high similarity
-          if (cleanTitle === cleanExisting) return true
-
-          // Check if one contains the other (for shortened headlines)
-          if (cleanTitle.length > 20 && cleanExisting.length > 20) {
-            if (cleanTitle.includes(cleanExisting) || cleanExisting.includes(cleanTitle)) return true
+          // Check for match
+          let isMatch = false
+          if (cleanTitle === cleanExisting) isMatch = true
+          else if (cleanTitle.length > 20 && cleanExisting.length > 20 && (cleanTitle.includes(cleanExisting) || cleanExisting.includes(cleanTitle))) isMatch = true
+          else {
+            const words1 = new Set(cleanTitle.split(/\s+/).filter(w => w.length > 3))
+            const words2 = new Set(cleanExisting.split(/\s+/).filter(w => w.length > 3))
+            if (words1.size >= 4 && words2.size >= 4) {
+              const overlap = [...words1].filter(w => words2.has(w)).length
+              const similarity = overlap / Math.min(words1.size, words2.size)
+              if (similarity > 0.75) isMatch = true
+            }
           }
 
-          // Simple word overlap check (>80% same words = duplicate)
-          const words1 = new Set(cleanTitle.split(/\s+/).filter(w => w.length > 3))
-          const words2 = new Set(cleanExisting.split(/\s+/).filter(w => w.length > 3))
-          if (words1.size >= 4 && words2.size >= 4) {
-            const overlap = [...words1].filter(w => words2.has(w)).length
-            const similarity = overlap / Math.min(words1.size, words2.size)
-            if (similarity > 0.8) return true
+          if (isMatch) {
+            // "Video Priority" Logic:
+            // 1. If Existing is Video -> We have the best version. Skip New.
+            if (existing.isVideo) return true
+
+            // 2. If Existing is Text...
+            //    a. And New is Video -> Allow New (Upgrade!). Don't skip.
+            if (newIsVideo) {
+              console.log(`[Duplicate Check] Allowing Video Upgrade: "${title.slice(0, 30)}..." (Existing was text-only)`)
+              return false
+            }
+
+            //    b. And New is Text -> Duplicate. Skip.
+            return true
           }
         }
         return false
       }
 
-      // Filter out: existing GUIDs AND similar titles
+      // Filter out: existing GUIDs AND similar titles (unless video upgrade)
       const filtered = candidates.filter(c => {
         if (existingGuids.has(c.guid)) return false
-        if (isTitleDuplicate(c.title)) {
+        if (shouldSkipDuplicate(c)) {
           console.log(`[Duplicate Title] Skipping: ${c.title.slice(0, 50)}...`)
           return false
         }
@@ -375,6 +402,11 @@ CATEGORIES - Pick the MOST SPECIFIC one, or use 'good-news' as fallback.
 5. "kindness"
 6. "sports"
 7. "good-news"
+
+IMPORTANT INSTRUCTION:
+- If the article is about football, basketball, olympics, or any athletic competition, YOU MUST USE THE CATEGORY 'sports'.
+- Do NOT use 'heroes' for sports stars unless they did something heroic OUTSIDE of the game (e.g. saving a life).
+- For generic rising stars or match wins, use 'sports'.
 
 Respond with JSON array ONLY (no other text):
 [{"idx": 1, "score": 85, "category": "innovation"}, ...]`

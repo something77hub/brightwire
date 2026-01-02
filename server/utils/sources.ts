@@ -352,6 +352,102 @@ export const newsSources: NewsSource[] = [
     feed: 'https://sports.yahoo.com/rss/',
     baseUrl: 'https://sports.yahoo.com',
   },
+  // ========================================
+  // ARTS & CULTURE (Requested)
+  // ========================================
+  {
+    name: 'Artnet News',
+    feed: 'https://news.artnet.com/feed',
+    baseUrl: 'https://news.artnet.com',
+  },
+  {
+    name: 'Hyperallergic',
+    feed: 'https://hyperallergic.com/feed/',
+    baseUrl: 'https://hyperallergic.com',
+  },
+  {
+    name: 'The Art Newspaper',
+    feed: 'https://www.theartnewspaper.com/feed',
+    baseUrl: 'https://www.theartnewspaper.com',
+  },
+  {
+    name: 'Colossal',
+    feed: 'https://www.thisiscolossal.com/feed/',
+    baseUrl: 'https://thisiscolossal.com',
+  },
+
+  // ========================================
+  // INTERNATIONAL / GLOBAL (Requested)
+  // ========================================
+  {
+    name: 'Al Jazeera English',
+    feed: 'https://www.aljazeera.com/xml/rss/all.xml',
+    baseUrl: 'https://aljazeera.com',
+  },
+  {
+    name: 'Deutsche Welle (DW)',
+    feed: 'https://rss.dw.com/xml/rss-en-all',
+    baseUrl: 'https://dw.com',
+  },
+  {
+    name: 'France 24',
+    feed: 'https://www.france24.com/en/rss',
+    baseUrl: 'https://france24.com',
+  },
+  {
+    name: 'Euronews',
+    feed: 'https://www.euronews.com/rss?format=xml',
+    baseUrl: 'https://euronews.com',
+  },
+  {
+    name: 'Kyodo News (Japan)',
+    feed: 'https://english.kyodonews.net/rss/news.xml',
+    baseUrl: 'https://english.kyodonews.net',
+  },
+
+  // ========================================
+  // REGIONAL SPOTLIGHTS (Requested)
+  // ========================================
+  // India (already have The Better India)
+  {
+    name: 'Times of India',
+    feed: 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms',
+    baseUrl: 'https://timesofindia.indiatimes.com',
+  },
+  {
+    name: 'NDTV India',
+    feed: 'https://feeds.feedburner.com/ndtvnews-top-stories',
+    baseUrl: 'https://ndtv.com',
+  },
+
+  // Australia
+  {
+    name: 'ABC News Australia',
+    feed: 'https://www.abc.net.au/news/feed/45910/rss.xml',
+    baseUrl: 'https://www.abc.net.au',
+  },
+  {
+    name: '9News Australia',
+    feed: 'https://www.9news.com.au/rss',
+    baseUrl: 'https://www.9news.com.au',
+  },
+
+  // Dubai / Middle East
+  {
+    name: 'Khaleej Times (Dubai)',
+    feed: 'https://www.khaleejtimes.com/rss',
+    baseUrl: 'https://www.khaleejtimes.com',
+  },
+  {
+    name: 'The National (UAE)',
+    feed: 'https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml',
+    baseUrl: 'https://www.thenationalnews.com',
+  },
+  {
+    name: 'Gulf News',
+    feed: 'https://gulfnews.com/rss/news',
+    baseUrl: 'https://gulfnews.com',
+  },
 ]
 
 // Keywords that usually indicate negative news - pre-filter before AI classification

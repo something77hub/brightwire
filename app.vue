@@ -8,6 +8,7 @@
       <div class="absolute bottom-1/3 left-1/3 w-[300px] h-[300px] bg-gradient-to-br from-yellow-200/20 to-amber-300/15 rounded-full blur-3xl"></div>
     </div>
 
+    <NuxtLoadingIndicator color="#f59e0b" :height="3" />
     <NuxtPage />
 
     <!-- Global New Articles Banner -->

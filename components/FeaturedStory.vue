@@ -6,19 +6,16 @@
       
       <!-- Card -->
       <div class="relative bg-white rounded-3xl overflow-hidden shadow-xl shadow-amber-900/5 group-hover:shadow-2xl group-hover:shadow-amber-900/10 transition-all duration-500">
-        <div class="grid lg:grid-cols-2 gap-0">
+        <div class="grid lg:grid-cols-2 gap-0" :class="{ '!grid-cols-1': !hasValidImage }">
           <!-- Image -->
-          <div class="relative h-64 sm:h-72 lg:h-auto lg:min-h-[400px] overflow-hidden">
+          <div v-if="hasValidImage" class="relative h-64 sm:h-72 lg:h-auto lg:min-h-[400px] overflow-hidden">
             <img 
-              v-if="story.imageUrl"
               :src="story.imageUrl"
               :alt="story.title"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
+              @error="imageError = true"
             />
-            <div v-else class="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
-              <span class="text-6xl">{{ categoryEmoji }}</span>
-            </div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-white/20"></div>
             
             <!-- Featured badge -->
@@ -93,6 +90,9 @@ import type { Story } from '~/types'
 const props = defineProps<{
   story: Story | null
 }>()
+
+const imageError = ref(false)
+const hasValidImage = computed(() => props.story?.imageUrl && !imageError.value)
 
 const categoryEmojis: Record<string, string> = {
   'good-news': '✨',

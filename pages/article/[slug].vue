@@ -23,11 +23,12 @@
     <!-- Article -->
     <article v-else-if="story" class="pb-16">
       <!-- Hero Image -->
-      <div v-if="story.imageUrl" class="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] overflow-hidden">
+      <div v-if="hasValidImage" class="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] overflow-hidden">
         <img 
           :src="story.imageUrl" 
           :alt="story.title"
           class="w-full h-full object-cover"
+          @error="imageError = true"
         />
         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
       </div>
@@ -35,8 +36,8 @@
       <!-- Article Content -->
       <div class="max-w-4xl mx-auto px-4 sm:px-6">
         <!-- Header -->
-        <header class="py-8 sm:py-12" :class="{ '-mt-32 sm:-mt-40 relative z-10': story.imageUrl }">
-          <div :class="{ 'bg-white rounded-2xl p-6 sm:p-8 shadow-xl': story.imageUrl }">
+        <header class="py-8 sm:py-12" :class="{ '-mt-32 sm:-mt-40 relative z-10': hasValidImage }">
+          <div :class="{ 'bg-white rounded-2xl p-6 sm:p-8 shadow-xl': hasValidImage }">
             <!-- Category Badge -->
             <div class="flex items-center gap-3 mb-4">
               <span 
@@ -436,6 +437,8 @@ const { siteUrl } = await useSiteSettings()
 
 const slug = computed(() => route.params.slug as string)
 const copied = ref(false)
+const imageError = ref(false)
+const hasValidImage = computed(() => story.value?.imageUrl && !imageError.value)
 
 // Fetch story
 const { data, pending, error } = await useFetch(`/api/stories/${slug.value}`)

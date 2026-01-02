@@ -464,8 +464,8 @@
     <!-- Quote Card Modal -->
     <div v-if="showQuoteCardModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/50" @click.self="showQuoteCardModal = false">
       <div class="flex min-h-full items-center justify-center p-4">
-        <div class="w-full max-w-3xl transform rounded-2xl bg-white shadow-2xl transition-all mb-8">
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10 rounded-t-2xl">
+        <div class="w-full max-w-3xl transform rounded-2xl bg-white shadow-2xl transition-all my-8 max-h-[90vh] flex flex-col">
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white z-10 rounded-t-2xl flex-shrink-0">
           <h3 class="text-lg font-semibold text-gray-900">Create Quote Card</h3>
           <button @click="showQuoteCardModal = false" class="text-gray-400 hover:text-gray-600">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -474,7 +474,7 @@
           </button>
         </div>
         
-        <div class="p-6">
+        <div class="p-6 overflow-y-auto flex-1">
           <!-- Article Info -->
           <div v-if="quoteCardArticle" class="mb-4 p-3 bg-gray-50 rounded-lg">
             <p class="text-sm font-medium text-gray-900">{{ quoteCardArticle.title }}</p>

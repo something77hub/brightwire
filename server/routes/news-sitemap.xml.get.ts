@@ -45,12 +45,13 @@ export default defineEventHandler(async (event) => {
                 .toArray()
         }
 
-        // Generate Google News-specific XML
-        const articlesXml = articles.map(article => {
-            const pubDate = new Date(article.publishedAt).toISOString()
-            const keywords = article.tags?.join(', ') || article.category
+        // Absolute fallback: If still no articles, add homepage
+        const articlesXml = articles.length > 0
+            ? articles.map(article => {
+                const pubDate = new Date(article.publishedAt).toISOString()
+                const keywords = article.tags?.join(', ') || article.category
 
-            return `
+                return `
   <url>
     <loc>${siteUrl}/article/${article.slug}</loc>
     <news:news>
@@ -63,7 +64,20 @@ export default defineEventHandler(async (event) => {
       <news:keywords>${keywords}</news:keywords>
     </news:news>
   </url>`
-        }).join('')
+            }).join('')
+            : `
+  <url>
+    <loc>${siteUrl}</loc>
+    <news:news>
+      <news:publication>
+        <news:name>BrightWire</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>${new Date().toISOString()}</news:publication_date>
+      <news:title>BrightWire - Good News Daily</news:title>
+      <news:keywords>good news, positive news, uplifting stories</news:keywords>
+    </news:news>
+  </url>`
 
         const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

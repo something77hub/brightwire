@@ -463,8 +463,8 @@
     
     <!-- Quote Card Modal -->
     <div v-if="showQuoteCardModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/50" @click.self="showQuoteCardModal = false">
-      <div class="flex min-h-screen items-start sm:items-center justify-center p-2 sm:p-4 py-4 sm:py-8">
-        <div class="w-full max-w-3xl transform rounded-2xl bg-white shadow-2xl transition-all max-h-[85vh] sm:max-h-[90vh] flex flex-col">
+      <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="w-full max-w-3xl transform rounded-2xl bg-white shadow-2xl transition-all max-h-[80vh] flex flex-col">
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white z-10 rounded-t-2xl flex-shrink-0">
           <h3 class="text-lg font-semibold text-gray-900">Create Quote Card</h3>
           <button @click="showQuoteCardModal = false" class="text-gray-400 hover:text-gray-600">

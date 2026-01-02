@@ -673,7 +673,15 @@ Respond with JSON array ONLY (no other text):
           const uniqueImages: string[] = []
 
           for (const img of allImages) {
-            if (!img) continue
+            // Skip empty, null, or undefined
+            if (!img || !img.trim()) continue
+
+            // Skip if not a valid HTTP/HTTPS URL
+            if (!img.startsWith('http://') && !img.startsWith('https://')) continue
+
+            // Skip obviously broken URLs
+            if (img.length < 10) continue // Too short to be valid
+
             const normalized = normalizeImageUrl(img)
             if (!normalized) continue
 

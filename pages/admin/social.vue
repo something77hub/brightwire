@@ -180,13 +180,9 @@
               class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-amber-500 focus:border-amber-500"
             >
               <option value="">All Categories</option>
-              <option value="good-news">Good News</option>
-              <option value="heroes">Heroes</option>
-              <option value="planet">Planet</option>
-              <option value="innovation">Innovation</option>
-              <option value="solutions">Solutions</option>
-              <option value="kindness">Kindness</option>
-              <option value="sports">Sports</option>
+              <option v-for="cat in CORE_CATEGORIES" :key="cat.id" :value="cat.id">
+                {{ cat.emoji }} {{ cat.label }}
+              </option>
             </select>
             
             <!-- Clear Filters -->
@@ -608,6 +604,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { CORE_CATEGORIES } from '~/utils/constants'
 
 definePageMeta({ layout: false })
 

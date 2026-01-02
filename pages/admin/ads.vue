@@ -370,11 +370,9 @@
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">Sponsored Category</label>
                   <select v-model="form.sponsoredCategory" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                    <option value="good-news">☀️ Today's Good News</option>
-                    <option value="heroes">🦸 Community Heroes</option>
-                    <option value="planet">🌍 Planet Wins</option>
-                    <option value="innovation">🚀 Innovation</option>
-                    <option value="solutions">💡 Solutions</option>
+                    <option v-for="cat in CORE_CATEGORIES" :key="cat.id" :value="cat.id">
+                      {{ cat.emoji }} {{ cat.label }}
+                    </option>
                   </select>
                 </div>
                 <div>
@@ -578,6 +576,7 @@
 
 <script setup lang="ts">
 import type { Advertisement, AdType, AdStatus } from '~/types'
+import { CORE_CATEGORIES } from '~/utils/constants'
 
 const router = useRouter()
 

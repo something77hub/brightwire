@@ -28,6 +28,12 @@ export default defineCachedEventHandler(async (event) => {
       filter.category = category
     }
 
+    // Exclude specific categories if requested
+    const exclude = query.exclude as string
+    if (exclude && !category) {
+      filter.category = { $nin: exclude.split(',') }
+    }
+
     if (featured) {
       filter.featured = true
     }
@@ -37,29 +43,29 @@ export default defineCachedEventHandler(async (event) => {
 
     if (isHomepage && !featured) {
       // HOMEPAGE DIVERSITY LOGIC
-      // We want to limit sports to 25% of the feed to prevent overshadowing
-      const sportsLimit = Math.ceil(limit * 0.25)
-      const otherLimit = limit - sportsLimit
+      // We want to limit sports/world to ~15% of the feed to prevent them from overwhelming the good news
+      const diversityLimit = Math.ceil(limit * 0.15) // ~2 items per 12
+      const coreLimit = limit - diversityLimit      // ~10 items per 12
 
-      const sportsSkip = (page - 1) * sportsLimit
-      const otherSkip = (page - 1) * otherLimit
+      const diversitySkip = (page - 1) * diversityLimit
+      const coreSkip = (page - 1) * coreLimit
 
       const aggregation = [
         {
           $facet: {
-            // Stream 1: Sports (Limited)
-            sports: [
-              { $match: { category: 'sports' } },
+            // Stream 1: Sports & World (Limited)
+            diversity: [
+              { $match: { ...filter, category: { $in: ['sports', 'world'] } } },
               { $sort: { createdAt: -1 } },
-              { $skip: sportsSkip },
-              { $limit: sportsLimit }
+              { $skip: diversitySkip },
+              { $limit: diversityLimit }
             ],
-            // Stream 2: Everything else
-            others: [
-              { $match: { category: { $ne: 'sports' } } },
+            // Stream 2: Core Categories (Majority)
+            core: [
+              { $match: { ...filter, category: { $nin: ['sports', 'world'] } } },
               { $sort: { createdAt: -1 } },
-              { $skip: otherSkip },
-              { $limit: otherLimit }
+              { $skip: coreSkip },
+              { $limit: coreLimit }
             ]
           }
         }
@@ -68,7 +74,7 @@ export default defineCachedEventHandler(async (event) => {
       const [faceted] = await stories.aggregate(aggregation).toArray()
 
       // Merge and sort by date to interleave them naturally
-      results = [...(faceted.sports || []), ...(faceted.others || [])].sort((a, b) => {
+      results = [...(faceted.diversity || []), ...(faceted.core || [])].sort((a, b) => {
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       })
 

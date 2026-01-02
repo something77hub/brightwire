@@ -116,11 +116,9 @@
               v-model="article.category"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-amber-500 focus:border-amber-500"
             >
-              <option value="good-news">☀️ Today's Good News</option>
-              <option value="heroes">🦸 Community Heroes</option>
-              <option value="planet">🌍 Planet Wins</option>
-              <option value="innovation">🚀 Innovation</option>
-              <option value="solutions">💡 Solutions</option>
+              <option v-for="cat in CORE_CATEGORIES" :key="cat.id" :value="cat.id">
+                {{ cat.emoji }} {{ cat.label }}
+              </option>
             </select>
           </div>
 
@@ -227,6 +225,7 @@
 
 <script setup lang="ts">
 import type { StoryCategory } from '~/types'
+import { CORE_CATEGORIES } from '~/utils/constants'
 import slugify from 'slugify'
 
 const route = useRoute()

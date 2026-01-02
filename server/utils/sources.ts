@@ -317,26 +317,31 @@ export const newsSources: NewsSource[] = [
     name: 'Punch Nigeria',
     feed: 'https://punchng.com/feed/',
     baseUrl: 'https://punchng.com',
+    forcedCategory: 'world',
   },
   {
     name: 'Vanguard News',
     feed: 'https://www.vanguardngr.com/feed/',
     baseUrl: 'https://www.vanguardngr.com',
+    forcedCategory: 'world',
   },
   {
     name: 'The Cable',
     feed: 'https://www.thecable.ng/feed',
     baseUrl: 'https://www.thecable.ng',
+    forcedCategory: 'world',
   },
   {
     name: 'Premium Times',
     feed: 'https://www.premiumtimesng.com/feed',
     baseUrl: 'https://www.premiumtimesng.com',
+    forcedCategory: 'world',
   },
   {
     name: 'Daily Trust',
     feed: 'https://dailytrust.com/feed',
     baseUrl: 'https://dailytrust.com',
+    forcedCategory: 'world',
   },
 
   // ========================================
@@ -346,11 +351,13 @@ export const newsSources: NewsSource[] = [
     name: 'BBC Sport',
     feed: 'https://feeds.bbci.co.uk/sport/rss.xml',
     baseUrl: 'https://bbc.com/sport',
+    forcedCategory: 'sports',
   },
   {
     name: 'Yahoo Sports',
     feed: 'https://sports.yahoo.com/rss/',
     baseUrl: 'https://sports.yahoo.com',
+    forcedCategory: 'sports',
   },
   // ========================================
   // ARTS & CULTURE (Requested)
@@ -383,26 +390,31 @@ export const newsSources: NewsSource[] = [
     name: 'Al Jazeera English',
     feed: 'https://www.aljazeera.com/xml/rss/all.xml',
     baseUrl: 'https://aljazeera.com',
+    forcedCategory: 'world',
   },
   {
     name: 'Deutsche Welle (DW)',
     feed: 'https://rss.dw.com/xml/rss-en-all',
     baseUrl: 'https://dw.com',
+    forcedCategory: 'world',
   },
   {
     name: 'France 24',
     feed: 'https://www.france24.com/en/rss',
     baseUrl: 'https://france24.com',
+    forcedCategory: 'world',
   },
   {
     name: 'Euronews',
     feed: 'https://www.euronews.com/rss?format=xml',
     baseUrl: 'https://euronews.com',
+    forcedCategory: 'world',
   },
   {
     name: 'Kyodo News (Japan)',
     feed: 'https://english.kyodonews.net/rss/news.xml',
     baseUrl: 'https://english.kyodonews.net',
+    forcedCategory: 'world',
   },
 
   // ========================================
@@ -413,11 +425,13 @@ export const newsSources: NewsSource[] = [
     name: 'Times of India',
     feed: 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms',
     baseUrl: 'https://timesofindia.indiatimes.com',
+    forcedCategory: 'world',
   },
   {
     name: 'NDTV India',
     feed: 'https://feeds.feedburner.com/ndtvnews-top-stories',
     baseUrl: 'https://ndtv.com',
+    forcedCategory: 'world',
   },
 
   // Australia
@@ -425,11 +439,13 @@ export const newsSources: NewsSource[] = [
     name: 'ABC News Australia',
     feed: 'https://www.abc.net.au/news/feed/45910/rss.xml',
     baseUrl: 'https://www.abc.net.au',
+    forcedCategory: 'world',
   },
   {
     name: '9News Australia',
     feed: 'https://www.9news.com.au/rss',
     baseUrl: 'https://www.9news.com.au',
+    forcedCategory: 'world',
   },
 
   // Dubai / Middle East
@@ -437,16 +453,19 @@ export const newsSources: NewsSource[] = [
     name: 'Khaleej Times (Dubai)',
     feed: 'https://www.khaleejtimes.com/rss',
     baseUrl: 'https://www.khaleejtimes.com',
+    forcedCategory: 'world',
   },
   {
     name: 'The National (UAE)',
     feed: 'https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml',
     baseUrl: 'https://www.thenationalnews.com',
+    forcedCategory: 'world',
   },
   {
     name: 'Gulf News',
     feed: 'https://gulfnews.com/rss/news',
     baseUrl: 'https://gulfnews.com',
+    forcedCategory: 'world',
   },
 ]
 

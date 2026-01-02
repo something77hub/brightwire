@@ -16,7 +16,9 @@ interface Candidate {
   source: string
   pubDate: string
   image?: string
+  image?: string
   guid: string
+  forcedCategory?: StoryCategory
 }
 
 // Helper functions (shouldSkip is replaced by preFilterStory)
@@ -220,7 +222,9 @@ export const fetchNews = inngest.createFunction(
               source: source.name,
               pubDate,
               image,
+              image,
               guid,
+              forcedCategory: source.forcedCategory,
             })
             added++
           }
@@ -368,13 +372,30 @@ export const fetchNews = inngest.createFunction(
     const classified = await step.run('classify-headlines', async () => {
       const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
-      // Log sample of headlines being classified
-      console.log(`Classifying ${newCandidates.length} headlines. Sample:`)
-      newCandidates.slice(0, 10).forEach((c, i) => {
-        console.log(`  ${i + 1}. [${c.source}] ${c.title}`)
-      })
+      console.log(`Classifying ${newCandidates.length} headlines.`)
 
-      const prompt = `You are classifying news headlines for a POSITIVE NEWS website called BrightWire.
+      // Split into forced and unclassified
+      const forcedCandidates = newCandidates.filter(c => c.forcedCategory)
+      const toClassify = newCandidates.filter(c => !c.forcedCategory)
+
+      // 1. Process Forced Categories
+      const forcedResults = forcedCandidates.map(c => ({
+        ...c,
+        score: c.forcedCategory === 'sports' ? 85 : 80, // Default high score for explicitly subscribed content
+        category: c.forcedCategory!,
+      }))
+      console.log(`Bypassing AI for ${forcedResults.length} articles with forced categories`)
+
+      // 2. Process Unclassified with AI
+      let aiResults: any[] = []
+
+      if (toClassify.length > 0) {
+        console.log(`Sending ${toClassify.length} headlines to Claude...`)
+        toClassify.slice(0, 5).forEach((c, i) => {
+          console.log(`  ${i + 1}. [${c.source}] ${c.title}`)
+        })
+
+        const prompt = `You are classifying news headlines for a POSITIVE NEWS website called BrightWire.
 
 Score each headline 0-100.
 STRICT FILTER: We ONLY want uplifting, solution-oriented, or generally positive news.
@@ -392,7 +413,7 @@ SCORING GUIDE:
 - 0-40: Negative, Tragical, or too controversial to be "Good News"
 
 Headlines to classify:
-${newCandidates.map((c, i) => `${i + 1}. ${c.title}`).join('\n')}
+${toClassify.map((c, i) => `${i + 1}. ${c.title}`).join('\n')}
 
 CATEGORIES - Pick the MOST SPECIFIC one, or use 'good-news' as fallback.
 1. "heroes"
@@ -409,72 +430,49 @@ IMPORTANT INSTRUCTION:
 - For generic rising stars or match wins, use 'sports'.
 
 Respond with JSON array ONLY (no other text):
-[{"idx": 1, "score": 85, "category": "innovation"}, ...]`
+[{"idx": 1, "score": 85, "category": "innovation"}, ...]`;
 
-      try {
-        const response = await anthropic.messages.create({
-          model: 'claude-3-5-haiku-20241022',
-          max_tokens: 8000,
-          messages: [{ role: 'user', content: prompt }],
-        })
-
-        const text = response.content[0].type === 'text' ? response.content[0].text : ''
-        console.log(`Classification response length: ${text.length} chars`)
-
-        const jsonMatch = text.match(/\[[\s\S]*\]/)
-
-        if (jsonMatch) {
-          const results = JSON.parse(jsonMatch[0])
-          console.log(`Parsed ${results.length} classification results`)
-          const categoryMap: Record<string, string> = {
-            // Canonical categories (AI is instructed to return these exactly)
-            'good-news': 'good-news',
-            'heroes': 'heroes',
-            'planet': 'planet',
-            'innovation': 'innovation',
-            'solutions': 'solutions',
-            'kindness': 'kindness',
-            'sports': 'sports',
-          }
-
-          const positive = results
-            .filter((r: any) => r.score >= 45 && r.idx >= 1 && r.idx <= newCandidates.length)
-            .map((r: any) => ({
-              ...newCandidates[r.idx - 1],
-              score: r.score,
-              // Map category to valid one, default to 'good-news'
-              category: (categoryMap[r.category?.toLowerCase()] || 'good-news') as StoryCategory,
-            }))
-
-          // Log score distribution
-          const allScores = results.map((r: any) => r.score).sort((a: number, b: number) => b - a)
-          console.log(`Score distribution: max=${allScores[0]}, median=${allScores[Math.floor(allScores.length / 2)]}, min=${allScores[allScores.length - 1]}`)
-
-          // Log top 5 scoring articles
-          const topScorers = results
-            .filter((r: any) => r.idx >= 1 && r.idx <= newCandidates.length)
-            .sort((a: any, b: any) => b.score - a.score)
-            .slice(0, 5)
-          console.log('Top 5 scoring headlines:')
-          topScorers.forEach((r: any) => {
-            const article = newCandidates[r.idx - 1]
-            console.log(`  ${r.score}: [${r.category}] ${article?.title?.substring(0, 60)}...`)
+        try {
+          const response = await anthropic.messages.create({
+            model: 'claude-3-5-haiku-20241022',
+            max_tokens: 8000,
+            messages: [{ role: 'user', content: prompt }],
           })
 
-          console.log(`${positive.length} articles scored 45+ (threshold)`)
-          return positive
-        } else {
-          console.error('No JSON array found in classification response')
-          console.error('Response preview:', text.slice(0, 500))
+          const text = response.content[0].type === 'text' ? response.content[0].text : ''
+          const jsonMatch = text.match(/\[[\s\S]*\]/)
+
+          if (jsonMatch) {
+            const results = JSON.parse(jsonMatch[0])
+            console.log(`Parsed ${results.length} classification results`)
+            const categoryMap: Record<string, string> = {
+              'good-news': 'good-news',
+              'heroes': 'heroes',
+              'planet': 'planet',
+              'innovation': 'innovation',
+              'solutions': 'solutions',
+              'kindness': 'kindness',
+              'sports': 'sports',
+            }
+
+            aiResults = results
+              .filter((r: any) => r.score >= 45 && r.idx >= 1 && r.idx <= toClassify.length)
+              .map((r: any) => ({
+                ...toClassify[r.idx - 1],
+                score: r.score,
+                category: (categoryMap[r.category?.toLowerCase()] || 'good-news') as StoryCategory,
+              }))
+          }
+        } catch (e: any) {
+          console.error('Classification error:', e)
         }
-      } catch (e: any) {
-        console.error('Classification error:', e)
-        console.error('Classification error message:', e?.message)
-        console.error('Classification error status:', e?.status)
       }
 
-      console.log('Classification step returning empty array')
-      return []
+      // Merge results
+      const combined = [...forcedResults, ...aiResults]
+
+      console.log(`Total positive articles: ${combined.length} (${forcedResults.length} forced, ${aiResults.length} AI)`)
+      return combined
     })
 
     console.log(`After classification: ${classified.length} positive articles`)

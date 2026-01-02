@@ -28,6 +28,7 @@ export type StoryCategory =
   | 'solutions'      // Solutions - systemic fixes, policy wins
   | 'kindness'       // Acts of Kindness - heartwarming human moments
   | 'sports'         // Sports - wins, records, teamwork
+  | 'world'          // World/International - specific country news (Nigeria, India, etc.)
 
 // Advertisement Types
 export type AdType =
@@ -142,6 +143,7 @@ export interface NewsSource {
     images?: string
     author?: string
   }
+  forcedCategory?: StoryCategory // Explicitly force this category (skip AI classification)
 }
 
 export interface CategoryInfo {

@@ -2,7 +2,7 @@
   <div class="relative z-40 bg-white/50 backdrop-blur-sm border-b border-amber-100/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
       <div class="relative">
-        <!-- Mobile: horizontal scroll -->
+        <!-- Mobile: horizontal scroll, Desktop: logical wrap -->
         <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto lg:overflow-visible lg:flex-wrap pb-1 scrollbar-hide">
           <!-- If on homepage, use buttons for filtering -->
           <template v-if="isHomepage">

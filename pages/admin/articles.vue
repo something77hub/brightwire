@@ -93,11 +93,9 @@
             class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           >
             <option value="">All Categories</option>
-            <option value="good-news">Today's Good News</option>
-            <option value="heroes">Community Heroes</option>
-            <option value="planet">Planet Wins</option>
-            <option value="innovation">Innovation</option>
-            <option value="solutions">Solutions</option>
+            <option v-for="cat in CORE_CATEGORIES" :key="cat.id" :value="cat.id">
+              {{ cat.emoji }} {{ cat.label }}
+            </option>
           </select>
           
           <select 
@@ -253,6 +251,7 @@
 
 <script setup lang="ts">
 import type { Story } from '~/types'
+import { CORE_CATEGORIES, CATEGORY_MAP } from '~/utils/constants'
 
 const router = useRouter()
 
@@ -336,25 +335,14 @@ function formatDate(date: string) {
 }
 
 function getCategoryColor(category: string) {
-  const colors: Record<string, string> = {
-    'good-news': 'bg-amber-100 text-amber-700',
-    'heroes': 'bg-rose-100 text-rose-700',
-    'planet': 'bg-green-100 text-green-700',
-    'innovation': 'bg-violet-100 text-violet-700',
-    'solutions': 'bg-blue-100 text-blue-700',
-  }
-  return colors[category] || 'bg-gray-100 text-gray-700'
+  const cat = CATEGORY_MAP[category]
+  if (!cat) return 'bg-gray-100 text-gray-700'
+  return `bg-${cat.twColor}-100 text-${cat.twColor}-700`
 }
 
 function getCategoryLabel(category: string) {
-  const labels: Record<string, string> = {
-    'good-news': 'Good News',
-    'heroes': 'Heroes',
-    'planet': 'Planet',
-    'innovation': 'Innovation',
-    'solutions': 'Solutions',
-  }
-  return labels[category] || category
+  const cat = CATEGORY_MAP[category]
+  return cat ? cat.label : category
 }
 
 async function toggleFeatured(article: Story) {

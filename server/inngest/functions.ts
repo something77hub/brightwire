@@ -416,10 +416,13 @@ CATEGORIES - Pick the MOST SPECIFIC one, or use 'good-news' as fallback.
 7. "world"
 8. "good-news"
 
-IMPORTANT INSTRUCTION:
+IMPORTANT INSTRUCTIONS:
+- If the article is about a SPECIFIC COUNTRY (Nigeria, India, Brazil, Japan, etc.) or international relations, YOU MUST USE 'world'.
+  Examples: "Nigeria launches health program" → world, "India celebrates festival" → world, "Japanese team wins" → sports + world context
 - If the article is about football, basketball, olympics, or any athletic competition, YOU MUST USE THE CATEGORY 'sports'.
 - Do NOT use 'heroes' for sports stars unless they did something heroic OUTSIDE of the game (e.g. saving a life).
 - For generic rising stars or match wins, use 'sports'.
+- PRIORITY: If it's about Nigeria, Ghana, Kenya, India, Brazil, or any non-US/UK country → 'world' takes priority over other categories.
 
 Respond with JSON array ONLY (no other text):
 [{"idx": 1, "score": 85, "category": "innovation"}, ...]`;

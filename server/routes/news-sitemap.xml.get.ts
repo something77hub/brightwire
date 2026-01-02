@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
         const twoDaysAgo = new Date()
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
 
-        const articles = await stories
+        let articles = await stories
             .find({
                 publishedAt: { $gte: twoDaysAgo },
                 category: { $exists: true }
@@ -27,6 +27,23 @@ export default defineEventHandler(async (event) => {
                 author: 1
             })
             .toArray()
+
+        // Fallback: If no articles from last 2 days, get most recent 10
+        if (articles.length === 0) {
+            articles = await stories
+                .find({ category: { $exists: true } })
+                .sort({ publishedAt: -1 })
+                .limit(10)
+                .project({
+                    slug: 1,
+                    title: 1,
+                    publishedAt: 1,
+                    category: 1,
+                    tags: 1,
+                    author: 1
+                })
+                .toArray()
+        }
 
         // Generate Google News-specific XML
         const articlesXml = articles.map(article => {

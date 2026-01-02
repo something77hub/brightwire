@@ -28,10 +28,26 @@ const SCRAPE_BLOCKED_DOMAINS = [
   'theatlantic.com',
 ]
 
-// Video URL patterns
+// Video URL patterns - Expanded platform support
 const VIDEO_PATTERNS = [
-  '/video/', '/videos/', 'video=', '/watch/',
-  '/clip/', '/clips/', '/embed/', 'youtube.com', 'youtu.be', 'vimeo.com'
+  // YouTube
+  '/video/', '/videos/', 'video=', '/watch/', 'youtube.com', 'youtu.be',
+  // Vimeo
+  'vimeo.com',
+  // Dailymotion
+  'dailymotion.com', 'dai.ly',
+  // Rumble
+  'rumble.com',
+  // Odysee / LBRY
+  'odysee.com', 'lbry.tv',
+  // Streamable
+  'streamable.com',
+  // Facebook Video
+  'facebook.com/watch', 'fb.watch',
+  // Twitter/X Video
+  'twitter.com/i/status', 'x.com/i/status',
+  // Generic
+  '/clip/', '/clips/', '/embed/'
 ]
 
 // Source-specific selectors
@@ -254,15 +270,14 @@ async function doScrape(url: string, summaryFallback?: string): Promise<ScrapedA
         || $('meta[property="og:video"]').attr('content')
         || $('meta[name="twitter:player"]').attr('content')
 
-      // Try iframes
+      // Try iframes - extract ANY video embed found
       if (!videoEmbedUrl) {
         $('iframe').each((_, iframe) => {
           const src = $(iframe).attr('src') || ''
-          if (src.includes('youtube.com/embed') ||
-            src.includes('player.vimeo.com') ||
-            src.includes('dailymotion.com/embed')) {
+          // Accept any iframe with a src (most video embeds use iframes)
+          if (src && src.startsWith('http')) {
             videoEmbedUrl = src
-            return false
+            return false // Stop at first valid embed
           }
         })
       }

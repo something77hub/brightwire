@@ -963,7 +963,7 @@ FORMATTING:
       const articlesToProcess = scraped.slice(0, MAX_ARTICLES)
 
       if (scraped.length > MAX_ARTICLES) {
-        console.log(`鈩癸笍 ${scraped.length - MAX_ARTICLES} articles deferred to next run (queue system)`)
+        console.log(`⏳ ${scraped.length - MAX_ARTICLES} articles deferred to next run (queue system)`)
       }
 
       console.log(`Processing ${articlesToProcess.length} of ${scraped.length} articles...`)
@@ -1019,7 +1019,7 @@ FORMATTING:
           const ageHours = (now.getTime() - publishedAt.getTime()) / (1000 * 60 * 60)
 
           if (ageHours > maxAgeHours) {
-            console.log(`鈴笍 Skipped (too old - ${ageHours.toFixed(0)}h): ${story.title.slice(0, 50)}`)
+            console.log(`⚠️ Skipped (too old - ${ageHours.toFixed(0)}h): ${story.title.slice(0, 50)}`)
             savedGuids.push(story.guid) // Still remove from queue
             continue
           }
@@ -1027,7 +1027,7 @@ FORMATTING:
           await stories.insertOne(story)
           added++
           savedGuids.push(story.guid)
-          console.log(`鉁?Saved: ${story.title.slice(0, 50)}`)
+          console.log(`✅ Saved: ${story.title.slice(0, 50)}`)
         } catch (e: any) {
           if (e.code === 11000) {
             // Duplicate - remove from queue
@@ -1109,7 +1109,7 @@ FORMATTING:
 
     if (remainingCount > 0) {
       await step.run('trigger-next-batch', async () => {
-        console.log(`馃攧 Triggering next batch immediately (${remainingCount} remaining)...`)
+        console.log(`🔄 Triggering next batch immediately (${remainingCount} remaining)...`)
         await inngest.send({
           name: 'app/manual.fetch',
           data: { reason: 'queue-continuation' }
@@ -1120,7 +1120,7 @@ FORMATTING:
     // ========================================
     // FINAL SUMMARY
     // ========================================
-    console.log('\n馃搳 PIPELINE SUMMARY:')
+    console.log('\n📊 PIPELINE SUMMARY:')
     console.log('----------------------------------------')
     console.log(`  RSS Items Fetched:     ${candidates.length}`)
     console.log(`  New (not in DB/queue): ${newCandidates.length}`)
@@ -1129,7 +1129,6 @@ FORMATTING:
     console.log(`  Scraped Successfully:  ${scraped.length}`)
     console.log(`  Rewritten:             ${rewritten.length}`)
     console.log(`  Saved to Database:     ${saved}`)
-    console.log('鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?)
     console.log('----------------------------------------')
     console.log('✅ Queue system ensures NO positive articles are missed')
     return {
@@ -1153,13 +1152,13 @@ export const generateDailyContent = inngest.createFunction(
     id: 'generate-daily-content',
     name: 'Generate Daily Joke and Quote',
   },
-  [ { cron: '0 6 * * *' }, { event: 'app/manual.daily-content' } ], // Daily at 6 AM UTC + Manual
+  [{ cron: '0 6 * * *' }, { event: 'app/manual.daily-content' }], // Daily at 6 AM UTC + Manual
   async ({ event, step }) => {
-    
+
     // Step 1: Generate Joke
     const joke = await step.run('generate-joke', async () => {
       const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
-      
+
       const response = await anthropic.messages.create({
         model: 'claude-3-5-haiku-20241022',
         max_tokens: 200,
@@ -1177,14 +1176,14 @@ Requirements:
 Return ONLY the joke text. No labels, no extra commentary.`
         }]
       })
-      
+
       return response.content[0].type === 'text' ? response.content[0].text.trim() : ''
     })
 
     // Step 2: Generate Quote
     const quote = await step.run('generate-quote', async () => {
       const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
-      
+
       const response = await anthropic.messages.create({
         model: 'claude-3-5-haiku-20241022',
         max_tokens: 200,
@@ -1205,7 +1204,7 @@ Quote text
 Return ONLY in that format. No extra text.`
         }]
       })
-      
+
       const fullText = response.content[0].type === 'text' ? response.content[0].text.trim() : ''
       const parts = fullText.split('—')
       return {
@@ -1218,12 +1217,12 @@ Return ONLY in that format. No extra text.`
     await step.run('update-settings', async () => {
       const config = useRuntimeConfig()
       const client = new MongoClient(config.mongodbUri)
-      
+
       try {
         await client.connect()
         const db = client.db('brightwire')
         const settings = db.collection('settings')
-        
+
         await settings.updateOne(
           { _id: 'site-settings' as any },
           {
@@ -1237,8 +1236,8 @@ Return ONLY in that format. No extra text.`
           },
           { upsert: true }
         )
-        
-        console.log('? Daily content updated:', { joke, quote: ` — ` })
+
+        console.log('✅ Daily content updated:', { joke, quote: `${quote.text} — ${quote.author}` })
       } finally {
         await client.close()
       }
@@ -1247,7 +1246,7 @@ Return ONLY in that format. No extra text.`
     return {
       success: true,
       joke,
-      quote: ` — `
+      quote: `${quote.text} — ${quote.author}`
     }
   }
 )

@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
 
       // Map category slugs to display names
       const categoryLabels: Record<string, string> = {
-        'good-news': 'Good News',
+        'good-news': 'Daily Mix',
         'heroes': 'Community Heroes',
         'planet': 'Planet Wins',
         'innovation': 'Innovation',

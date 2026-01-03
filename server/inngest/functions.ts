@@ -414,7 +414,7 @@ CATEGORIES - Pick the MOST SPECIFIC one, or use 'good-news' as fallback.
 5. "kindness"
 6. "sports"
 7. "world"
-8. "good-news"
+8. "good-news" (Daily Mix / General)
 
 IMPORTANT INSTRUCTIONS:
 - If the article is about a SPECIFIC COUNTRY (Nigeria, India, Brazil, Japan, etc.) or international relations, YOU MUST USE 'world'.

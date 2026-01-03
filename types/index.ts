@@ -21,7 +21,7 @@ export interface Story {
 }
 
 export type StoryCategory =
-  | 'good-news'      // Today's Good News - general feel-good stories
+  | 'good-news'      // Daily Mix - general feel-good stories
   | 'heroes'         // Community Heroes - people making a difference
   | 'planet'         // Planet Wins - environment, nature, climate victories
   | 'innovation'     // Innovation - tech, science breakthroughs

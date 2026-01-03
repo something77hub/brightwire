@@ -30,7 +30,7 @@
       <div class="mb-10 text-center">
         <span class="text-6xl mb-4 block">📰</span>
         <h1 class="text-3xl sm:text-4xl font-bold text-amber-950 mb-3 font-display">
-          Today's Good News
+          Daily Mix
         </h1>
         <p class="text-amber-700/70 max-w-2xl mx-auto">
           The latest positive stories from the last 24-48 hours. Fresh updates throughout the day.
@@ -50,7 +50,7 @@
       <div v-else-if="!stories.length" class="text-center py-20">
         <span class="text-6xl mb-4 block">🌅</span>
         <h2 class="text-xl font-bold text-amber-900 mb-2">New stories coming soon!</h2>
-        <p class="text-amber-700/60">Check back later for today's good news.</p>
+        <p class="text-amber-700/60">Check back later for the daily mix.</p>
       </div>
 
       <!-- Stories Grid -->
@@ -215,7 +215,7 @@ onMounted(() => {
 })
 
 useHead({
-  title: "Today's Good News - BrightWire",
+  title: "Daily Mix - BrightWire",
   meta: [
     { name: 'description', content: "Today's latest positive news stories. Fresh good news updated throughout the day." }
   ]

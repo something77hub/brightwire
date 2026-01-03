@@ -52,7 +52,7 @@ CATEGORIES - Pick the MOST SPECIFIC one:
 5. "kindness" (Heartwarming moments, reunions, generosity)
 6. "sports" (Athletes, matches, records, teams)
 7. "world" (International news, specific countries, diplomacy)
-8. "good-news" (General positive stories that don't fit above)
+8. "good-news" (General positive stories / Daily Mix)
 
 IMPORTANT INSTRUCTIONS:
 - Sports takes priority over Heroes (e.g. Messi saving a game is Sports)

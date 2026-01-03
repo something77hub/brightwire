@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
     // Category colors
     const categoryColors: Record<string, { bg: string; accent: string; text: string }> = {
-      'good-news': { bg: '#FFF7ED', accent: '#F59E0B', text: '#78350F' },
+      'good-news': { bg: '#FFF7ED', accent: '#F59E0B', text: '#78350F', label: 'Daily Mix' },
       'heroes': { bg: '#FEF3C7', accent: '#D97706', text: '#78350F' },
       'planet': { bg: '#ECFDF5', accent: '#10B981', text: '#064E3B' },
       'innovation': { bg: '#EFF6FF', accent: '#3B82F6', text: '#1E3A8A' },

@@ -39,15 +39,15 @@ export async function rewriteArticle(
     heroes: 'Highlight the human element and what makes this person/group inspiring.',
     planet: 'Emphasize the environmental win and hope for the planet.',
     innovation: 'Explain the breakthrough in accessible terms and its potential.',
-    'good-news': 'Find the uplifting angle and human interest.',
+    'good-news': 'Find the uplifting angle and human interest (Daily Mix style).',
     kindness: 'Capture the warmth, generosity and humanity of the story.',
   }
 
   // Detect if this is video content (short source material)
   const isVideoContent = scraped.content.length < 500
   const contentType = isVideoContent ? 'VIDEO SUMMARY' : 'ARTICLE'
-  const lengthGuidance = isVideoContent 
-    ? '200-400 words (shorter since source is limited)' 
+  const lengthGuidance = isVideoContent
+    ? '200-400 words (shorter since source is limited)'
     : '300-600 words'
 
   const prompt = `You are a journalist for BrightWire, a positive news publication. Your job is to REWRITE the following ${contentType.toLowerCase()} in your own words.
@@ -232,7 +232,7 @@ RESPOND WITH JSON ONLY:
     if (jsonText.startsWith('```')) {
       jsonText = jsonText.replace(/```json?\n?/g, '').replace(/```$/g, '').trim()
     }
-    
+
     const result = JSON.parse(jsonText)
 
     if (result.score < 70 || !result.article) {

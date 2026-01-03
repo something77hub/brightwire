@@ -78,7 +78,7 @@
               <option value="planet">🌍 Planet Wins</option>
               <option value="innovation">🚀 Innovation</option>
               <option value="kindness">💛 Acts of Kindness</option>
-              <option value="good-news">☀️ Today's Good News</option>
+              <option value="good-news">☀️ Daily Mix</option>
             </select>
           </div>
 

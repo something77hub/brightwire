@@ -3,10 +3,10 @@ import { getStoriesCollection } from '~/server/utils/db'
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const siteUrl = config.public.siteUrl || 'https://brightwire.news'
-  
+
   try {
     const stories = await getStoriesCollection()
-    
+
     // Get latest 20 articles
     const articles = await stories
       .find({})
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
 
     const getCategoryLabel = (category: string) => {
       const labels: Record<string, string> = {
-        'good-news': 'Good News',
+        'good-news': 'Daily Mix',
         'heroes': 'Community Heroes',
         'planet': 'Planet Wins',
         'innovation': 'Innovation',
@@ -80,7 +80,7 @@ export default defineEventHandler(async (event) => {
     // Set proper headers for RSS
     setHeader(event, 'Content-Type', 'application/rss+xml; charset=utf-8')
     setHeader(event, 'Cache-Control', 'public, max-age=3600') // Cache for 1 hour
-    
+
     return rss
   } catch (error) {
     console.error('RSS feed error:', error)

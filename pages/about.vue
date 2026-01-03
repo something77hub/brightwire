@@ -70,7 +70,7 @@
             <div class="flex items-start gap-3">
               <span class="text-2xl">☀️</span>
               <div>
-                <h3 class="font-bold text-amber-900">Today's Good News</h3>
+                <h3 class="font-bold text-amber-900">Daily Mix</h3>
                 <p class="text-amber-700/70 text-sm">Feel-good stories and uplifting moments</p>
               </div>
             </div>
@@ -90,7 +90,7 @@
             50,000+ people start their day with BrightWire. Join them.
           </p>
           <NuxtLink to="/" class="inline-block bg-white text-amber-600 px-8 py-3 rounded-full font-semibold hover:bg-amber-50 transition-colors">
-            Read Today's Good News
+            Read Daily Mix
           </NuxtLink>
         </div>
       </div>

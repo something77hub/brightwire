@@ -180,7 +180,7 @@
 const { data: settings } = await useFetch('/api/site-settings')
 
 const sectionLinks = [
-  { label: "Today's Good News", href: '/category/good-news' },
+  { label: "Daily Mix", href: '/category/good-news' },
   { label: 'Community Heroes', href: '/category/heroes' },
   { label: 'Planet Wins', href: '/category/planet' },
   { label: 'Innovation', href: '/category/innovation' },

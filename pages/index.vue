@@ -435,7 +435,7 @@ function formatCategoryTitle(category: string): string {
     heroes: 'Community Heroes',
     planet: 'Planet Wins',
     innovation: 'Innovation & Discovery',
-    'good-news': "Today's Good News",
+    'good-news': "Daily Mix",
     kindness: 'Acts of Kindness',
     sports: 'Sports & Athletics',
   }

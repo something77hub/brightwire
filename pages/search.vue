@@ -155,7 +155,7 @@ function categoryBadgeClass(category: string): string {
 
 function formatCategory(category: string): string {
   const labels: Record<string, string> = {
-    'good-news': 'Good News',
+    'good-news': 'Daily Mix',
     'heroes': 'Heroes',
     'planet': 'Planet',
     'innovation': 'Innovation',

@@ -582,7 +582,7 @@ const renderedContent = computed(() => {
 // Format category name
 function formatCategory(category: string): string {
   const labels: Record<string, string> = {
-    'good-news': "Today's Good News",
+    'good-news': "Daily Mix",
     'heroes': 'Community Heroes',
     'planet': 'Planet Wins',
     'innovation': 'Innovation',

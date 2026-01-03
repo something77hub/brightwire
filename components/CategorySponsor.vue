@@ -27,7 +27,7 @@ const props = defineProps<{
 
 // Category labels
 const categoryLabels: Record<string, string> = {
-  'good-news': "Today's Good News",
+  'good-news': "Daily Mix",
   'heroes': 'Community Heroes',
   'planet': 'Planet Wins',
   'innovation': 'Innovation',

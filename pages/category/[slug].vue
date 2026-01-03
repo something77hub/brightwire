@@ -132,7 +132,7 @@ const allStories = ref<any[]>([])
 
 const categoryData: Record<string, { title: string; emoji: string; description: string }> = {
   'good-news': {
-    title: "Today's Good News",
+    title: "Daily Mix",
     emoji: '☀️',
     description: 'Feel-good stories, heartwarming moments, and uplifting news from around the world.',
   },

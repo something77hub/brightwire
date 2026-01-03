@@ -9,24 +9,24 @@ async function loadFonts(): Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }>
   if (fontRegularCache && fontBoldCache) {
     return { regular: fontRegularCache, bold: fontBoldCache }
   }
-  
+
   // Fetch Roboto fonts
   const regularUrl = 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Regular.ttf'
   const boldUrl = 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Bold.ttf'
-  
+
   try {
     const [regularRes, boldRes] = await Promise.all([
       fetch(regularUrl),
       fetch(boldUrl)
     ])
-    
+
     if (!regularRes.ok || !boldRes.ok) {
       throw new Error('Failed to fetch fonts')
     }
-    
+
     fontRegularCache = await regularRes.arrayBuffer()
     fontBoldCache = await boldRes.arrayBuffer()
-    
+
     return { regular: fontRegularCache, bold: fontBoldCache }
   } catch (error) {
     console.error('Font fetch error:', error)
@@ -62,10 +62,10 @@ export default defineEventHandler(async (event) => {
     if (titleLength > 80) fontSize = 48
     else if (titleLength > 60) fontSize = 54
     else if (titleLength > 40) fontSize = 62
-    
+
     // Truncate very long titles
     const displayTitle = title.length > 120 ? title.slice(0, 117) + '...' : title
-    
+
     element = {
       type: 'div',
       props: {
@@ -258,13 +258,13 @@ export default defineEventHandler(async (event) => {
   // CATEGORY PAGE
   else if (type === 'category' && category) {
     const categoryNames: Record<string, string> = {
-      'good-news': "Today's Good News",
+      'good-news': "Daily Mix",
       'heroes': 'Community Heroes',
       'planet': 'Planet Wins',
       'innovation': 'Innovation & Discovery',
       'solutions': 'Solutions That Work',
     }
-    
+
     element = {
       type: 'div',
       props: {
@@ -476,7 +476,7 @@ export default defineEventHandler(async (event) => {
   try {
     // Load fonts
     const fonts = await loadFonts()
-    
+
     // Generate SVG with Satori
     const svg = await satori(element, {
       width: 1200,
@@ -514,7 +514,7 @@ export default defineEventHandler(async (event) => {
     return pngBuffer
   } catch (error) {
     console.error('OG Image generation error:', error)
-    
+
     throw createError({
       statusCode: 500,
       message: 'Failed to generate image',

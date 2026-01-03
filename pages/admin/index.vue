@@ -69,7 +69,7 @@
       <!-- Quick Actions -->
       <div class="bg-white rounded-xl p-6 shadow-sm mb-8">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-        <div class="flex flex-wrap gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <button 
             @click="triggerFetch" 
             :disabled="fetching"

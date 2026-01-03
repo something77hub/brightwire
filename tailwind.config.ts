@@ -13,6 +13,14 @@ export default <Config>{
         'display': ['"Playfair Display"', 'Georgia', 'serif'],
         'sans': ['"Roboto"', 'system-ui', 'sans-serif'],
       },
+      fontSize: {
+        'base': ['18px', { lineHeight: '1.75' }],     // Increased from default 16px
+        'lg': ['20px', { lineHeight: '1.75' }],       // Larger body text
+        'xl': ['22px', { lineHeight: '1.75' }],       // Even larger for emphasis
+        '2xl': ['26px', { lineHeight: '1.6' }],       // Headings
+        '3xl': ['32px', { lineHeight: '1.5' }],
+        '4xl': ['40px', { lineHeight: '1.4' }],
+      },
       colors: {
         brand: {
           50: '#fffbeb',

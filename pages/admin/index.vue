@@ -185,7 +185,8 @@
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-gray-900">Recent Articles</h2>
           <NuxtLink to="/admin/articles" class="text-amber-600 hover:text-amber-700 text-sm font-medium">
-            View All 鈫?          </NuxtLink>
+            View All &rarr;
+          </NuxtLink>
         </div>
         
         <div v-if="pending" class="text-center py-8">
@@ -196,7 +197,7 @@
           <div v-for="article in recentArticles" :key="article._id" class="py-3 flex items-center justify-between">
             <div class="flex-1 min-w-0">
               <p class="font-medium text-gray-900 truncate">{{ article.title }}</p>
-              <p class="text-sm text-gray-500">{{ article.originalSource }} 路 {{ formatDate(article.createdAt) }}</p>
+              <p class="text-sm text-gray-500">{{ article.originalSource }} &bull; {{ formatDate(article.createdAt) }}</p>
             </div>
             <span :class="['px-2 py-1 rounded text-xs font-medium', getCategoryColor(article.category)]">
               {{ article.category }}
@@ -352,7 +353,7 @@ async function reclassifyArticles() {
     })
     
     if (dryRun.total === 0) {
-      reclassifyMessage.value = 'All articles are already properly categorized! 馃帀'
+      reclassifyMessage.value = 'All articles are already properly categorized! 🎉'
       await refreshCategoryStats()
       reclassifying.value = false
       return
@@ -397,7 +398,7 @@ async function reclassifyArticles() {
       await new Promise(r => setTimeout(r, 1000))
     }
     
-    reclassifyMessage.value = `鉁?Setup Complete! Processed ${processedCount} articles. Fixed ${changedCount} categories.`
+    reclassifyMessage.value = `✅ Setup Complete! Processed ${processedCount} articles. Fixed ${changedCount} categories.`
     await refreshCategoryStats()
 
   } catch (e) {
@@ -417,7 +418,7 @@ async function generateDaily() {
   generatingDaily.value = true
   try {
     const result = await $fetch('/api/admin/trigger-daily', { method: 'POST' })
-    alert('Started! 馃帀 The joke and quote will update in a few seconds.')
+    alert('Started! 🎉 The joke and quote will update in a few seconds.')
   } catch (e: any) {
     alert('Error: ' + (e.message || 'Unknown error'))
   } finally {
@@ -430,7 +431,7 @@ const deleting = ref(false)
 
 async function deleteAllArticles() {
   // Double confirmation
-  if (!confirm('鈿狅笍 This will DELETE ALL ARTICLES!\n\nAre you sure you want to start fresh?')) {
+  if (!confirm('⚠️ This will DELETE ALL ARTICLES!\n\nAre you sure you want to start fresh?')) {
     return
   }
   
@@ -448,7 +449,7 @@ async function deleteAllArticles() {
       body: { confirm: 'DELETE ALL ARTICLES' }
     })
     
-    alert(`鉁?${result.message}\n\nClick "Fetch News Now" to get fresh articles with proper categories.`)
+    alert(`✅ ${result.message}\n\nClick "Fetch News Now" to get fresh articles with proper categories.`)
     
     // Refresh stats
     await refreshCategoryStats()

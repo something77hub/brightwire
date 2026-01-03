@@ -10,7 +10,7 @@
         class="block"
       >
         <!-- Display Ad (Banner) -->
-        <div v-if="ad.type === 'display'" :class="displayClass">
+        <div v-if="ad.type === 'display' || ['header', 'article-top', 'article-bottom', 'category-header'].includes(placement)" :class="displayClass">
           <img 
             v-if="ad.imageUrl" 
             :src="ad.imageUrl" 

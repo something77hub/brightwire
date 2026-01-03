@@ -1121,7 +1121,7 @@ FORMATTING:
     // FINAL SUMMARY
     // ========================================
     console.log('\n馃搳 PIPELINE SUMMARY:')
-    console.log('鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?)
+    console.log('----------------------------------------')
     console.log(`  RSS Items Fetched:     ${candidates.length}`)
     console.log(`  New (not in DB/queue): ${newCandidates.length}`)
     console.log(`  Positive (score 45+):  ${classified.length}`)
@@ -1130,8 +1130,8 @@ FORMATTING:
     console.log(`  Rewritten:             ${rewritten.length}`)
     console.log(`  Saved to Database:     ${saved}`)
     console.log('鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?)
+    console.log('----------------------------------------')
     console.log('✅ Queue system ensures NO positive articles are missed')
-
     return {
       success: true,
       candidates: candidates.length,

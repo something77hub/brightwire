@@ -15,7 +15,7 @@
             v-if="ad.imageUrl" 
             :src="ad.imageUrl" 
             :alt="ad.headline || 'Advertisement'"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-contain bg-gray-50"
             loading="lazy"
           />
           <div v-else class="w-full h-full bg-gradient-to-r from-amber-100 to-orange-100 flex items-center justify-center p-4">
@@ -39,7 +39,7 @@
             v-if="ad.imageUrl" 
             :src="ad.imageUrl" 
             :alt="ad.headline || 'Advertisement'"
-            class="w-full h-32 object-cover rounded-lg mb-3"
+            class="w-full h-32 object-contain bg-gray-50 rounded-lg mb-3"
             loading="lazy"
           />
           <p v-if="ad.headline" class="font-semibold text-amber-900 text-sm">{{ ad.headline }}</p>

@@ -15,6 +15,7 @@ export const CORE_CATEGORIES: CategoryDefinition[] = [
     { id: 'solutions', label: 'Solutions', emoji: '💡', color: 'blue', twColor: 'blue' },
     { id: 'kindness', label: 'Acts of Kindness', emoji: '💛', color: 'yellow', twColor: 'yellow' },
     { id: 'sports', label: 'Sports', emoji: '🏆', color: 'orange', twColor: 'orange' },
+    { id: 'video', label: 'Videos', emoji: '🎬', color: 'red', twColor: 'red' },
     { id: 'world', label: 'Global News', emoji: '🌐', color: 'cyan', twColor: 'cyan' },
 ]
 

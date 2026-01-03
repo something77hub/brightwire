@@ -4,18 +4,18 @@ export const healthSources: NewsSource[] = [
     // ========================================
     // HEALTH & WELLNESS (New Category)
     // ========================================
-    {
-        name: 'Healthline News',
-        feed: 'https://www.healthline.com/feeds/health-news',
-        baseUrl: 'https://www.healthline.com',
-        forcedCategory: 'health',
-    },
-    {
-        name: 'Medical News Today',
-        feed: 'https://www.medicalnewstoday.com/feed',
-        baseUrl: 'https://www.medicalnewstoday.com',
-        forcedCategory: 'health',
-    },
+    // {
+    //     name: 'Healthline News',
+    //     feed: 'https://www.healthline.com/feeds/health-news',
+    //     baseUrl: 'https://www.healthline.com',
+    //     forcedCategory: 'health',
+    // },
+    // {
+    //     name: 'Medical News Today',
+    //     feed: 'https://www.medicalnewstoday.com/feed',
+    //     baseUrl: 'https://www.medicalnewstoday.com',
+    //     forcedCategory: 'health',
+    // },
     {
         name: 'ScienceDaily Health',
         feed: 'https://www.sciencedaily.com/rss/health_medicine.xml',

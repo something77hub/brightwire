@@ -242,8 +242,8 @@ export const fetchNews = inngest.createFunction(
       return allCandidates
     })
 
-    if (candidates.length === 0) {
-      return { success: true, added: 0, message: 'No candidates found' }
+    if (candidates.length === 0 && queuedArticles.length === 0) {
+      return { success: true, added: 0, message: 'No candidates found and queue is empty' }
     }
 
     // ========================================

@@ -67,9 +67,14 @@ export function preFilterStory(title: string, summary: string): 'skip' | 'boost'
   return 'classify'
 }
 
+import { videoSources } from './sources/video'
+
+// ... existing imports ...
+
 // Aggregate all sources
 export const newsSources = [
   ...generalSources,
   ...sportsSources,
   ...healthSources,
+  ...videoSources,
 ]

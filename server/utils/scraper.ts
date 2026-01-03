@@ -111,6 +111,26 @@ const SOURCE_SELECTORS: Record<string, {
     remove: ['.related-posts', '.ad'],
     images: '.entry-content img[src]',
   },
+  'space.com': {
+    content: ['#article-body'],
+    remove: ['aside', '.ad-unit', '.advertisement', '#top-leaderboard', '.newsletter-signup', '.exit-intent', '.utility-bar', '#viafoura-comments', '.taboola-container'],
+    images: '#article-body img[src]',
+  },
+  'carbonbrief.org': {
+    content: ['.innerArt'],
+    remove: ['.article-aside', '.shareArtInner', '.pum', '.artTop', '.greyBar'],
+    images: '.innerArt img[src]',
+  },
+  'sunnyskyz.com': {
+    content: ['.storytext'],
+    remove: ['#rightcol', '#disqus_thread', '.ad-leader', '.sharethis-inline-share-buttons', '#footer'],
+    images: '.storytext img[src]',
+  },
+  'medicalxpress.com': {
+    content: ['.article-main'],
+    remove: ['.ads', '.article-main__support', '.article-main__more', '.article-main__note', '.d-print-block'],
+    images: '.article-main img[src]',
+  },
 }
 
 // Generic selectors

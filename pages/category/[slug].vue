@@ -173,6 +173,11 @@ const categoryData: Record<string, { title: string; emoji: string; description: 
     emoji: '🏆',
     description: 'Yes, it is sports, and of course it is good news! Celebrating wins, records, and teamwork.',
   },
+  health: {
+    title: 'Health & Wellness',
+    emoji: '🧘‍♀️',
+    description: 'Breakthroughs in medicine, mental health tips, and stories of healing and recovery.',
+  },
 }
 
 const categoryInfo = computed(() => categoryData[category.value] || {

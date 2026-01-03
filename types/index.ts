@@ -29,6 +29,7 @@ export type StoryCategory =
   | 'kindness'       // Acts of Kindness - heartwarming human moments
   | 'sports'         // Sports - wins, records, teamwork
   | 'world'          // World/International - specific country news (Nigeria, India, etc.)
+  | 'health'         // Health & Wellness - medical breakthroughs, mental health
 
 // Advertisement Types
 export type AdType =

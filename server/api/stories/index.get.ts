@@ -43,26 +43,35 @@ export default defineEventHandler(async (event) => {
 
     if (isHomepage && !featured) {
       // HOMEPAGE DIVERSITY LOGIC
-      // We want to limit sports/world to ~15% of the feed to prevent them from overwhelming the good news
-      const diversityLimit = Math.ceil(limit * 0.15) // ~2 items per 12
-      const coreLimit = limit - diversityLimit      // ~10 items per 12
+      // Target Mix: 10% Sports, 20% Health, 70% General (Core)
+      const sportsLimit = Math.ceil(limit * 0.10)  // ~1-2 items per 20
+      const healthLimit = Math.ceil(limit * 0.20)  // ~4 items per 20
+      const coreLimit = limit - sportsLimit - healthLimit // Remaining ~70%
 
-      const diversitySkip = (page - 1) * diversityLimit
+      const sportsSkip = (page - 1) * sportsLimit
+      const healthSkip = (page - 1) * healthLimit
       const coreSkip = (page - 1) * coreLimit
 
       const aggregation = [
         {
           $facet: {
-            // Stream 1: Sports & World (Limited)
-            diversity: [
-              { $match: { ...filter, category: { $in: ['sports', 'world'] } } },
+            // Stream 1: Sports (10%)
+            sports: [
+              { $match: { ...filter, category: 'sports' } },
               { $sort: { createdAt: -1 } },
-              { $skip: diversitySkip },
-              { $limit: diversityLimit }
+              { $skip: sportsSkip },
+              { $limit: sportsLimit }
             ],
-            // Stream 2: Core Categories (Majority)
+            // Stream 2: Health (20%)
+            health: [
+              { $match: { ...filter, category: 'health' } },
+              { $sort: { createdAt: -1 } },
+              { $skip: healthSkip },
+              { $limit: healthLimit }
+            ],
+            // Stream 3: General/Core (70%) - Exclude Sports & Health
             core: [
-              { $match: { ...filter, category: { $nin: ['sports', 'world'] } } },
+              { $match: { ...filter, category: { $nin: ['sports', 'health'] } } },
               { $sort: { createdAt: -1 } },
               { $skip: coreSkip },
               { $limit: coreLimit }
@@ -74,7 +83,16 @@ export default defineEventHandler(async (event) => {
       const [faceted] = await stories.aggregate(aggregation).toArray()
 
       // Merge and sort by date to interleave them naturally
-      results = [...(faceted.diversity || []), ...(faceted.core || [])].sort((a, b) => {
+      // We start with Core as base, then inject Sports and Health at intervals if we wanted strictly ordered,
+      // but sorting by date is usually best for a natural "Newest" feel while respecting the quantity caps.
+      // However, if we just sort by date, a recent burst of sports might clump at top if they are newer. 
+      // But since we LIMITED the number of sports items returned, they can't dominate the whole list.
+      // They will just be the *newest* 2 sports items.
+      results = [
+        ...(faceted.sports || []),
+        ...(faceted.health || []),
+        ...(faceted.core || [])
+      ].sort((a, b) => {
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       })
 

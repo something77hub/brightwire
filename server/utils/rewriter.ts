@@ -41,6 +41,7 @@ export async function rewriteArticle(
     innovation: 'Explain the breakthrough in accessible terms and its potential.',
     'good-news': 'Find the uplifting angle and human interest (Daily Mix style).',
     kindness: 'Capture the warmth, generosity and humanity of the story.',
+    health: 'Focus on the breakthrough, recovery, or actionable wellness advice.',
   }
 
   // Detect if this is video content (short source material)
@@ -194,7 +195,7 @@ Create a new article in BrightWire's voice:
 - End on a hopeful note
 - DO NOT copy original sentences
 
-CATEGORY OPTIONS: solutions, heroes, planet, innovation, kindness, good-news
+CATEGORY OPTIONS: solutions, heroes, planet, innovation, kindness, good-news, health, sports, world
 
 RESPOND WITH JSON ONLY:
 {

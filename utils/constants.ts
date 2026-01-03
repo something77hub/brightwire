@@ -8,6 +8,7 @@ export interface CategoryDefinition {
 
 export const CORE_CATEGORIES: CategoryDefinition[] = [
 
+    { id: 'health', label: 'Health & Wellness', emoji: '🧘‍♀️', color: 'teal', twColor: 'teal' },
     { id: 'heroes', label: 'Community Heroes', emoji: '🦸', color: 'rose', twColor: 'rose' },
     { id: 'planet', label: 'Planet Wins', emoji: '🌍', color: 'emerald', twColor: 'emerald' },
     { id: 'innovation', label: 'Innovation', emoji: '🚀', color: 'violet', twColor: 'violet' },

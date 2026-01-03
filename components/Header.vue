@@ -68,7 +68,7 @@
             v-for="item in navItems" 
             :key="item.href"
             :to="item.href"
-            class="text-amber-900/70 hover:text-amber-600 transition-colors font-medium text-sm relative group"
+            class="text-amber-900/70 hover:text-amber-600 transition-colors font-medium text-xs relative group"
           >
             {{ item.label }}
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-orange-400 group-hover:w-full transition-all duration-300"></span>

@@ -272,19 +272,20 @@
 
 <script setup lang="ts">
 import type { Story } from '~/types'
+import { CORE_CATEGORIES } from '~/utils/constants'
 
 const mobileMenuOpen = ref(false)
 const searchQuery = ref('')
 const searchFocused = ref(false)
 const searchContainer = ref<HTMLElement | null>(null)
 
-const navItems = [
+const navItems = computed(() => [
   { label: 'Today', href: '/today' },
-  { label: 'Solutions', href: '/category/solutions' },
-  { label: 'Heroes', href: '/category/heroes' },
-  { label: 'Planet', href: '/category/planet' },
-  { label: 'Innovation', href: '/category/innovation' },
-]
+  ...CORE_CATEGORIES.map(c => ({ 
+    label: c.label.replace("Today's ", ""), // Shorten "Today's Good News" for menu
+    href: `/category/${c.id}` 
+  })),
+])
 
 // Debounced search
 const debouncedQuery = ref('')

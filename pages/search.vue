@@ -95,7 +95,6 @@
           </NuxtLink>
         </div>
       </div>
-      </div>
 
       <!-- Sidebar Widgets -->
       <div class="max-w-2xl mx-auto mt-16 mb-12">

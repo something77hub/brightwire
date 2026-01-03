@@ -108,7 +108,7 @@
 
         <!-- Main Content -->
         <div 
-          class="prose prose-lg lg:prose-xl prose-amber max-w-none
+          class="prose prose-lg lg:prose-xl prose-amber max-w-none font-serif
                  prose-headings:font-display prose-headings:text-amber-950
                  prose-p:text-amber-900/80 prose-p:leading-relaxed
                  prose-a:text-amber-600 prose-a:no-underline hover:prose-a:underline

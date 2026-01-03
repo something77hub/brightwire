@@ -19,6 +19,10 @@ export default defineNuxtConfig({
       'Roboto': {
         wght: [300, 400, 500, 700],
       },
+      'Merriweather': {
+        wght: [300, 400, 700, 900],
+        ital: [300, 400, 700],
+      },
     },
     display: 'swap',
   },

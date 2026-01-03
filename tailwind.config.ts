@@ -12,6 +12,7 @@ export default <Config>{
       fontFamily: {
         'display': ['"Playfair Display"', 'Georgia', 'serif'],
         'sans': ['"Roboto"', 'system-ui', 'sans-serif'],
+        'serif': ['"Merriweather"', 'Georgia', 'serif'],
       },
       fontSize: {
         'base': ['18px', { lineHeight: '1.75' }],     // Increased from default 16px

@@ -157,9 +157,9 @@ function trackClick(adId: string) {
 
 // Display styling
 const displayClass = computed(() => {
-  if (props.placement === 'header') return 'relative w-full h-24 sm:h-32 rounded-xl overflow-hidden'
-  if (props.placement === 'article-top') return 'relative w-full h-20 rounded-lg overflow-hidden'
-  if (props.placement === 'article-bottom') return 'relative w-full h-24 rounded-lg overflow-hidden'
-  return 'relative w-full h-32 rounded-xl overflow-hidden'
+  if (props.placement === 'header') return 'relative w-full h-auto min-h-[90px] sm:h-32 rounded-xl overflow-hidden'
+  if (props.placement === 'article-top') return 'relative w-full h-auto min-h-[80px] sm:h-24 rounded-lg overflow-hidden'
+  if (props.placement === 'article-bottom') return 'relative w-full h-auto min-h-[90px] sm:h-32 rounded-lg overflow-hidden'
+  return 'relative w-full h-auto min-h-[90px] sm:h-32 rounded-xl overflow-hidden'
 })
 </script>

@@ -379,7 +379,7 @@ function getCategoryEmoji(category: string): string {
     'innovation': '馃殌',
     'solutions': '馃挕',
   }
-  return emojis[category] || '鉁?
+    return emojis[category] || '&#9989;'
 }
 
 // Handle category changes

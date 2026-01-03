@@ -7,7 +7,7 @@ export interface CategoryDefinition {
 }
 
 export const CORE_CATEGORIES: CategoryDefinition[] = [
-    { id: 'good-news', label: "Today's Good News", emoji: '☀️', color: 'amber', twColor: 'amber' },
+
     { id: 'heroes', label: 'Community Heroes', emoji: '🦸', color: 'rose', twColor: 'rose' },
     { id: 'planet', label: 'Planet Wins', emoji: '🌍', color: 'emerald', twColor: 'emerald' },
     { id: 'innovation', label: 'Innovation', emoji: '🚀', color: 'violet', twColor: 'violet' },

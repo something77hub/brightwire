@@ -1130,7 +1130,7 @@ FORMATTING:
     console.log(`  Rewritten:             ${rewritten.length}`)
     console.log(`  Saved to Database:     ${saved}`)
     console.log('鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?)
-    console.log('鉁?Queue system ensures NO positive articles are missed')
+    console.log('✅ Queue system ensures NO positive articles are missed')
 
     return {
       success: true,
@@ -1251,4 +1251,5 @@ Return ONLY in that format. No extra text.`
     }
   }
 )
+
 

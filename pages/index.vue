@@ -76,7 +76,7 @@
 
       <!-- Empty state - no stories yet -->
       <div v-else-if="showEmptyState" class="text-center py-20">
-        <span class="text-5xl mb-4 block">馃寘</span>
+        <span class="text-5xl mb-4 block">☕</span>
         <h2 class="text-2xl font-bold text-amber-900 mb-2">Good news is brewing...</h2>
         <p class="text-amber-700/60 mb-6">We're gathering uplifting stories. Check back soon!</p>
         <button 

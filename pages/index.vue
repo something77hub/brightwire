@@ -194,41 +194,6 @@
               </div>
             </div>
 
-            <!-- Newsletter Mini -->
-            <div class="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white">
-              <span class="text-3xl block mb-2">☀️</span>
-              <h3 class="font-bold mb-2">{{ siteSettings?.newsletterTitle || 'Daily Good News' }}</h3>
-              <p class="text-white/80 text-sm mb-4">{{ siteSettings?.newsletterSubtitle || 'Get positivity in your inbox every morning.' }}</p>
-              <form v-if="!quickSubscribed" @submit.prevent="subscribeQuick" class="space-y-2">
-                <input 
-                  type="email" 
-                  v-model="quickEmail"
-                  required
-                  :disabled="quickLoading"
-                  placeholder="Your email"
-                  class="w-full px-4 py-2 rounded-lg text-amber-900 placeholder-amber-400 text-sm focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50"
-                />
-                <button 
-                  type="submit"
-                  :disabled="quickLoading"
-                  class="w-full bg-amber-950 text-white py-2 rounded-lg font-semibold text-sm hover:bg-amber-900 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  <svg v-if="quickLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {{ quickLoading ? 'Subscribing...' : (siteSettings?.newsletterButtonText || 'Subscribe Free') }}
-                </button>
-              </form>
-              <div v-else class="text-center py-2">
-                <svg class="w-8 h-8 mx-auto mb-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <p class="text-sm font-medium">{{ quickSuccessMsg || "You're in! 馃帀" }}</p>
-              </div>
-              <p v-if="quickError" class="text-red-200 text-xs mt-2">{{ quickError }}</p>
-            </div>
-
             <!-- Sidebar Ad (Self-managed first, then GAM fallback) -->
             <ClientOnly>
               <UnifiedAd placement="sidebar" />
@@ -268,11 +233,7 @@ const activeCategory = ref('all')
 const page = ref(1)
 const loadingMore = ref(false)
 const allStories = ref<Story[]>([])
-const quickEmail = ref('')
-const quickLoading = ref(false)
-const quickSubscribed = ref(false)
-const quickError = ref('')
-const quickSuccessMsg = ref('')
+
 const newStoriesCount = ref(0)
 const latestStoryId = ref<string | null>(null)
 
@@ -524,30 +485,7 @@ async function loadMore() {
   }
 }
 
-async function subscribeQuick() {
-  if (!quickEmail.value) return
-  
-  quickLoading.value = true
-  quickError.value = ''
-  
-  try {
-    const response = await $fetch('/api/subscribe', {
-      method: 'POST',
-      body: { email: quickEmail.value },
-    })
-    
-    quickSuccessMsg.value = response.message || siteSettings.value?.newsletterSuccessMessage || "You're in! 馃帀"
-    quickSubscribed.value = true
-    quickEmail.value = ''
-  } catch (error: any) {
-    quickError.value = error.data?.message || 'Something went wrong'
-    setTimeout(() => {
-      quickError.value = ''
-    }, 5000)
-  } finally {
-    quickLoading.value = false
-  }
-}
+
 
 const shareJoke = () => {
   const joke = siteSettings.value?.jokeText || "Why don't scientists trust atoms? Because they make up everything!"

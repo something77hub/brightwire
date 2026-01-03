@@ -64,15 +64,13 @@ export default defineEventHandler(async (event) => {
           a._id.toString() === scene.articleId || a.guid === scene.articleId
         )
         if (article) {
-          bgImage = article.image || (article.imageUrl) // Prefer main image
+          // Priority: images[0] (hero) > imageUrl > image
+          bgImage = article.images?.[0] || article.imageUrl || article.image
         }
       }
 
       // Fallback/Intro/Outro Backgrounds
-      // ideally we would have a branded intro/outro video or image
-      // For now, use a solid branded color for intro/outro to differentiate
-      // and prevent random images being shown when not talking about them.
-
+      // Use branded color for intro/outro to differentiate and prevent compositing issues
       const background = bgImage
         ? { type: 'image', url: bgImage, fit: 'cover' }
         : { type: 'color', value: '#FFFBEB' } // BrightWire amber/white theme

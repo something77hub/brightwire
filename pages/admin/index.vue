@@ -314,7 +314,7 @@ function getCategoryColor(category: string) {
 }
 
 function getCategoryEmoji(category: string) {
-    return CATEGORY_MAP[category]?.emoji || '&#9989;'
+    return CATEGORY_MAP[category]?.emoji || '✅'
 }
 
 async function triggerFetch() {
@@ -468,5 +468,6 @@ useHead({
   title: 'Admin Dashboard - BrightWire',
 })
 </script>
+
 
 

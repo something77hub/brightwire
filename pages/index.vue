@@ -16,7 +16,7 @@
         class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-amber-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 cursor-pointer hover:bg-amber-600 transition-colors"
         @click="loadNewStories"
       >
-        <span class="animate-pulse">&#9889;</span>
+        <span class="animate-pulse">⚡</span>
         <span class="font-medium">{{ newStoriesCount }} new {{ newStoriesCount === 1 ? 'story' : 'stories' }}</span>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -161,7 +161,7 @@
             <!-- Joke of the Day -->
             <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 shadow-lg border border-amber-200/50">
               <div class="flex items-center gap-2 mb-4">
-                <span class="text-2xl">&#128516;</span>
+                <span class="text-2xl">😄</span>
                 <h3 class="font-bold text-amber-950">Joke of the Day</h3>
               </div>
               <div class="space-y-3">
@@ -196,7 +196,7 @@
 
             <!-- Newsletter Mini -->
             <div class="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white">
-              <span class="text-3xl block mb-2">&#9728;&#65039;</span>
+              <span class="text-3xl block mb-2">☀️</span>
               <h3 class="font-bold mb-2">{{ siteSettings?.newsletterTitle || 'Daily Good News' }}</h3>
               <p class="text-white/80 text-sm mb-4">{{ siteSettings?.newsletterSubtitle || 'Get positivity in your inbox every morning.' }}</p>
               <form v-if="!quickSubscribed" @submit.prevent="subscribeQuick" class="space-y-2">
@@ -373,13 +373,13 @@ const displayTrendingTopics = computed(() => {
 
 function getCategoryEmoji(category: string): string {
   const emojis: Record<string, string> = {
-      'good-news': '&#9728;&#65039;',
+      'good-news': '☀️',
     'heroes': '馃Ω',
     'planet': '馃實',
     'innovation': '馃殌',
     'solutions': '馃挕',
   }
-    return emojis[category] || '&#9989;'
+    return emojis[category] || '✅'
 }
 
 // Handle category changes
@@ -460,7 +460,7 @@ const showEmptyState = computed(() => {
 import { CORE_CATEGORIES } from '~/utils/constants'
 
 const categories = [
-    { id: 'all', label: 'All Stories', emoji: '&#9989;' },
+    { id: 'all', label: 'All Stories', emoji: '✅' },
   ...CORE_CATEGORIES.map(c => ({
     id: c.id,
     label: c.label,
@@ -654,5 +654,6 @@ useHead({
   display: inline-block;
 }
 </style>
+
 
 

@@ -185,6 +185,9 @@ const sectionLinks = [
   { label: 'Planet Wins', href: '/category/planet' },
   { label: 'Innovation', href: '/category/innovation' },
   { label: 'Solutions', href: '/category/solutions' },
+  { label: 'Acts of Kindness', href: '/category/kindness' },
+  { label: 'Sports & Athletics', href: '/category/sports' },
+  { label: 'Global News', href: '/category/world' },
 ]
 
 const companyLinks = [

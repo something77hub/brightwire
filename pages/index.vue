@@ -288,6 +288,7 @@ function getCategoryEmoji(category: string): string {
     'planet': '馃實',
     'innovation': '馃殌',
     'solutions': '馃挕',
+    'video': '🎬',
   }
     return emojis[category] || '✅'
 }
@@ -446,6 +447,7 @@ function formatCategoryTitle(category: string): string {
     'good-news': "Daily Mix",
     kindness: 'Acts of Kindness',
     sports: 'Sports & Athletics',
+    video: 'Must-Watch Videos',
   }
   return titles[category] || 'Good News'
 }

@@ -410,7 +410,8 @@ async function reclassifyArticles() {
 }
 
 // Generate Daily Content
-const generatingDaily = ref(false)
+// Generate Daily Content
+
 
 async function generateDaily() {
   generatingDaily.value = true

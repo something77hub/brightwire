@@ -1,12 +1,19 @@
 <template>
   <div>
     <Header />
+    <ClientOnly>
+      <UnifiedAd placement="header" class="my-6 max-w-7xl mx-auto px-4 sm:px-6" />
+    </ClientOnly>
     <CategoryPills v-model="category" @select="navigateToCategory" />
     
     <!-- Category Sponsor -->
     <CategorySponsor :category="category" />
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <!-- Ad Placement: Category Header -->
+      <ClientOnly>
+        <UnifiedAd placement="category-header" class="mb-10" />
+      </ClientOnly>
       <!-- Category Header -->
       <div class="mb-10 text-center">
         <span class="text-6xl mb-4 block">{{ categoryInfo.emoji }}</span>

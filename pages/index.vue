@@ -1,6 +1,9 @@
 ﻿<template>
   <div>
     <Header />
+    <ClientOnly>
+      <UnifiedAd placement="header" class="my-6 max-w-7xl mx-auto px-4 sm:px-6" />
+    </ClientOnly>
     
     <!-- New Stories Toast -->
     <Transition
@@ -93,6 +96,11 @@
             <section v-if="featuredStory">
               <FeaturedStory :story="featuredStory" />
             </section>
+            
+            <!-- In-Feed Ad -->
+            <ClientOnly>
+              <UnifiedAd placement="in-feed" class="my-8" />
+            </ClientOnly>
 
             <!-- Section Header -->
             <div class="flex items-center gap-4 pt-4">

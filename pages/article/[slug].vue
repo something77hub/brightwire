@@ -1,6 +1,9 @@
 <template>
   <div>
     <Header />
+    <ClientOnly>
+      <UnifiedAd placement="header" class="my-6 max-w-7xl mx-auto px-4 sm:px-6" />
+    </ClientOnly>
 
     <!-- Loading -->
     <div v-if="pending" class="max-w-4xl mx-auto px-4 sm:px-6 py-20">
@@ -35,6 +38,11 @@
 
       <!-- Article Content -->
       <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <!-- Ad Placement: Article Top -->
+        <ClientOnly>
+          <UnifiedAd placement="article-top" class="mb-8" />
+        </ClientOnly>
+
         <!-- Header -->
         <header class="py-8 sm:py-12" :class="{ '-mt-32 sm:-mt-40 relative z-10': hasValidImage }">
           <div :class="{ 'bg-white rounded-2xl p-6 sm:p-8 shadow-xl': hasValidImage }">

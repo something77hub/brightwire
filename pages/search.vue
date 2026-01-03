@@ -1,6 +1,9 @@
 <template>
   <div>
     <Header />
+    <ClientOnly>
+      <UnifiedAd placement="header" class="my-6 max-w-7xl mx-auto px-4 sm:px-6" />
+    </ClientOnly>
     
     <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
       <!-- Search Input -->

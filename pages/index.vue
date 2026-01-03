@@ -460,7 +460,7 @@ const showEmptyState = computed(() => {
 import { CORE_CATEGORIES } from '~/utils/constants'
 
 const categories = [
-  { id: 'all', label: 'All Stories', emoji: '鉁? },
+    { id: 'all', label: 'All Stories', emoji: '&#9989;' },
   ...CORE_CATEGORIES.map(c => ({
     id: c.id,
     label: c.label,

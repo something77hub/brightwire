@@ -196,7 +196,7 @@
 
             <!-- Newsletter Mini -->
             <div class="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white">
-              <span class="text-3xl block mb-2">鈽€锔?/span>
+              <span class="text-3xl block mb-2">&#9728;&#65039;</span>
               <h3 class="font-bold mb-2">{{ siteSettings?.newsletterTitle || 'Daily Good News' }}</h3>
               <p class="text-white/80 text-sm mb-4">{{ siteSettings?.newsletterSubtitle || 'Get positivity in your inbox every morning.' }}</p>
               <form v-if="!quickSubscribed" @submit.prevent="subscribeQuick" class="space-y-2">

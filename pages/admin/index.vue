@@ -409,6 +409,21 @@ async function reclassifyArticles() {
   }
 }
 
+// Generate Daily Content
+const generatingDaily = ref(false)
+
+async function generateDaily() {
+  generatingDaily.value = true
+  try {
+    const result = await $fetch('/api/admin/trigger-daily', { method: 'POST' })
+    alert('Started! 馃帀 The joke and quote will update in a few seconds.')
+  } catch (e: any) {
+    alert('Error: ' + (e.message || 'Unknown error'))
+  } finally {
+    generatingDaily.value = false
+  }
+}
+
 // Delete all articles
 const deleting = ref(false)
 

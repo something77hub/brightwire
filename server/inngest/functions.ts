@@ -1,4 +1,4 @@
-/// <reference types="node" />
+﻿/// <reference types="node" />
 import { inngest } from './client'
 import Parser from 'rss-parser'
 import Anthropic from '@anthropic-ai/sdk'
@@ -228,9 +228,9 @@ export const fetchNews = inngest.createFunction(
             })
             added++
           }
-          sourceResults.push(`✅ ${source.name}: ${added} items`)
+          sourceResults.push(`鉁?${source.name}: ${added} items`)
         } catch (e: any) {
-          sourceResults.push(`❌ ${source.name}: ${e.message?.slice(0, 50)}`)
+          sourceResults.push(`鉂?${source.name}: ${e.message?.slice(0, 50)}`)
         }
       }
 
@@ -418,11 +418,11 @@ CATEGORIES - Pick the MOST SPECIFIC one, or use 'good-news' as fallback.
 
 IMPORTANT INSTRUCTIONS:
 - If the article is about a SPECIFIC COUNTRY (Nigeria, India, Brazil, Japan, etc.) or international relations, YOU MUST USE 'world'.
-  Examples: "Nigeria launches health program" → world, "India celebrates festival" → world, "Japanese team wins" → sports + world context
+  Examples: "Nigeria launches health program" 鈫?world, "India celebrates festival" 鈫?world, "Japanese team wins" 鈫?sports + world context
 - If the article is about football, basketball, olympics, or any athletic competition, YOU MUST USE THE CATEGORY 'sports'.
 - Do NOT use 'heroes' for sports stars unless they did something heroic OUTSIDE of the game (e.g. saving a life).
 - For generic rising stars or match wins, use 'sports'.
-- PRIORITY: If it's about Nigeria, Ghana, Kenya, India, Brazil, or any non-US/UK country → 'world' takes priority over other categories.
+- PRIORITY: If it's about Nigeria, Ghana, Kenya, India, Brazil, or any non-US/UK country 鈫?'world' takes priority over other categories.
 
 Respond with JSON array ONLY (no other text):
 [{"idx": 1, "score": 85, "category": "innovation"}, ...]`;
@@ -596,7 +596,7 @@ Respond with JSON array ONLY (no other text):
             }
 
             if (scrapedData.isVideo) {
-              console.log(`✅ VIDEO validated: ${candidate.source} (embed: ${scrapedData.videoEmbedUrl?.slice(0, 50)}...)`)
+              console.log(`鉁?VIDEO validated: ${candidate.source} (embed: ${scrapedData.videoEmbedUrl?.slice(0, 50)}...)`)
             }
 
             results.push({
@@ -963,7 +963,7 @@ FORMATTING:
       const articlesToProcess = scraped.slice(0, MAX_ARTICLES)
 
       if (scraped.length > MAX_ARTICLES) {
-        console.log(`ℹ️ ${scraped.length - MAX_ARTICLES} articles deferred to next run (queue system)`)
+        console.log(`鈩癸笍 ${scraped.length - MAX_ARTICLES} articles deferred to next run (queue system)`)
       }
 
       console.log(`Processing ${articlesToProcess.length} of ${scraped.length} articles...`)
@@ -1019,7 +1019,7 @@ FORMATTING:
           const ageHours = (now.getTime() - publishedAt.getTime()) / (1000 * 60 * 60)
 
           if (ageHours > maxAgeHours) {
-            console.log(`⏭️ Skipped (too old - ${ageHours.toFixed(0)}h): ${story.title.slice(0, 50)}`)
+            console.log(`鈴笍 Skipped (too old - ${ageHours.toFixed(0)}h): ${story.title.slice(0, 50)}`)
             savedGuids.push(story.guid) // Still remove from queue
             continue
           }
@@ -1027,7 +1027,7 @@ FORMATTING:
           await stories.insertOne(story)
           added++
           savedGuids.push(story.guid)
-          console.log(`✅ Saved: ${story.title.slice(0, 50)}`)
+          console.log(`鉁?Saved: ${story.title.slice(0, 50)}`)
         } catch (e: any) {
           if (e.code === 11000) {
             // Duplicate - remove from queue
@@ -1109,7 +1109,7 @@ FORMATTING:
 
     if (remainingCount > 0) {
       await step.run('trigger-next-batch', async () => {
-        console.log(`🔄 Triggering next batch immediately (${remainingCount} remaining)...`)
+        console.log(`馃攧 Triggering next batch immediately (${remainingCount} remaining)...`)
         await inngest.send({
           name: 'app/manual.fetch',
           data: { reason: 'queue-continuation' }
@@ -1120,8 +1120,8 @@ FORMATTING:
     // ========================================
     // FINAL SUMMARY
     // ========================================
-    console.log('\n📊 PIPELINE SUMMARY:')
-    console.log('═══════════════════════════════════════')
+    console.log('\n馃搳 PIPELINE SUMMARY:')
+    console.log('鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?)
     console.log(`  RSS Items Fetched:     ${candidates.length}`)
     console.log(`  New (not in DB/queue): ${newCandidates.length}`)
     console.log(`  Positive (score 45+):  ${classified.length}`)
@@ -1129,8 +1129,8 @@ FORMATTING:
     console.log(`  Scraped Successfully:  ${scraped.length}`)
     console.log(`  Rewritten:             ${rewritten.length}`)
     console.log(`  Saved to Database:     ${saved}`)
-    console.log('═══════════════════════════════════════')
-    console.log('✅ Queue system ensures NO positive articles are missed')
+    console.log('鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?)
+    console.log('鉁?Queue system ensures NO positive articles are missed')
 
     return {
       success: true,
@@ -1153,7 +1153,7 @@ export const generateDailyContent = inngest.createFunction(
     id: 'generate-daily-content',
     name: 'Generate Daily Joke and Quote',
   },
-  { cron: '0 6 * * *' }, // Daily at 6 AM UTC
+  [ { cron: '0 6 * * *' }, { event: 'app/manual.daily-content' } ], // Daily at 6 AM UTC + Manual
   async ({ event, step }) => {
     
     // Step 1: Generate Joke
@@ -1200,14 +1200,14 @@ Requirements:
 
 Format:
 Quote text
-�� Author Name
+— Author Name
 
 Return ONLY in that format. No extra text.`
         }]
       })
       
       const fullText = response.content[0].type === 'text' ? response.content[0].text.trim() : ''
-      const parts = fullText.split('��')
+      const parts = fullText.split('—')
       return {
         text: parts[0]?.trim().replace(/^["']|["']$/g, '') || '',
         author: parts[1]?.trim() || 'Unknown'
@@ -1238,7 +1238,7 @@ Return ONLY in that format. No extra text.`
           { upsert: true }
         )
         
-        console.log('? Daily content updated:', { joke, quote: ` �� ` })
+        console.log('? Daily content updated:', { joke, quote: ` — ` })
       } finally {
         await client.close()
       }
@@ -1247,7 +1247,8 @@ Return ONLY in that format. No extra text.`
     return {
       success: true,
       joke,
-      quote: ` �� `
+      quote: ` — `
     }
   }
 )
+

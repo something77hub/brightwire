@@ -1157,61 +1157,170 @@ export const generateDailyContent = inngest.createFunction(
 
     // Step 1: Generate Joke
     const joke = await step.run('generate-joke', async () => {
+      const client = new MongoClient(process.env.MONGODB_URI!)
       const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
-      const response = await anthropic.messages.create({
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 200,
-        messages: [{
-          role: 'user',
-          content: `Generate ONE clean, family-friendly joke for BrightWire - a positive news site.
 
-Requirements:
-- Must be genuinely funny
-- No politics, religion, or controversial topics
-- Appropriate for all ages
-- 1-2 sentences maximum
-- Wordplay, puns, or clever observations preferred
+      let uniqueJoke = ''
+      let attempts = 0
+      const maxAttempts = 3
 
-Return ONLY the joke text. No labels, no extra commentary.`
-        }]
-      })
+      try {
+        await client.connect()
+        const db = client.db('brightwire')
+        const history = db.collection('daily_content_history')
+        const thirtyDaysAgo = new Date()
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-      return response.content[0].type === 'text' ? response.content[0].text.trim() : ''
+        while (attempts < maxAttempts) {
+          attempts++
+          console.log(`[Joke] Generation attempt ${attempts}/${maxAttempts}`)
+
+          const response = await anthropic.messages.create({
+            model: 'claude-3-5-haiku-20241022',
+            max_tokens: 200,
+            messages: [{
+              role: 'user',
+              content: `Generate ONE clean, family-friendly joke for BrightWire - a positive news site.${attempts > 1 ? ' Give me a DIFFERENT one, that one was already used.' : ''}
+  
+  Requirements:
+  - Must be genuinely funny
+  - No politics, religion, or controversial topics
+  - Appropriate for all ages
+  - 1-2 sentences maximum
+  - Wordplay, puns, or clever observations preferred
+  
+  Return ONLY the joke text. No labels, no extra commentary.`
+            }]
+          })
+
+          const generatedJoke = response.content[0].type === 'text' ? response.content[0].text.trim() : ''
+
+          // Check uniqueness (ALL TIME)
+          const existing = await history.findOne({
+            type: 'joke',
+            text: generatedJoke
+            // Removed date filter to check ALL history
+          })
+
+          if (!existing) {
+            uniqueJoke = generatedJoke
+            break
+          } else {
+            console.log(`[Joke] Duplicate found: "${generatedJoke.slice(0, 20)}..." Retrying...`)
+          }
+        }
+      } finally {
+        await client.close()
+      }
+
+      return uniqueJoke || "Why don't scientists trust atoms? Because they make up everything!" // Fallback
     })
+
+    // Helper to check history (Moved logic to inside steps for better flow control in future refactors, 
+    // but for now we generate first. A true RETRY loop requires the generation to happen 
+    // INSIDE a loop. Let's refactor the generation steps to include the loop.)
+
+    // REFACTORING GENERATION TO INCLUDE CHECK:
+    // We'll override the previous simple generation with a smart loop.
+
 
     // Step 2: Generate Quote
     const quote = await step.run('generate-quote', async () => {
+      const client = new MongoClient(process.env.MONGODB_URI!)
       const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
-      const response = await anthropic.messages.create({
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 200,
-        messages: [{
-          role: 'user',
-          content: `Generate ONE inspirational quote for BrightWire - a positive news site.
 
-Requirements:
-- Famous person (entrepreneur, scientist, artist, leader)
-- Uplifting and motivational
-- About hope, progress, innovation, or humanity
-- 1-2 sentences maximum
+      let uniqueQuote = { text: '', author: '' }
+      let attempts = 0
+      const maxAttempts = 3
 
-Format:
-Quote text
-— Author Name
+      try {
+        await client.connect()
+        const db = client.db('brightwire')
+        const history = db.collection('daily_content_history')
+        const thirtyDaysAgo = new Date()
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-Return ONLY in that format. No extra text.`
-        }]
-      })
+        while (attempts < maxAttempts) {
+          attempts++
+          console.log(`[Quote] Generation attempt ${attempts}/${maxAttempts}`)
 
-      const fullText = response.content[0].type === 'text' ? response.content[0].text.trim() : ''
-      const parts = fullText.split('—')
-      return {
-        text: parts[0]?.trim().replace(/^["']|["']$/g, '') || '',
-        author: parts[1]?.trim() || 'Unknown'
+          const response = await anthropic.messages.create({
+            model: 'claude-3-5-haiku-20241022',
+            max_tokens: 200,
+            messages: [{
+              role: 'user',
+              content: `Generate ONE inspirational quote for BrightWire - a positive news site.${attempts > 1 ? ' Give me a DIFFERENT one than before.' : ''}
+  
+  Requirements:
+  - Famous person (entrepreneur, scientist, artist, leader)
+  - Uplifting and motivational
+  - About hope, progress, innovation, or humanity
+  - 1-2 sentences maximum
+  
+  Format:
+  Quote text
+  — Author Name
+  
+  Return ONLY in that format. No extra text.`
+            }]
+          })
+
+          const fullText = response.content[0].type === 'text' ? response.content[0].text.trim() : ''
+          const parts = fullText.split('—')
+          const generatedQuote = {
+            text: parts[0]?.trim().replace(/^["']|["']$/g, '') || '',
+            author: parts[1]?.trim() || 'Unknown'
+          }
+
+          // Check uniqueness (ALL TIME)
+          const existing = await history.findOne({
+            type: 'quote',
+            text: generatedQuote.text
+            // Removed date filter to check ALL history
+          })
+
+          if (!existing) {
+            uniqueQuote = generatedQuote
+            break
+          } else {
+            console.log(`[Quote] Duplicate found: "${generatedQuote.text.slice(0, 20)}..." Retrying...`)
+          }
+        }
+      } finally {
+        await client.close()
+      }
+
+      return uniqueQuote.text ? uniqueQuote : {
+        text: "The only way to do great work is to love what you do.",
+        author: "Steve Jobs"
       }
     })
+
+
+    // Step 2.5: Save History (Now clearly just saving, as deduplication happened upstream)
+    await step.run('save-history', async () => {
+      const client = new MongoClient(process.env.MONGODB_URI!)
+      await client.connect()
+      const db = client.db('brightwire')
+      const history = db.collection('daily_content_history')
+
+      // Save valid content to history to prevent reuse tomorrow
+      if (joke && joke !== "Why don't scientists trust atoms? Because they make up everything!") {
+        // Create index if needed (unique text + type) to prevent double saving on retries 
+        // (though 'date' makes it unique usually, better to be safe)
+        await history.createIndex({ text: 1 }, { unique: false })
+        await history.insertOne({ type: 'joke', text: joke, date: new Date() })
+      }
+
+      if (quote && quote.text && quote.text !== "The only way to do great work is to love what you do.") {
+        await history.insertOne({ type: 'quote', text: quote.text, author: quote.author, date: new Date() })
+      }
+
+      await client.close()
+    })
+
 
     // Step 3: Update Site Settings
     await step.run('update-settings', async () => {

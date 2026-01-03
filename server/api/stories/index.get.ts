@@ -1,7 +1,7 @@
 import { getStoriesCollection } from '~/server/utils/db'
 import type { Story, StoryCategory } from '~/types'
 
-export default defineCachedEventHandler(async (event) => {
+export default defineEventHandler(async (event) => {
   const query = getQuery(event)
 
   // Get category - treat empty string and 'undefined' as no filter
@@ -107,13 +107,5 @@ export default defineCachedEventHandler(async (event) => {
       statusCode: 500,
       message: 'Failed to fetch stories',
     })
-  }
-}, {
-  maxAge: 60,
-  swr: true,
-  name: 'stories-api',
-  getKey: (event) => {
-    const query = getQuery(event)
-    return `stories-${query.category || 'all'}-${query.page || 1}-${query.limit || 20}-${query.featured || false}`
   }
 })

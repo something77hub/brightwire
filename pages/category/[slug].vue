@@ -102,6 +102,12 @@
           </div>
         </div>
 
+
+        <!-- Sidebar Widgets -->
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 mt-16 mb-12">
+          <SidebarWidgets />
+        </div>
+
         <div id="newsletter">
           <Newsletter />
         </div>

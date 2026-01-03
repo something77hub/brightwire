@@ -416,6 +416,11 @@
         </div>
       </section>
 
+      <!-- Sidebar Widgets -->
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 mt-16 mb-12">
+        <SidebarWidgets />
+      </div>
+
       <!-- Newsletter -->
       <div id="newsletter" class="max-w-4xl mx-auto px-4 sm:px-6">
         <Newsletter />

@@ -397,6 +397,11 @@ CRITICAL - AUTOMATIC 0 SCORE FOR:
 - Political attacks or scandals
 - Natural disasters (unless sticking to rescue/recovery)
 - "Church Erupts in Inferno" -> SCORE 0 (Destruction)
+- ROUTINE SPORTS MATCH RESULTS (e.g., "Arsenal beats Chelsea 2-0", "Lakers win against Bulls") -> SCORE 0
+  * CRITICAL FOR SPORTS: We only want the TOP 1% of sports stories.
+  * REJECT: Standard wins, transfer news, team updates, injury reports.
+  * ACCEPT ONLY: World records broken, historic achievements, massive underdog miracles, or acts of incredible sportsmanship.
+  * IF UNSURE ABOUT A SPORTS STORY -> REJECT IT (Score 0).
 
 SCORING GUIDE:
 - 80-100: Clearly positive (breakthroughs, victories, acts of kindness, progress)

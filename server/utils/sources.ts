@@ -504,7 +504,7 @@ export const positiveKeywords = [
   'hope', 'hopeful', 'optimistic', 'positive',
   'growth', 'growing', 'thriving', 'flourishing',
   'peace', 'peaceful', 'agreement', 'cooperation',
-  'win', 'wins', 'won', 'triumph', 'victory',
+  'triumph', // Removed 'win', 'wins', 'won', 'victory' to avoid sports false positives
 ]
 
 /**

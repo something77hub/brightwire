@@ -234,24 +234,18 @@
               <UnifiedAd placement="sidebar" />
             </ClientOnly>
 
-            <!-- RSS Feed -->
-            <div class="bg-white rounded-2xl p-5 shadow-lg">
-              <h3 class="font-bold text-amber-950 mb-4">Stay Connected</h3>
-              <a 
-                href="/feed.xml" 
-                target="_blank"
-                class="flex items-center gap-3 p-3 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors"
-              >
-                <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1Z"/>
-                  </svg>
-                </div>
-                <div>
-                  <p class="font-semibold text-amber-900 text-sm">RSS Feed</p>
-                  <p class="text-amber-600 text-xs">Subscribe in your reader</p>
-                </div>
-              </a>
+            <!-- Quote of the Day -->
+            <div class="bg-white rounded-2xl p-5 shadow-lg border border-amber-100">
+              <div class="flex items-center gap-2 mb-4">
+                <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                </svg>
+                <h3 class="font-bold text-amber-950">Quote of the Day</h3>
+              </div>
+              <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-lg border-l-4 border-amber-500">
+                <p class="text-amber-900 text-sm leading-relaxed mb-2">"{{ siteSettings?.quoteText || "The only way to do great work is to love what you do." }}"</p>
+                <p class="text-xs text-amber-600 font-medium">&mdash; {{ siteSettings?.quoteAuthor || "Steve Jobs" }}</p>
+              </div>
             </div>
           </aside>
         </div>
@@ -654,6 +648,7 @@ useHead({
   display: inline-block;
 }
 </style>
+
 
 
 

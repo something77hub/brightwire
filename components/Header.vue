@@ -85,7 +85,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search good news..."
-              class="w-full pl-10 pr-4 py-2 text-sm bg-amber-50/50 border border-amber-200/50 rounded-full outline-none focus:bg-white focus:border-amber-300 focus:ring-2 focus:ring-amber-100 transition-all"
+              class="w-full pl-10 pr-4 py-2 text-xs bg-amber-50/50 border border-amber-200/50 rounded-full outline-none focus:bg-white focus:border-amber-300 focus:ring-2 focus:ring-amber-100 transition-all placeholder:text-amber-400"
               @focus="searchFocused = true"
               @keydown.escape="closeSearch"
             />
@@ -280,10 +280,10 @@ const searchFocused = ref(false)
 const searchContainer = ref<HTMLElement | null>(null)
 
 const navItems = computed(() => [
-  { label: 'Today', href: '/today' },
+  { label: 'All Stories', href: '/' },
   ...CORE_CATEGORIES.map(c => ({ 
-    label: c.label.replace("Today's ", ""), // Shorten "Today's Good News" for menu
-    href: `/category/${c.id}` 
+    label: c.label, 
+    href: `/category/${c.id}`
   })),
 ])
 

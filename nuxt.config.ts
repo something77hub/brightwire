@@ -7,6 +7,10 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
   ],
 
+  css: [
+    '~/assets/css/typography.css'
+  ],
+
   googleFonts: {
     families: {
       'Playfair Display': {

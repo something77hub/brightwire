@@ -357,9 +357,10 @@ async function doScrape(url: string, summaryFallback?: string): Promise<ScrapedA
       }
     }
 
-    if (!content || content.length < 100) {
+    if (!content || (content.length < 100 && !isVideo)) {
       // Last ditch effort: if we have a summary and it's substantial, use it
-      if (summaryFallback && summaryFallback.length > 200) {
+      // For videos, we accept shorter summaries since the video is the main content
+      if (summaryFallback && (summaryFallback.length > 200 || (isVideo && summaryFallback.length > 20))) {
         content = summaryFallback
       } else {
         console.error(`Not enough content found for ${url}`)

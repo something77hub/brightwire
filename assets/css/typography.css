@@ -1,7 +1,7 @@
 /* Global font size overrides for better readability */
 html {
-  font-size: 18px;
-  /* Increase from default 16px */
+  font-size: 16px;
+  /* Reverted to 16px */
 }
 
 body {

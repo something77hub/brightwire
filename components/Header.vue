@@ -63,7 +63,7 @@
         </NuxtLink>
 
         <!-- Navigation - Hidden on mobile -->
-        <nav class="hidden lg:flex items-center gap-6">
+        <nav class="hidden lg:flex items-center gap-3">
           <NuxtLink 
             v-for="item in navItems" 
             :key="item.href"

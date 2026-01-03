@@ -16,8 +16,9 @@ export default defineNuxtConfig({
       'Playfair Display': {
         wght: [400, 500, 600, 700],
       },
-      'Roboto': {
-        wght: [300, 400, 500, 700],
+      'Merriweather Sans': {
+        wght: [300, 400, 500, 600, 700, 800],
+        ital: [300, 400, 700],
       },
       'Merriweather': {
         wght: [300, 400, 700, 900],

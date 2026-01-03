@@ -11,7 +11,7 @@ export default <Config>{
     extend: {
       fontFamily: {
         'display': ['"Playfair Display"', 'Georgia', 'serif'],
-        'sans': ['"Roboto"', 'system-ui', 'sans-serif'],
+        'sans': ['"Merriweather Sans"', 'system-ui', 'sans-serif'],
         'serif': ['"Merriweather"', 'Georgia', 'serif'],
       },
       fontSize: {

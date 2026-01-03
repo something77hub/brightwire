@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="min-h-screen bg-gray-50">
     <!-- Admin Header -->
     <header class="bg-white border-b border-gray-200">
@@ -183,7 +183,7 @@
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-gray-900">Recent Articles</h2>
           <NuxtLink to="/admin/articles" class="text-amber-600 hover:text-amber-700 text-sm font-medium">
-            View All �?          </NuxtLink>
+            View All 鈫?          </NuxtLink>
         </div>
         
         <div v-if="pending" class="text-center py-8">
@@ -194,7 +194,7 @@
           <div v-for="article in recentArticles" :key="article._id" class="py-3 flex items-center justify-between">
             <div class="flex-1 min-w-0">
               <p class="font-medium text-gray-900 truncate">{{ article.title }}</p>
-              <p class="text-sm text-gray-500">{{ article.originalSource }} · {{ formatDate(article.createdAt) }}</p>
+              <p class="text-sm text-gray-500">{{ article.originalSource }} 路 {{ formatDate(article.createdAt) }}</p>
             </div>
             <span :class="['px-2 py-1 rounded text-xs font-medium', getCategoryColor(article.category)]">
               {{ article.category }}
@@ -314,7 +314,7 @@ function getCategoryColor(category: string) {
 }
 
 function getCategoryEmoji(category: string) {
-  return CATEGORY_MAP[category]?.emoji || '�?
+    return CATEGORY_MAP[category]?.emoji || '&#9989;'
 }
 
 async function triggerFetch() {
@@ -350,7 +350,7 @@ async function reclassifyArticles() {
     })
     
     if (dryRun.total === 0) {
-      reclassifyMessage.value = 'All articles are already properly categorized! 🎉'
+      reclassifyMessage.value = 'All articles are already properly categorized! 馃帀'
       await refreshCategoryStats()
       reclassifying.value = false
       return
@@ -395,7 +395,7 @@ async function reclassifyArticles() {
       await new Promise(r => setTimeout(r, 1000))
     }
     
-    reclassifyMessage.value = `�?Setup Complete! Processed ${processedCount} articles. Fixed ${changedCount} categories.`
+    reclassifyMessage.value = `鉁?Setup Complete! Processed ${processedCount} articles. Fixed ${changedCount} categories.`
     await refreshCategoryStats()
 
   } catch (e) {
@@ -412,7 +412,7 @@ const deleting = ref(false)
 
 async function deleteAllArticles() {
   // Double confirmation
-  if (!confirm('⚠️ This will DELETE ALL ARTICLES!\n\nAre you sure you want to start fresh?')) {
+  if (!confirm('鈿狅笍 This will DELETE ALL ARTICLES!\n\nAre you sure you want to start fresh?')) {
     return
   }
   
@@ -430,7 +430,7 @@ async function deleteAllArticles() {
       body: { confirm: 'DELETE ALL ARTICLES' }
     })
     
-    alert(`�?${result.message}\n\nClick "Fetch News Now" to get fresh articles with proper categories.`)
+    alert(`鉁?${result.message}\n\nClick "Fetch News Now" to get fresh articles with proper categories.`)
     
     // Refresh stats
     await refreshCategoryStats()

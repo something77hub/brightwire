@@ -16,7 +16,7 @@
         class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-amber-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 cursor-pointer hover:bg-amber-600 transition-colors"
         @click="loadNewStories"
       >
-        <span class="animate-pulse">●</span>
+        <span class="animate-pulse">�?/span>
         <span class="font-medium">{{ newStoriesCount }} new {{ newStoriesCount === 1 ? 'story' : 'stories' }}</span>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -152,29 +152,28 @@
             
             <!-- End of stories message -->
             <div v-else-if="!data?.pagination.hasMore && stories.length > 0" class="pt-8 text-center">
-              <p class="text-amber-600/50 text-sm">✨ You've seen all the stories!</p>
+              <p class="text-amber-600/50 text-sm">�?You've seen all the stories!</p>
             </div>
           </div>
 
           <!-- Sidebar -->
           <aside class="space-y-6">
-            <!-- Trending Topics -->
-            <div class="bg-white rounded-2xl p-5 shadow-lg">
+            <!-- Joke of the Day -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 shadow-lg border border-amber-200/50">
               <div class="flex items-center gap-2 mb-4">
-                <svg class="w-5 h-5 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
-                </svg>
-                <h3 class="font-bold text-amber-950">Trending Now</h3>
+                <span class="text-2xl">😄</span>
+                <h3 class="font-bold text-amber-950">Joke of the Day</h3>
               </div>
               <div class="space-y-3">
+                <p class="text-amber-900 text-sm leading-relaxed italic">"{{ siteSettings?.jokeText || "Why don't scientists trust atoms? Because they make up everything!" }}"</p>
                 <button 
-                  v-for="(topic, i) in displayTrendingTopics" 
-                  :key="topic"
-                  @click="openSearchWithQuery(topic)"
-                  class="flex items-center gap-3 group w-full text-left"
+                  @click="shareJoke"
+                  class="text-xs text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 transition-colors"
                 >
-                  <span class="text-2xl font-bold text-amber-300 group-hover:text-amber-500 transition-colors">{{ i + 1 }}</span>
-                  <span class="text-amber-800 group-hover:text-amber-600 transition-colors text-sm font-medium">{{ topic }}</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                  Share this laugh
                 </button>
               </div>
             </div>
@@ -197,7 +196,7 @@
 
             <!-- Newsletter Mini -->
             <div class="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white">
-              <span class="text-3xl block mb-2">☀️</span>
+              <span class="text-3xl block mb-2">☀�?/span>
               <h3 class="font-bold mb-2">{{ siteSettings?.newsletterTitle || 'Daily Good News' }}</h3>
               <p class="text-white/80 text-sm mb-4">{{ siteSettings?.newsletterSubtitle || 'Get positivity in your inbox every morning.' }}</p>
               <form v-if="!quickSubscribed" @submit.prevent="subscribeQuick" class="space-y-2">
@@ -235,24 +234,18 @@
               <UnifiedAd placement="sidebar" />
             </ClientOnly>
 
-            <!-- RSS Feed -->
-            <div class="bg-white rounded-2xl p-5 shadow-lg">
-              <h3 class="font-bold text-amber-950 mb-4">Stay Connected</h3>
-              <a 
-                href="/feed.xml" 
-                target="_blank"
-                class="flex items-center gap-3 p-3 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors"
-              >
-                <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1Z"/>
-                  </svg>
-                </div>
-                <div>
-                  <p class="font-semibold text-amber-900 text-sm">RSS Feed</p>
-                  <p class="text-amber-600 text-xs">Subscribe in your reader</p>
-                </div>
-              </a>
+            <!-- Quote of the Day -->
+            <div class="bg-white rounded-2xl p-5 shadow-lg border border-amber-100">
+              <div class="flex items-center gap-2 mb-4">
+                <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                </svg>
+                <h3 class="font-bold text-amber-950">Quote of the Day</h3>
+              </div>
+              <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-lg border-l-4 border-amber-500">
+                <p class="text-amber-900 text-sm leading-relaxed mb-2">"{{ siteSettings?.quoteText || "{{ siteSettings?.quoteText || \"The only way to do great work is to love what you do.\" }}" }}"</p>
+                <p class="text-xs text-amber-600 font-medium">�?Steve Jobs</p>
+              </div>
             </div>
           </aside>
         </div>
@@ -374,13 +367,13 @@ const displayTrendingTopics = computed(() => {
 
 function getCategoryEmoji(category: string): string {
   const emojis: Record<string, string> = {
-    'good-news': '☀️',
+    'good-news': '☀�?,
     'heroes': '🦸',
     'planet': '🌍',
     'innovation': '🚀',
     'solutions': '💡',
   }
-  return emojis[category] || '✨'
+  return emojis[category] || '�?
 }
 
 // Handle category changes
@@ -461,7 +454,7 @@ const showEmptyState = computed(() => {
 import { CORE_CATEGORIES } from '~/utils/constants'
 
 const categories = [
-  { id: 'all', label: 'All Stories', emoji: '✨' },
+  { id: 'all', label: 'All Stories', emoji: '�? },
   ...CORE_CATEGORIES.map(c => ({
     id: c.id,
     label: c.label,
@@ -551,8 +544,27 @@ async function subscribeQuick() {
     setTimeout(() => {
       quickError.value = ''
     }, 5000)
+```
   } finally {
     quickLoading.value = false
+  }
+}
+
+const shareJoke = () => {
+  const joke = siteSettings.value?.jokeText || "Why don't scientists trust atoms? Because they make up everything!" }}"
+  const text = `${joke}\n\n😄 Daily good news at BrightWire`
+  
+  if (navigator.share) {
+    navigator.share({
+      title: 'Joke of the Day',
+      text,
+      url: 'https://brightwire.news'
+    }).catch(() => {})
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Joke copied to clipboard! 📋')
+    })
   }
 }
 
@@ -638,3 +650,7 @@ useHead({
   display: inline-block;
 }
 </style>
+
+
+
+

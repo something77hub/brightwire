@@ -1144,3 +1144,110 @@ FORMATTING:
     }
   }
 )
+
+// ========================================
+// Daily Content Generation (Joke + Quote)
+// ========================================
+export const generateDailyContent = inngest.createFunction(
+  {
+    id: 'generate-daily-content',
+    name: 'Generate Daily Joke and Quote',
+  },
+  { cron: '0 6 * * *' }, // Daily at 6 AM UTC
+  async ({ event, step }) => {
+    
+    // Step 1: Generate Joke
+    const joke = await step.run('generate-joke', async () => {
+      const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+      
+      const response = await anthropic.messages.create({
+        model: 'claude-3-5-haiku-20241022',
+        max_tokens: 200,
+        messages: [{
+          role: 'user',
+          content: `Generate ONE clean, family-friendly joke for BrightWire - a positive news site.
+
+Requirements:
+- Must be genuinely funny
+- No politics, religion, or controversial topics
+- Appropriate for all ages
+- 1-2 sentences maximum
+- Wordplay, puns, or clever observations preferred
+
+Return ONLY the joke text. No labels, no extra commentary.`
+        }]
+      })
+      
+      return response.content[0].type === 'text' ? response.content[0].text.trim() : ''
+    })
+
+    // Step 2: Generate Quote
+    const quote = await step.run('generate-quote', async () => {
+      const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+      
+      const response = await anthropic.messages.create({
+        model: 'claude-3-5-haiku-20241022',
+        max_tokens: 200,
+        messages: [{
+          role: 'user',
+          content: `Generate ONE inspirational quote for BrightWire - a positive news site.
+
+Requirements:
+- Famous person (entrepreneur, scientist, artist, leader)
+- Uplifting and motivational
+- About hope, progress, innovation, or humanity
+- 1-2 sentences maximum
+
+Format:
+Quote text
+！ Author Name
+
+Return ONLY in that format. No extra text.`
+        }]
+      })
+      
+      const fullText = response.content[0].type === 'text' ? response.content[0].text.trim() : ''
+      const parts = fullText.split('！')
+      return {
+        text: parts[0]?.trim().replace(/^["']|["']$/g, '') || '',
+        author: parts[1]?.trim() || 'Unknown'
+      }
+    })
+
+    // Step 3: Update Site Settings
+    await step.run('update-settings', async () => {
+      const config = useRuntimeConfig()
+      const client = new MongoClient(config.mongodbUri)
+      
+      try {
+        await client.connect()
+        const db = client.db('brightwire')
+        const settings = db.collection('settings')
+        
+        await settings.updateOne(
+          { _id: 'site-settings' as any },
+          {
+            $set: {
+              jokeText: joke,
+              quoteText: quote.text,
+              quoteAuthor: quote.author,
+              lastJokeUpdate: new Date(),
+              lastQuoteUpdate: new Date(),
+            }
+          },
+          { upsert: true }
+        )
+        
+        console.log('? Daily content updated:', { joke, quote: ` ！ ` })
+      } finally {
+        await client.close()
+      }
+    })
+
+    return {
+      success: true,
+      joke,
+      quote: ` ！ `
+    }
+  }
+)

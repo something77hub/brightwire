@@ -9,8 +9,12 @@ export default defineNuxtConfig({
 
   googleFonts: {
     families: {
-      'Playfair Display': [400, 500, 600, 700],
-      'Inter': [300, 400, 500, 600, 700],
+      'Playfair Display': {
+        wght: [400, 500, 600, 700],
+      },
+      'Roboto': {
+        wght: [300, 400, 500, 700],
+      },
     },
     display: 'swap',
   },

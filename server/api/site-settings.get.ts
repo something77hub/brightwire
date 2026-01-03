@@ -5,14 +5,14 @@ import { MongoClient } from 'mongodb'
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const client = new MongoClient(config.mongodbUri)
-  
+
   try {
     await client.connect()
     const db = client.db('brightwire')
     const settings = db.collection('settings')
-    
+
     const doc = await settings.findOne({ _id: 'site-settings' as any })
-    
+
     // Return only public settings
     return {
       siteName: doc?.siteName || 'BrightWire',
@@ -25,6 +25,9 @@ export default defineEventHandler(async (event) => {
       socialLinkedin: doc?.socialLinkedin || '',
       socialYoutube: doc?.socialYoutube || '',
       socialTiktok: doc?.socialTiktok || '',
+      jokeText: doc?.jokeText || "Why don't scientists trust atoms? Because they make up everything!",
+      quoteText: doc?.quoteText || "The only way to do great work is to love what you do.",
+      quoteAuthor: doc?.quoteAuthor || "Steve Jobs",
     }
   } catch (error) {
     // Return defaults if DB fails
@@ -39,6 +42,9 @@ export default defineEventHandler(async (event) => {
       socialLinkedin: '',
       socialYoutube: '',
       socialTiktok: '',
+      jokeText: "Why don't scientists trust atoms? Because they make up everything!",
+      quoteText: "The only way to do great work is to love what you do.",
+      quoteAuthor: "Steve Jobs",
     }
   } finally {
     await client.close()

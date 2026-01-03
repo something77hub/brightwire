@@ -61,6 +61,12 @@ export function scoreStory(title: string, summary: string): number {
 }
 
 export function preFilterStory(title: string, summary: string): 'skip' | 'boost' | 'classify' {
+  // FILTER: Reject Chinese/CJK characters [u4e00-u9fa5]
+  // This prevents articles from mixed-language feeds or accidental scrapes
+  if (/[\u4e00-\u9fa5]/.test(title)) {
+    return 'skip'
+  }
+
   const score = scoreStory(title, summary)
   if (score <= -10) return 'skip'
   if (score >= 5) return 'boost'

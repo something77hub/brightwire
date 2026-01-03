@@ -30,6 +30,7 @@ export type StoryCategory =
   | 'sports'         // Sports - wins, records, teamwork
   | 'world'          // World/International - specific country news (Nigeria, India, etc.)
   | 'health'         // Health & Wellness - medical breakthroughs, mental health
+  | 'video'          // Video content
 
 // Advertisement Types
 export type AdType =

@@ -927,7 +927,8 @@ FORMATTING:
               originalSource: item.candidate.source,
               sourceUrl: item.candidate.link,
               videoEmbedUrl: item.videoEmbedUrl,
-              category: item.candidate.category,
+              // Force 'video' category if we successfully scraped a video embed
+              category: (item.isVideo || item.videoEmbedUrl) ? 'video' : item.candidate.category,
               score: item.candidate.score,
               imageUrl: heroImage ? proxyImage(heroImage) : undefined,
               images: item.images.map(proxyImage),

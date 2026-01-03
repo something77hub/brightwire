@@ -519,6 +519,9 @@ const categoryEmojis: Record<string, string> = {
   'solutions': '💡',
   'kindness': '💛',
   'sports': '🏆',
+  'health': '🩺',
+  'world': '🌎',
+  'video': '🎥',
 }
 
 const categoryBadgeColors: Record<string, string> = {
@@ -529,6 +532,9 @@ const categoryBadgeColors: Record<string, string> = {
   'solutions': 'bg-blue-500 text-white',
   'kindness': 'bg-yellow-500 text-white',
   'sports': 'bg-orange-600 text-white',
+  'health': 'bg-teal-500 text-white',
+  'world': 'bg-indigo-500 text-white',
+  'video': 'bg-red-600 text-white',
 }
 
 const categoryEmoji = computed(() => 

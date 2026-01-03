@@ -63,7 +63,7 @@
 
       <!-- Error state -->
       <div v-else-if="error" class="text-center py-20">
-        <span class="text-5xl mb-4 block">馃槩</span>
+        <span class="text-5xl mb-4 block">😕</span>
         <h2 class="text-2xl font-bold text-amber-900 mb-2">Oops! Something went wrong</h2>
         <p class="text-amber-700/60 mb-6">We couldn't load the good news right now.</p>
         <button 
@@ -113,7 +113,7 @@
 
             <!-- Empty state -->
             <div v-if="!stories.length" class="text-center py-16 bg-white/50 rounded-2xl">
-              <span class="text-5xl mb-4 block">馃摪</span>
+              <span class="text-5xl mb-4 block">📰</span>
               <h3 class="text-xl font-bold text-amber-900 mb-2">No stories yet</h3>
               <p class="text-amber-700/60">Check back soon for more good news!</p>
             </div>
@@ -160,7 +160,7 @@
             
             <!-- End of stories message -->
             <div v-else-if="!data?.pagination.hasMore && stories.length > 0" class="pt-8 text-center">
-              <p class="text-amber-600/50 text-sm">鉁?You've seen all the stories!</p>
+              <p class="text-amber-600/50 text-sm">✅ You've seen all the stories!</p>
             </div>
           </div>
 
@@ -284,10 +284,14 @@ const displayTrendingTopics = computed(() => {
 function getCategoryEmoji(category: string): string {
   const emojis: Record<string, string> = {
       'good-news': '☀️',
-    'heroes': '馃Ω',
-    'planet': '馃實',
-    'innovation': '馃殌',
-    'solutions': '馃挕',
+    'heroes': '🦸',
+    'planet': '🌍',
+    'innovation': '🚀',
+    'solutions': '💡',
+    'sports': '🏆',
+    'health': '🩺',
+    'kindness': '💛',
+    'world': '🌎',
     'video': '🎬',
   }
     return emojis[category] || '✅'
@@ -447,6 +451,8 @@ function formatCategoryTitle(category: string): string {
     'good-news': "Daily Mix",
     kindness: 'Acts of Kindness',
     sports: 'Sports & Athletics',
+    health: 'Health & Wellness',
+    world: 'World News',
     video: 'Must-Watch Videos',
   }
   return titles[category] || 'Good News'

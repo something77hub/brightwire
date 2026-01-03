@@ -228,6 +228,27 @@ function getYouTubeEmbedUrl(url: string): string | undefined {
 
 const isVideoUrl = (url: string) => VIDEO_PATTERNS.some(p => url.toLowerCase().includes(p))
 
+const parseSrcset = (srcset: string): string | null => {
+  if (!srcset) return null
+  try {
+    return srcset
+      .split(',')
+      .map(entry => {
+        const [url, descriptor] = entry.trim().split(/\s+/)
+        if (!url) return null
+        // Extract numeric width if available (e.g., "1200w" -> 1200)
+        const width = descriptor && descriptor.endsWith('w')
+          ? parseInt(descriptor.slice(0, -1), 10)
+          : (descriptor && descriptor.endsWith('x') ? parseInt(descriptor.slice(0, -1), 10) * 1000 : 0) // Treat 2x as roughly high res
+        return { url, width }
+      })
+      .filter((e): e is { url: string; width: number } => e !== null)
+      .sort((a, b) => b.width - a.width)[0]?.url || null
+  } catch {
+    return null
+  }
+}
+
 /**
  * Scrape article content from URL with retries
  */
@@ -246,6 +267,7 @@ export async function scrapeArticle(url: string, summaryFallback?: string): Prom
     try {
       return await doScrape(url, summaryFallback)
     } catch (error: any) {
+      console.error(`Attempt ${attempts} failed for ${url}:`, error.message)
       if (attempts > maxAttempts) {
         console.error(`Failed to scrape ${url} after ${attempts} attempts:`, error.message)
         return null
@@ -290,16 +312,66 @@ async function doScrape(url: string, summaryFallback?: string): Promise<ScrapedA
         || $('meta[property="og:video"]').attr('content')
         || $('meta[name="twitter:player"]').attr('content')
 
-      // Try iframes - extract ANY video embed found
+      // Try iframes - Check for known video platforms first
       if (!videoEmbedUrl) {
+        // Priority 1: Known video platforms
+        const videoDomains = [
+          'youtube.com/embed', 'youtube.com/v', 'youtu.be',
+          'player.vimeo.com',
+          'dailymotion.com/embed',
+          'rumble.com/embed',
+          'video.twimg.com',
+          'facebook.com/plugins/video.php',
+          'odysee.com/$/embed',
+          'streamable.com',
+        ]
+
         $('iframe').each((_, iframe) => {
           const src = $(iframe).attr('src') || ''
-          // Accept any iframe with a src (most video embeds use iframes)
-          if (src && src.startsWith('http')) {
+          if (!src) return
+
+          // Check if src contains any known video domain
+          if (videoDomains.some(d => src.includes(d))) {
             videoEmbedUrl = src
-            return false // Stop at first valid embed
+            return false // Stop at first valid known embed
           }
         })
+
+        // Priority 2: Generic fallback (strict)
+        if (!videoEmbedUrl) {
+          $('iframe').each((_, iframe) => {
+            const src = $(iframe).attr('src') || ''
+            const title = $(iframe).attr('title') || ''
+            const allow = $(iframe).attr('allow') || ''
+
+            if (!src.startsWith('http')) return
+
+            const lowerSrc = src.toLowerCase()
+
+            // Must explicitly look like a video player
+            const looksLikeVideo =
+              allow.includes('autoplay') ||
+              allow.includes('encrypted-media') ||
+              lowerSrc.includes('player') ||
+              lowerSrc.includes('video') ||
+              lowerSrc.includes('embed')
+
+            // Must NOT look like an ad or tracking
+            const isJunk =
+              lowerSrc.includes('googleads') ||
+              lowerSrc.includes('doubleclick') ||
+              lowerSrc.includes('tracking') ||
+              lowerSrc.includes('pixel') ||
+              lowerSrc.includes('cookie') ||
+              lowerSrc.includes('banner') ||
+              lowerSrc.includes('smartframe') // Common non-video widget
+
+            if (looksLikeVideo && !isJunk) {
+              videoEmbedUrl = src
+              return false
+            }
+          })
+        }
       }
     }
 
@@ -387,7 +459,40 @@ async function doScrape(url: string, summaryFallback?: string): Promise<ScrapedA
 
     $(imageSelector).each((_, el) => {
       const $el = $(el)
-      const src = $el.attr('src') || $el.attr('data-src')
+
+      // Strategy 1: Check if inside a <picture> tag -> prefer <source> elements
+      const $picture = $el.closest('picture')
+      if ($picture.length) {
+        let bestSrcFromPicture: string | null = null
+        // Try all sources in order, but really we want the largest
+        $picture.find('source').each((_, source) => {
+          const parsed = parseSrcset($(source).attr('srcset') || '')
+          // Assuming the browser/parser logic, we just want *a* high res URL
+          if (parsed && !bestSrcFromPicture) bestSrcFromPicture = parsed
+        })
+        if (bestSrcFromPicture) {
+          // If we found a good source in the picture tag, use it and continue
+          const absoluteUrl = new URL(bestSrcFromPicture, url).href
+          if (!images.includes(absoluteUrl)) images.push(absoluteUrl)
+          return
+        }
+      }
+
+      // Strategy 2: Check srcset on the img tag itself
+      const srcset = $el.attr('srcset')
+      const parsedSrcset = parseSrcset(srcset || '')
+      if (parsedSrcset) {
+        try {
+          const absoluteUrl = new URL(parsedSrcset, url).href
+          if (!images.includes(absoluteUrl) && !JUNK_KEYWORDS.some(kw => absoluteUrl.toLowerCase().includes(kw))) {
+            images.push(absoluteUrl)
+            return
+          }
+        } catch { }
+      }
+
+      // Strategy 3: Standard src or data-src
+      const src = $el.attr('src') || $el.attr('data-src') || $el.attr('data-original')
 
       if (!src || src.includes('data:') || src.includes('placeholder')) return
 

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div>
     <Header />
     
@@ -16,7 +16,7 @@
         class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-amber-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 cursor-pointer hover:bg-amber-600 transition-colors"
         @click="loadNewStories"
       >
-        <span class="animate-pulse">�?/span>
+        <span class="animate-pulse">&#9889;</span>
         <span class="font-medium">{{ newStoriesCount }} new {{ newStoriesCount === 1 ? 'story' : 'stories' }}</span>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -60,7 +60,7 @@
 
       <!-- Error state -->
       <div v-else-if="error" class="text-center py-20">
-        <span class="text-5xl mb-4 block">😢</span>
+        <span class="text-5xl mb-4 block">馃槩</span>
         <h2 class="text-2xl font-bold text-amber-900 mb-2">Oops! Something went wrong</h2>
         <p class="text-amber-700/60 mb-6">We couldn't load the good news right now.</p>
         <button 
@@ -73,7 +73,7 @@
 
       <!-- Empty state - no stories yet -->
       <div v-else-if="showEmptyState" class="text-center py-20">
-        <span class="text-5xl mb-4 block">🌅</span>
+        <span class="text-5xl mb-4 block">馃寘</span>
         <h2 class="text-2xl font-bold text-amber-900 mb-2">Good news is brewing...</h2>
         <p class="text-amber-700/60 mb-6">We're gathering uplifting stories. Check back soon!</p>
         <button 
@@ -105,7 +105,7 @@
 
             <!-- Empty state -->
             <div v-if="!stories.length" class="text-center py-16 bg-white/50 rounded-2xl">
-              <span class="text-5xl mb-4 block">📰</span>
+              <span class="text-5xl mb-4 block">馃摪</span>
               <h3 class="text-xl font-bold text-amber-900 mb-2">No stories yet</h3>
               <p class="text-amber-700/60">Check back soon for more good news!</p>
             </div>
@@ -152,7 +152,7 @@
             
             <!-- End of stories message -->
             <div v-else-if="!data?.pagination.hasMore && stories.length > 0" class="pt-8 text-center">
-              <p class="text-amber-600/50 text-sm">�?You've seen all the stories!</p>
+              <p class="text-amber-600/50 text-sm">鉁?You've seen all the stories!</p>
             </div>
           </div>
 
@@ -161,7 +161,7 @@
             <!-- Joke of the Day -->
             <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 shadow-lg border border-amber-200/50">
               <div class="flex items-center gap-2 mb-4">
-                <span class="text-2xl">😄</span>
+                <span class="text-2xl">馃槃</span>
                 <h3 class="font-bold text-amber-950">Joke of the Day</h3>
               </div>
               <div class="space-y-3">
@@ -196,7 +196,7 @@
 
             <!-- Newsletter Mini -->
             <div class="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white">
-              <span class="text-3xl block mb-2">☀�?/span>
+              <span class="text-3xl block mb-2">鈽€锔?/span>
               <h3 class="font-bold mb-2">{{ siteSettings?.newsletterTitle || 'Daily Good News' }}</h3>
               <p class="text-white/80 text-sm mb-4">{{ siteSettings?.newsletterSubtitle || 'Get positivity in your inbox every morning.' }}</p>
               <form v-if="!quickSubscribed" @submit.prevent="subscribeQuick" class="space-y-2">
@@ -224,7 +224,7 @@
                 <svg class="w-8 h-8 mx-auto mb-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
-                <p class="text-sm font-medium">{{ quickSuccessMsg || "You're in! 🎉" }}</p>
+                <p class="text-sm font-medium">{{ quickSuccessMsg || "You're in! 馃帀" }}</p>
               </div>
               <p v-if="quickError" class="text-red-200 text-xs mt-2">{{ quickError }}</p>
             </div>
@@ -244,7 +244,7 @@
               </div>
               <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-lg border-l-4 border-amber-500">
                 <p class="text-amber-900 text-sm leading-relaxed mb-2">"{{ siteSettings?.quoteText || "The only way to do great work is to love what you do." }}"</p>
-                <p class="text-xs text-amber-600 font-medium">�?�� {{ siteSettings?.quoteAuthor || "Steve Jobs" }}</p>
+                <p class="text-xs text-amber-600 font-medium">&mdash; {{ siteSettings?.quoteAuthor || "Steve Jobs" }}</p>
               </div>
             </div>
           </aside>
@@ -367,13 +367,13 @@ const displayTrendingTopics = computed(() => {
 
 function getCategoryEmoji(category: string): string {
   const emojis: Record<string, string> = {
-    'good-news': '☀�?,
-    'heroes': '🦸',
-    'planet': '🌍',
-    'innovation': '🚀',
-    'solutions': '💡',
+    'good-news': '鈽€锔?,
+    'heroes': '馃Ω',
+    'planet': '馃實',
+    'innovation': '馃殌',
+    'solutions': '馃挕',
   }
-  return emojis[category] || '�?
+  return emojis[category] || '鉁?
 }
 
 // Handle category changes
@@ -454,7 +454,7 @@ const showEmptyState = computed(() => {
 import { CORE_CATEGORIES } from '~/utils/constants'
 
 const categories = [
-  { id: 'all', label: 'All Stories', emoji: '�? },
+  { id: 'all', label: 'All Stories', emoji: '鉁? },
   ...CORE_CATEGORIES.map(c => ({
     id: c.id,
     label: c.label,
@@ -536,7 +536,7 @@ async function subscribeQuick() {
       body: { email: quickEmail.value },
     })
     
-    quickSuccessMsg.value = response.message || siteSettings.value?.newsletterSuccessMessage || "You're in! 🎉"
+    quickSuccessMsg.value = response.message || siteSettings.value?.newsletterSuccessMessage || "You're in! 馃帀"
     quickSubscribed.value = true
     quickEmail.value = ''
   } catch (error: any) {
@@ -552,7 +552,7 @@ async function subscribeQuick() {
 
 const shareJoke = () => {
   const joke = siteSettings.value?.jokeText || "Why don't scientists trust atoms? Because they make up everything!" }}"
-  const text = `${joke}\n\n😄 Daily good news at BrightWire`
+  const text = `${joke}\n\n馃槃 Daily good news at BrightWire`
   
   if (navigator.share) {
     navigator.share({
@@ -563,7 +563,7 @@ const shareJoke = () => {
   } else {
     // Fallback: copy to clipboard
     navigator.clipboard.writeText(text).then(() => {
-      alert('Joke copied to clipboard! 📋')
+      alert('Joke copied to clipboard! 馃搵')
     })
   }
 }
@@ -650,6 +650,7 @@ useHead({
   display: inline-block;
 }
 </style>
+
 
 
 

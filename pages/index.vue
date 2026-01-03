@@ -243,8 +243,8 @@
                 <h3 class="font-bold text-amber-950">Quote of the Day</h3>
               </div>
               <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-lg border-l-4 border-amber-500">
-                <p class="text-amber-900 text-sm leading-relaxed mb-2">"{{ siteSettings?.quoteText || "{{ siteSettings?.quoteText || \"The only way to do great work is to love what you do.\" }}" }}"</p>
-                <p class="text-xs text-amber-600 font-medium">â€?Steve Jobs</p>
+                <p class="text-amber-900 text-sm leading-relaxed mb-2">"{{ siteSettings?.quoteText || "The only way to do great work is to love what you do." }}"</p>
+                <p class="text-xs text-amber-600 font-medium">â€?¡ª {{ siteSettings?.quoteAuthor || "Steve Jobs" }}</p>
               </div>
             </div>
           </aside>
@@ -650,6 +650,7 @@ useHead({
   display: inline-block;
 }
 </style>
+
 
 
 

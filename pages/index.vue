@@ -373,7 +373,7 @@ const displayTrendingTopics = computed(() => {
 
 function getCategoryEmoji(category: string): string {
   const emojis: Record<string, string> = {
-    'good-news': '鈽€锔?,
+      'good-news': '&#9728;&#65039;',
     'heroes': '馃Ω',
     'planet': '馃實',
     'innovation': '馃殌',
